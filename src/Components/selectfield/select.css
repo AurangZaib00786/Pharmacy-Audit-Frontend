@@ -1,0 +1,20 @@
+.select_class::after{
+    content: attr(data-content);
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: white;
+    padding: 0 5px;
+    color: gray;
+    font-size: 12px;
+    
+    }
+
+.select_class > select:focus{
+    .select_class{
+        color: #0d6efd;
+    }
+}
+.wrapper{
+    position: relative;
+}

@@ -1,0 +1,15 @@
+.pop_over{
+    width:200px;
+    height:150px;    
+}
+
+.pop_over_header{
+    display: flex;
+    flex-direction: column;
+    height:70%;
+    place-items: center;
+}
+
+.cursor-pointer:hover{
+    cursor: pointer;
+}

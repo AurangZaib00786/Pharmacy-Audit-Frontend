@@ -1,0 +1,54 @@
+
+
+.table-sm>:not(caption)>*>* {
+    padding: 0.25rem 1rem;
+}
+
+.sr-only{
+    display: none;
+}
+
+.action > .MuiIconButton-root {
+    flex: 0 0 auto;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0;
+    overflow: visible;
+    font-size: 1.5rem;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: 50%;
+}
+
+.customClass{
+    height: 5rem;
+}
+
+.csvbutton{
+    height: fit-content;
+}
+
+.user_main>h1{
+    margin-bottom: 2%;
+}
+
+.user_main{
+    display: flex;
+    flex-direction: column;
+    margin-left: 1%;
+    margin-bottom: 2%;
+}
+
+
+
+.react-bootstrap-table table {
+    table-layout: auto;
+  }
+
+thead {
+    border-bottom-width: 3px;
+}
+
+
+
+td {
+    vertical-align: middle;
+  }

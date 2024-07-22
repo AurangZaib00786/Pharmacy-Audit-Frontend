@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+
+
+.form-control:focus {
+    border-color: inherit;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  
+.form{
+    
+    
+    box-shadow: 5px 5px 17px -5px rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+
+}
+::placeholder {
+  color: whitesmoke;
+ 
+}
+
+.body_1{
+  background: rgb(239,240,242);
+  background: linear-gradient(129deg, #F0F2F5 44%, #167EE680 98%);
+}
+
+.inputclass{
+  border:none;
+}
+
+.inputclass:focus{
+  
+  outline: none;
+}
+
+/* .body {
+  background: rgb(162,78,82);
+background: linear-gradient(144deg, rgba(162,78,82,1) 9%, rgba(156,81,90,1) 16%, rgba(52,80,140,1) 64%, rgba(171,93,109,1) 87%);
+} */
+
+.body{
+background-color: #F0F2F5;
+background: linear-gradient(129deg, #F0F2F5 40%, #167EE680 98%);
+}
+
+.loginpic{
+  height: 100vh;
+  width: 100%;
+}
+
+.welcomback{
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 44px;
+  color: black;
+  margin-bottom: 6px;
+
+}
+
+.loginaccount{
+  font-family: 'Poppins', sans-serif;
+font-size: 18px;
+font-weight: 400;
+line-height: 29.16px;
+text-align: left;
+
+}
+
+.google{
+ 
+  border: 1px solid #DEDEDE;
+  border-radius: 5px;
+  background-color: white;
+}
+.text-box{
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 44px;
+  text-align: left;
+
+}
+
+.continue{
+  font-family: 'Poppins', sans-serif;
+font-size: 13px;
+font-weight: 400;
+line-height: 14.5px;
+text-align: left;
+margin-bottom: 0;
+color: black;
+}
+
+.label{
+  font-family: 'Inter', sans-serif;
+font-size: 14px;
+font-weight: 400;
+line-height: 24.5px;
+text-align: left;
+color: #4A4A4A;
+}
+
+.showpass{
+  font-family: 'Inter', sans-serif;
+font-size: 12px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0.30000001192092896px;
+text-align: left;
+
+}
+
+.forgetpassword{
+  font-family: 'Inter', sans-serif;
+font-size: 14px;
+font-weight: 300;
+line-height: 14.5px;
+text-align: left;
+color:  #D93F21;
+}
+
+.button{
+  border-radius: 33px;
+}
+
+.noaccount{
+  font-family: 'Inter', sans-serif;
+font-size: 14px;
+font-weight: 300;
+line-height: 14.5px;
+text-align: left;
+
+}
+.signup{
+  font-family: 'Inter', sans-serif;
+font-size: 14px;
+font-weight: 500;
+line-height: 14.5px;
+text-align: left;
+
+}

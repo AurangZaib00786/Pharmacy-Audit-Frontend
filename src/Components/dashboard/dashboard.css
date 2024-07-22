@@ -1,0 +1,33 @@
+a{
+    text-decoration: none;
+}
+
+.main_widget{
+    
+    height: 85px;
+}
+
+.icon{
+    
+    border-radius: 5px;
+    width: 85px;
+    height: 70px;
+    font-size: 40px;
+}
+
+.tableclass{
+    
+    background-color: #fff;
+    box-shadow: 5px 5px 17px -5px rgba(0, 0, 0, 0.75) !important;
+    border-radius: 5px;
+    
+}
+
+.canvasjs-chart-canvas{
+    width:100% !important;
+    
+}
+
+.canvasjs-chart-credit{
+    display:none;
+}

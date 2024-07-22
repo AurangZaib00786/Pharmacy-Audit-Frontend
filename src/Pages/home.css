@@ -1,0 +1,22 @@
+.header_right{
+    margin-right: 3%;
+    
+
+}
+
+.custom_popover{
+    background-color: skyblue;
+
+}
+
+.header_right:hover{
+    background-color: gainsboro;
+}
+.activeMenuItem {
+    background-color: #f0f0f0;
+  }
+
+  .sidebarclass::-webkit-scrollbar {
+    display: none;
+}
+
