@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 .table-sm>:not(caption)>*>* {
     padding: 0.25rem 1rem;
@@ -46,7 +46,19 @@
 thead {
     border-bottom-width: 3px;
 }
+.modal-content {
+    /* border-radius: 0; */
+    border-top: 6px solid #4169e1;
+}
 
+.model-heading{
+    font-family: 'Inter', sans-serif;
+font-size: 24px;
+font-weight: 600;
+line-height: 46px;
+text-align: left;
+
+}
 
 
 td {

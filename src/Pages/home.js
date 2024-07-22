@@ -27,7 +27,7 @@ import useLogout from "../hooks/uselogout";
 import ArchiveIcon from "@material-ui/icons/Archive";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import ReplayIcon from "@material-ui/icons/Replay";
-
+import { ToastContainer } from "react-toastify";
 function Layout() {
   const { user, route, menu_status } = useAuthContext();
 
@@ -84,15 +84,15 @@ function Layout() {
     <div
       id="app"
       className={user && "d-flex "}
-      style={{ zoom: user ? ".7" : "1" }}
+      style={{ zoom: user ? "1" : "1" }}
     >
       {user ? (
         <>
           <Sidebar
             breakPoint="md"
             defaultCollapsed={true}
-            rootStyles={{ color: "#fbfbfb" }}
-            backgroundColor="#003049"
+            rootStyles={{ color: "#fff" }}
+            backgroundColor="#1679FF"
           >
             <div
               style={{
@@ -118,11 +118,12 @@ function Layout() {
                 button: ({ level, active, disabled }) => {
                   if (level === 0 || level === 1) {
                     return {
-                      color: active ? "#DA251C" : undefined,
+                      color: active ? "#1679FF" : undefined,
+                      backgroundColor: active ? "#fff" : undefined,
                       "&:hover": {
-                        backgroundColor: "#DA251C !important",
-                        color: "#fbfbfb !important",
-                        borderRadius: "8px !important",
+                        backgroundColor: "#fff !important",
+                        color: "#1679FF !important",
+                        borderRadius: "0px !important",
                         fontWeight: "bold !important",
                       },
                     };
@@ -139,17 +140,19 @@ function Layout() {
                 Dashboard
               </MenuItem> */}
 
-              <MenuItem
-                active={menu_status === "user"}
-                icon={<PersonIcon />}
-                component={<Link to="/user" />}
-                rootStyles={{
-                  color: "#fbfbfb",
-                  backgroundColor: "#003049",
-                }}
-              >
-                User
-              </MenuItem>
+              {current_user?.id === 1 && (
+                <MenuItem
+                  active={menu_status === "user"}
+                  icon={<PersonIcon />}
+                  component={<Link to="/user" />}
+                  rootStyles={{
+                    color: "#ffff",
+                    backgroundColor: "#1679FF",
+                  }}
+                >
+                  User
+                </MenuItem>
+              )}
 
               {/* <SubMenu
                 active={menu_status === "user"}
@@ -215,6 +218,7 @@ function Layout() {
           <Outlet />
         </div>
       )}
+      <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
     </div>
   );
 }

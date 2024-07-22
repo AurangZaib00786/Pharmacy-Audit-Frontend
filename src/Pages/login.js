@@ -59,12 +59,17 @@ function Login() {
   return (
     <div
       className=" d-flex align-items-center justify-content-center body"
-      style={{ minHeight: "100vh" }}
+      style={{ minHeight: "100vh", zoom: ".9" }}
     >
-      <div className=" col-7 text-dark  " style={{ zoom: ".7" }}>
+      <div className=" text-dark  " style={{ width: "65%" }}>
         <p className="welcomback text-center">Welcome Back</p>
-        <p className="loginaccount text-center">Login into Your Account </p>
-        <div className="text-center " style={{ marginTop: "37px" }}>
+        <p
+          className="loginaccount text-center"
+          style={{ marginBottom: "25px" }}
+        >
+          Login into Your Account{" "}
+        </p>
+        {/* <div className="text-center " style={{ marginTop: "37px" }}>
           <block className="google p-3 me-3">
             <img src="/google.png" className="me-3" alt="image" />
             <span className="text-box">Google</span>
@@ -73,19 +78,22 @@ function Login() {
             <img src="/facebook.png" className="me-3" alt="image" />
             <span className="text-box">Facebook</span>
           </block>
-        </div>
-        <div className="d-flex justify-content-center align-items-center mt-3">
+        </div> */}
+        {/* <div
+          className="d-flex justify-content-center align-items-center mt-3"
+          style={{ marginBottom: "25px" }}
+        >
           <img src="line.png" alt="image" />
           <p className="continue ms-3 me-3">or continue with</p>
           <img src="line.png" alt="image" />
-        </div>
+        </div> */}
 
         <form onSubmit={handleSubmit}>
           <h6 className=" text-center text-danger mt-3">{error}</h6>
           <div className="d-flex flex-column justify-content-center align-items-center">
-            <div className="col-10 col-md-6 mb-3 mt-2 ">
+            <div className="col-10 col-md-6 ">
               <p className="label">Username</p>
-              <div className="w-100">
+              <div className="w-100" style={{ marginBottom: "14px" }}>
                 <input
                   className="form-control"
                   style={{
@@ -105,9 +113,9 @@ function Login() {
               </div>
             </div>
 
-            <div className="col-10 col-md-6  mb-3 mt-2 ">
+            <div className="col-10 col-md-6   ">
               <p className="label">Password</p>
-              <div className="w-100">
+              <div className="w-100" style={{ marginBottom: "14px" }}>
                 <input
                   type={show ? "text" : "password"}
                   className="form-control"
@@ -128,7 +136,7 @@ function Login() {
               </div>
             </div>
 
-            <div className="col-10 col-md-6 mb-3 mt-2 d-flex justify-content-between">
+            <div className="col-10 col-md-6 d-flex justify-content-start">
               <label className="form-check-label">
                 <input
                   className="form-check-input"
@@ -138,13 +146,9 @@ function Login() {
                 />{" "}
                 <span className="showpass">Show Password</span>
               </label>
-
-              <Link to={"/forget-password"} className="forgetpassword">
-                Forget Password?
-              </Link>
             </div>
 
-            <div className="col-10 col-md-6 mt-5">
+            <div className="col-10 col-md-6 " style={{ marginTop: "55px" }}>
               <button
                 type="submit"
                 style={{ backgroundColor: "#0D6EFD" }}
@@ -167,14 +171,14 @@ function Login() {
           </div>
         </form>
 
-        <p className="text-center mt-4 mb-0 noaccount">
+        <p className="text-center mb-5 noaccount" style={{ marginTop: "91px" }}>
           Don't Have an Account?{" "}
           <Link to={"/sign-up"} className="signup">
             Sign Up!
           </Link>
         </p>
       </div>
-      <div className="col-5 text-end">
+      <div className="text-end" style={{ width: "35%" }}>
         <img src="/loginpic.png" alt="Image" className="loginpic" />
       </div>
       <ToastContainer autoClose={2000} hideProgressBar={true} theme="dark" />

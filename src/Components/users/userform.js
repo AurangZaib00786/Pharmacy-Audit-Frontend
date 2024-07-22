@@ -7,6 +7,7 @@ import went_wrong_toast from "../alerts/went_wrong_toast";
 import success_toast from "../alerts/success_toast";
 import Save_button from "../buttons/save_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
+import "./user.css";
 function Userform(props) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();

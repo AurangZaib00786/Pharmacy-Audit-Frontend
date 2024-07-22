@@ -254,105 +254,106 @@ function User() {
     pdfMake.createPdf(documentDefinition).print();
   };
 
-  return (
-    <div className="user_main">
-      <h1>Users</h1>
-      <div className="card me-3">
-        <div className="card-header bg-white  d-flex justify-content-between">
-          <h3>Users list</h3>
-          <Button
-            type="button"
-            className="mb-2"
-            variant="outline-success"
-            onClick={() => setshowmodel(!showmodel)}
-          >
-            <PersonAddIcon /> Add user
-          </Button>
-        </div>
+  // return (
+  //   <div className="user_main">
+  //     <h1>Users</h1>
+  //     <div className="card me-3">
+  //       <div className="card-header bg-white  d-flex justify-content-between">
+  //         <h3>Users list</h3>
+  //         <Button
+  //           type="button"
+  //           className="mb-2"
+  //           variant="outline-success"
+  //           onClick={() => setshowmodel(!showmodel)}
+  //         >
+  //           <PersonAddIcon /> Add user
+  //         </Button>
+  //       </div>
 
-        <div className="card-body pt-0">
-          <ToolkitProvider
-            keyField="id"
-            data={Data}
-            columns={columns}
-            search
-            exportCSV
-          >
-            {(props) => (
-              <div>
-                <div className="d-flex justify-content-between align-items-center mt-3">
-                  <div>
-                    <ExportCSVButton
-                      {...props.csvProps}
-                      className="csvbutton  border bg-secondary text-light me-2"
-                    >
-                      Export CSV
-                    </ExportCSVButton>
-                    <Button
-                      type="button"
-                      className="p-1 ps-3 pe-3 me-2"
-                      variant="outline-primary"
-                      onClick={download}
-                    >
-                      <PictureAsPdfIcon /> PDF
-                    </Button>
-                    <Button
-                      type="button"
-                      className="p-1 ps-3 pe-3"
-                      variant="outline-success"
-                      onClick={print}
-                    >
-                      <PrintIcon /> Print
-                    </Button>
-                  </div>
-                  <SearchBar {...props.searchProps} />
-                </div>
+  //       <div className="card-body pt-0">
+  //         <ToolkitProvider
+  //           keyField="id"
+  //           data={Data}
+  //           columns={columns}
+  //           search
+  //           exportCSV
+  //         >
+  //           {(props) => (
+  //             <div>
+  //               <div className="d-flex justify-content-between align-items-center mt-3">
+  //                 <div>
+  //                   <ExportCSVButton
+  //                     {...props.csvProps}
+  //                     className="csvbutton  border bg-secondary text-light me-2"
+  //                   >
+  //                     Export CSV
+  //                   </ExportCSVButton>
+  //                   <Button
+  //                     type="button"
+  //                     className="p-1 ps-3 pe-3 me-2"
+  //                     variant="outline-primary"
+  //                     onClick={download}
+  //                   >
+  //                     <PictureAsPdfIcon /> PDF
+  //                   </Button>
+  //                   <Button
+  //                     type="button"
+  //                     className="p-1 ps-3 pe-3"
+  //                     variant="outline-success"
+  //                     onClick={print}
+  //                   >
+  //                     <PrintIcon /> Print
+  //                   </Button>
+  //                 </div>
+  //                 <SearchBar {...props.searchProps} />
+  //               </div>
 
-                <hr />
-                {isloading && (
-                  <div className="text-center">
-                    <Spinner animation="border" variant="primary" />
-                  </div>
-                )}
-                <BootstrapTable
-                  {...props.baseProps}
-                  pagination={paginationFactory(options)}
-                  rowStyle={rowstyle}
-                  striped
-                  bootstrap4
-                  condensed
-                  wrapperClasses="table-resposive"
-                />
-              </div>
-            )}
-          </ToolkitProvider>
-        </div>
-      </div>
+  //               <hr />
+  //               {isloading && (
+  //                 <div className="text-center">
+  //                   <Spinner animation="border" variant="primary" />
+  //                 </div>
+  //               )}
+  //               <BootstrapTable
+  //                 {...props.baseProps}
+  //                 pagination={paginationFactory(options)}
+  //                 rowStyle={rowstyle}
+  //                 striped
+  //                 bootstrap4
+  //                 condensed
+  //                 wrapperClasses="table-resposive"
+  //               />
+  //             </div>
+  //           )}
+  //         </ToolkitProvider>
+  //       </div>
+  //     </div>
 
-      {showmodel && (
-        <Userform show={showmodel} onHide={() => setshowmodel(false)} />
-      )}
-      {showmodelupdate && (
-        <Userupdate
-          show={showmodelupdate}
-          onHide={() => setshowmodelupdate(false)}
-          data={data}
-          fun={custom_toast}
-        />
-      )}
+  //     {showmodel && (
+  //       <Userform show={showmodel} onHide={() => setshowmodel(false)} />
+  //     )}
+  //     {showmodelupdate && (
+  //       <Userupdate
+  //         show={showmodelupdate}
+  //         onHide={() => setshowmodelupdate(false)}
+  //         data={data}
+  //         fun={custom_toast}
+  //       />
+  //     )}
 
-      {delete_user && (
-        <Alert_before_delete
-          show={delete_user}
-          onHide={() => setdelete_user(false)}
-          url={url_to_delete}
-          dis_fun={handleconfirm}
-          row_id={row_id}
-        />
-      )}
-      <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
-    </div>
-  );
+  //     {delete_user && (
+  //       <Alert_before_delete
+  //         show={delete_user}
+  //         onHide={() => setdelete_user(false)}
+  //         url={url_to_delete}
+  //         dis_fun={handleconfirm}
+  //         row_id={row_id}
+  //       />
+  //     )}
+  //     <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
+  //   </div>
+  // );
+  return <></>;
 }
 
 export default User;

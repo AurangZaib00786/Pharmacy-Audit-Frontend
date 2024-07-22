@@ -6,10 +6,13 @@ import TextField from "@mui/material/TextField";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Update_button from "../buttons/update_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
+import "./user.css";
+import custom_toast from "../alerts/custom_toast";
+import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 function Userupdate({ show, onHide, data, fun }) {
-  const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
   const [isloading, setisloading] = useState(false);
+  const { dispatch } = UseaddheaderContext();
   const [username, setusername] = useState(data.username);
   const [first_name, setfirst_name] = useState(data.first_name);
   const [last_name, setlast_name] = useState(data.last_name);
@@ -63,9 +66,9 @@ function Userupdate({ show, onHide, data, fun }) {
 
     if (response.ok) {
       setisloading(false);
-      dispatch({ type: "Update_data", payload: json });
+      dispatch({ type: "Set_Current_user", payload: json });
       onHide();
-      fun("Update");
+      custom_toast("Update ");
     }
   };
 
@@ -77,19 +80,13 @@ function Userupdate({ show, onHide, data, fun }) {
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Modal.Header closeButton>
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="d-flex align-items-center"
-        >
-          <PersonAddIcon className="me-2" />
-          Edit User
-        </Modal.Title>
+        <Modal.Title className="model-heading">Edit User</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={handleSubmit}>
           <TextField
             className="form-control"
-            label="First Name"
+            label="Company Name"
             value={first_name}
             onChange={(e) => {
               setfirst_name(e.target.value);
@@ -100,7 +97,7 @@ function Userupdate({ show, onHide, data, fun }) {
 
           <TextField
             className="form-control mt-3"
-            label="Last Name"
+            label="Contact Number"
             value={last_name}
             onChange={(e) => {
               setlast_name(e.target.value);
@@ -129,7 +126,6 @@ function Userupdate({ show, onHide, data, fun }) {
               setemailerror("");
             }}
             size="small"
-            required
           />
           <div className="text-danger">{emailerror}</div>
           <TextField

@@ -9,7 +9,6 @@ import User from "./Components/users/User";
 import Login from "./Pages/login";
 import Dashboard from "./Components/dashboard/dashboard";
 import SignUp from "./Pages/signup";
-import ForgetPassword from "./Pages/forget-password";
 
 function Routing() {
   const { user } = useAuthContext();
@@ -27,10 +26,7 @@ function Routing() {
               path="/sign-up"
               element={!user ? <SignUp /> : <Navigate to={"/user"} />}
             ></Route>
-            <Route
-              path="/forget-password"
-              element={!user ? <ForgetPassword /> : <Navigate to={"/user"} />}
-            ></Route>
+
             <Route
               path="/dashboard"
               element={user ? <Dashboard /> : <Navigate to={"/"} />}

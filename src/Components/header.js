@@ -10,15 +10,15 @@ import { useAuthContext } from "../hooks/useauthcontext";
 import { UseaddheaderContext } from "../hooks/useaddheadercontext";
 import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
-import NotificationModal from "./notificationmodel";
-
+import custom_toast from "./alerts/custom_toast";
+import Userupdate from "./users/userupdateform";
 function Header(props) {
   const { user, route, dispatch_auth } = useAuthContext();
   const { selected_branch, current_user, dispatch } = UseaddheaderContext();
   const [show, setshow] = useState(false);
   const [target, setTarget] = useState(null);
   const [allremainders, setallremainders] = useState([]);
-  const [shownotification, setshownotification] = useState(false);
+  const [showmodelupdate, setshowmodelupdate] = useState(false);
   const ref = useRef(null);
   const { logout } = useLogout();
 
@@ -198,17 +198,22 @@ function Header(props) {
       >
         <Popover id="popover-contained" className="pop_over">
           <Popover.Header className="bg-primary pop_over_header">
-            {current_user && (
-              <>
-                <Avatar style={{ width: "50px", height: "50px" }} />
-                <p className="mt-2 text-white">{current_user.username}</p>
-              </>
-            )}
+            <>
+              <Avatar style={{ width: "50px", height: "50px" }} />
+              <p className="mt-2 text-white">{current_user?.username}</p>
+            </>
           </Popover.Header>
           <Popover.Body>
             <div className="row ">
               <div className="d-flex justify-content-between">
-                <button type="button" className="border">
+                <button
+                  type="button"
+                  className="border"
+                  onClick={() => {
+                    setshowmodelupdate(true);
+                    setshow(false);
+                  }}
+                >
                   Profile
                 </button>
 
@@ -221,14 +226,12 @@ function Header(props) {
         </Popover>
       </Overlay>
 
-      {shownotification && (
-        <NotificationModal
-          show={shownotification}
-          onHide={() => setshownotification(false)}
-          user={user}
-          route={route}
-          allremainders={allremainders}
-          setallremainders={setallremainders}
+      {showmodelupdate && (
+        <Userupdate
+          show={showmodelupdate}
+          onHide={() => setshowmodelupdate(false)}
+          data={current_user}
+          fun={custom_toast}
         />
       )}
     </div>

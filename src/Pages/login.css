@@ -42,11 +42,17 @@ background: linear-gradient(144deg, rgba(162,78,82,1) 9%, rgba(156,81,90,1) 16%,
 
 .body{
 background-color: #F0F2F5;
-background: linear-gradient(129deg, #F0F2F5 40%, #167EE680 98%);
+background: linear-gradient(129deg, #F0F2F5 50%, #167EE680 98%);
 }
 
 .loginpic{
-  height: 100vh;
+  height: 100%;
+  width: 100%;
+  object-fit: fill; 
+}
+
+.signuppic{
+  height: 150vh;
   width: 100%;
 }
 
@@ -57,6 +63,7 @@ background: linear-gradient(129deg, #F0F2F5 40%, #167EE680 98%);
   line-height: 44px;
   color: black;
   margin-bottom: 6px;
+  margin-top: 76px;
 
 }
 
@@ -101,6 +108,7 @@ font-weight: 400;
 line-height: 24.5px;
 text-align: left;
 color: #4A4A4A;
+margin-bottom: 10px;
 }
 
 .showpass{
