@@ -23,8 +23,7 @@ import custom_toast from "../alerts/custom_toast";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
-import PrintIcon from "@material-ui/icons/Print";
+
 import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 import useLogout from "../../hooks/uselogout";
 function User() {

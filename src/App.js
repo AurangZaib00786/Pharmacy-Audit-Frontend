@@ -9,6 +9,7 @@ import User from "./Components/users/User";
 import Login from "./Pages/login";
 import Dashboard from "./Components/dashboard/dashboard";
 import SignUp from "./Pages/signup";
+import Audit from "./Components/audit/audit";
 
 function Routing() {
   const { user } = useAuthContext();
@@ -34,6 +35,10 @@ function Routing() {
             <Route
               path="/user"
               element={user ? <User /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/audit"
+              element={user ? <Audit /> : <Navigate to={"/"} />}
             ></Route>
           </Route>
 

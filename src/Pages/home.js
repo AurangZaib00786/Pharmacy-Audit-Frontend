@@ -84,7 +84,7 @@ function Layout() {
     <div
       id="app"
       className={user && "d-flex "}
-      style={{ zoom: user ? "1" : "1" }}
+      style={{ zoom: user ? "0.85" : "1" }}
     >
       {user ? (
         <>
@@ -113,16 +113,14 @@ function Layout() {
               onMouseLeave={handlemouseleave}
               closeOnClick={true}
               className="sidebarclass"
-              style={{ height: "134vh", overflow: "auto" }}
+              style={{ height: "105vh", overflow: "auto" }}
               menuItemStyles={{
                 button: ({ level, active, disabled }) => {
                   if (level === 0 || level === 1) {
                     return {
-                      color: active ? "#1679FF" : undefined,
-                      backgroundColor: active ? "#fff" : undefined,
+                      color: active ? "#fff" : undefined,
                       "&:hover": {
-                        backgroundColor: "#fff !important",
-                        color: "#1679FF !important",
+                        color: "#fff !important",
                         borderRadius: "0px !important",
                         fontWeight: "bold !important",
                       },
@@ -131,15 +129,6 @@ function Layout() {
                 },
               }}
             >
-              {/* <MenuItem
-                active={menu_status === "dashboard"}
-                icon={<DashboardIcon />}
-                onClick={() => handleopen("dashboard")}
-                component={<Link to="/dashboard" />}
-              >
-                Dashboard
-              </MenuItem> */}
-
               {current_user?.id === 1 && (
                 <MenuItem
                   active={menu_status === "user"}
@@ -153,26 +142,17 @@ function Layout() {
                   User
                 </MenuItem>
               )}
-
-              {/* <SubMenu
-                active={menu_status === "user"}
-                open={open === "user"}
-                onClick={() => handleopen("user")}
-                label="Basic Menu"
-                icon={<MenuIcon />}
+              <MenuItem
+                active={menu_status === "audit"}
+                icon={<PersonIcon />}
+                component={<Link to="/audit" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
               >
-                <MenuItem
-                  active={menu_status === "user"}
-                  icon={<PersonIcon />}
-                  component={<Link to="/user" />}
-                  rootStyles={{
-                    color: "#fbfbfb",
-                    backgroundColor: "#003049",
-                  }}
-                >
-                  User
-                </MenuItem>
-              </SubMenu> */}
+                Audit
+              </MenuItem>
             </Menu>
           </Sidebar>
 
@@ -187,22 +167,10 @@ function Layout() {
                 />
               )}
             </div>
-            {/* {user && (
-              <>
-                {!selected_branch && (
-                  <h6
-                    className="text-center text-danger m-0"
-                    style={{ backgroundColor: "rgb(241, 245, 245)" }}
-                  >
-                    {" "}
-                    Please select Project first !!
-                  </h6>
-                )}
-              </>
-            )} */}
+
             <div
               style={{
-                height: "122vh",
+                height: "100vh",
                 overflow: "auto",
                 backgroundColor: "rgb(241, 245, 245)",
               }}
@@ -218,7 +186,6 @@ function Layout() {
           <Outlet />
         </div>
       )}
-      <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
     </div>
   );
 }
