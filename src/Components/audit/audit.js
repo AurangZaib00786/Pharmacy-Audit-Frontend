@@ -26,6 +26,8 @@ import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import PrintIcon from "@material-ui/icons/Print";
 import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
+import Select from "../selectfield/select";
+
 function Audit() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
@@ -43,13 +45,14 @@ function Audit() {
   const [delete_user, setdelete_user] = useState(false);
   const url_to_delete = `${route}/api/manage-files/`;
 
-  const [callagain, setcallagain] = useState("");
-  const [isloading, setisloading] = useState(false);
+  const [isloading, setisloading] = useState("");
+  const [callagain_vendor, setcallagain_vendor] = useState(false);
+  const [callagain_billing, setcallagain_billing] = useState(false);
+  const [vendor, setvendor] = useState("");
+  const [allvendors, setallvendors] = useState([]);
 
   const { logout } = useLogout();
   useEffect(() => {
-    dispatch_auth({ type: "Set_menuitem", payload: "audit" });
-
     setisloading(true);
     const fetchvendorfiles = async () => {
       const response = await fetch(
@@ -71,6 +74,13 @@ function Audit() {
         setisloading(false);
       }
     };
+
+    fetchvendorfiles();
+  }, [callagain_vendor]);
+
+  useEffect(() => {
+    setisloading(true);
+
     const fetchbillingfiles = async () => {
       const response = await fetch(
         `${route}/api/manage-files/?directory=billing_files`,
@@ -91,9 +101,37 @@ function Audit() {
         setisloading(false);
       }
     };
-
-    fetchvendorfiles();
     fetchbillingfiles();
+  }, [callagain_billing]);
+
+  useEffect(() => {
+    dispatch_auth({ type: "Set_menuitem", payload: "audit" });
+
+    const fetchvendors = async () => {
+      const response = await fetch(`${route}/api/vendor-file-formats/`, {
+        headers: { Authorization: `Bearer ${user.access}` },
+      });
+
+      const json = await response.json();
+      if (json.code === "token_not_valid") {
+        logout();
+      }
+      if (!response.ok) {
+        went_wrong_toast(json.error);
+      }
+      if (response.ok) {
+        setallvendors(
+          json.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          })
+        );
+      }
+    };
+
+    fetchvendors();
   }, []);
 
   const headerstyle = (column, colIndex, { sortElement }) => {
@@ -108,11 +146,20 @@ function Audit() {
     );
   };
 
-  const handleconfirm = (row) => {
-    custom_toast(row.success);
+  const handleconfirm = () => {
+    custom_toast("Data Deleted Succefully");
+    setvendor_filesdata([]);
+    setbilling_filesdata([]);
   };
 
   const [columns, setcolumns] = useState([
+    {
+      dataField: "id",
+      text: "#",
+      csvExport: false,
+      formatter: (cell, row, rowIndex) => rowIndex + 1,
+      headerFormatter: headerstyle,
+    },
     {
       dataField: "ndc",
       text: "NDC",
@@ -147,7 +194,7 @@ function Audit() {
 
     const documentDefinition = {
       content: [
-        { text: "Audit", style: "header" },
+        { text: "Audit Report", style: "header" },
         // { text: `Project Name: ${selected_branch?.name}`, style: "body" },
         {
           canvas: [
@@ -247,7 +294,7 @@ function Audit() {
       setisloading(true);
       const formData = new FormData();
       formData.append(`file`, Fileurl_vendor.file);
-      formData.append(`vendor_file_format_id `, 1);
+      formData.append(`vendor_file_format_id `, vendor.value);
       const response = await fetch(`${route}/api/upload-pharmacy-file/`, {
         method: "POST",
         headers: {
@@ -265,6 +312,8 @@ function Audit() {
       if (response.ok) {
         setFileurl_vendor(null);
         custom_toast(json.message);
+        setcallagain_vendor(!callagain_vendor);
+        setvendor("");
       }
     } catch (e) {
       setisloading(false);
@@ -295,6 +344,7 @@ function Audit() {
       if (response.ok) {
         setFileurl_billing(null);
         custom_toast(json.message);
+        setcallagain_billing(!callagain_billing);
       }
     } catch (e) {
       setisloading(false);
@@ -317,6 +367,13 @@ function Audit() {
     }
     if (response.ok) {
       let new_columns = [
+        {
+          dataField: "id",
+          text: "#",
+          csvExport: false,
+          formatter: (cell, row, rowIndex) => rowIndex + 1,
+          headerFormatter: headerstyle,
+        },
         {
           dataField: "ndc",
           text: "NDC",
@@ -381,28 +438,50 @@ function Audit() {
           <div className="col-md-6 border-end border-secondary p-3">
             <h5>Vendor Files</h5>
 
-            <form
-              onSubmit={handlesubmitvendor_files}
-              className="d-flex align-items-center p-0"
-            >
-              <p className="col-md-8 ">{Fileurl_vendor?.name}</p>
-              <div className="col-md-2 text-end">
-                <input
-                  onChange={handleimageselection_vendor}
-                  id="select-file"
-                  type="file"
-                  accept=".xlsx"
-                  ref={inputFile_vendor}
-                  style={{ display: "none" }}
-                />
-                <Button className="mb-2" onClick={onButtonClick_vendor} shadow>
-                  Choose file
-                </Button>
+            <form onSubmit={handlesubmitvendor_files} className=" mt-3 p-0">
+              <div className="d-flex jsutify-content-between align-items-center ">
+                <div className="col-md-5 me-3">
+                  <Select
+                    options={allvendors}
+                    value={vendor}
+                    funct={(e) => setvendor(e)}
+                    placeholder={"Vendor"}
+                    required={true}
+                  />
+                </div>
+                <p className="col-md-7">{Fileurl_vendor?.name}</p>
               </div>
-              <div className="col-md-2 text-end">
-                <Button type="submit" variant="success" className="mb-2" shadow>
-                  Upload file
-                </Button>
+
+              <div className="d-flex justify-content-end">
+                <div className="me-3 text-end">
+                  <input
+                    onChange={handleimageselection_vendor}
+                    id="select-file"
+                    type="file"
+                    accept=".xlsx"
+                    ref={inputFile_vendor}
+                    style={{ display: "none" }}
+                  />
+                  <Button
+                    style={{ width: "110px" }}
+                    className="mb-2"
+                    onClick={onButtonClick_vendor}
+                    shadow
+                  >
+                    Choose file
+                  </Button>
+                </div>
+                <div className=" text-end">
+                  <Button
+                    style={{ width: "110px" }}
+                    type="submit"
+                    variant="success"
+                    className="mb-2"
+                    shadow
+                  >
+                    Upload file
+                  </Button>
+                </div>
               </div>
             </form>
 
@@ -426,26 +505,39 @@ function Audit() {
 
             <form
               onSubmit={handlesubmitbilling_files}
-              className="d-flex align-items-center"
+              className="d-flex justify-content-between align-items-center"
             >
-              <p className="col-md-8">{Fileurl_billing?.name}</p>
-              <div className="col-md-2 text-end">
-                <input
-                  onChange={handleimageselection_billing}
-                  id="select-file"
-                  type="file"
-                  accept=".xlsx"
-                  ref={inputFile_billing}
-                  style={{ display: "none" }}
-                />
-                <Button className="mb-2" onClick={onButtonClick_billing} shadow>
-                  Choose file
-                </Button>
-              </div>
-              <div className="col-md-2 text-end">
-                <Button type="submit" variant="success" className="mb-2" shadow>
-                  Upload file
-                </Button>
+              <p>{Fileurl_billing?.name}</p>
+              <div className="d-flex">
+                <div className="me-3 text-end">
+                  <input
+                    onChange={handleimageselection_billing}
+                    id="select-file"
+                    type="file"
+                    accept=".xlsx"
+                    ref={inputFile_billing}
+                    style={{ display: "none" }}
+                  />
+                  <Button
+                    style={{ width: "110px" }}
+                    className="mb-2"
+                    onClick={onButtonClick_billing}
+                    shadow
+                  >
+                    Choose file
+                  </Button>
+                </div>
+                <div className=" text-end">
+                  <Button
+                    style={{ width: "110px" }}
+                    type="submit"
+                    variant="success"
+                    className="mb-2"
+                    shadow
+                  >
+                    Upload file
+                  </Button>
+                </div>
               </div>
             </form>
 
@@ -515,6 +607,7 @@ function Audit() {
                     bootstrap4
                     condensed
                     wrapperClasses="table-resposive"
+                    classes="audit-table"
                   />
                 </div>
               )}

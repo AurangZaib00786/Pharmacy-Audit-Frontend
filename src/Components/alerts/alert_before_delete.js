@@ -30,15 +30,14 @@ const Alert_before_delete = ({ show, onHide, url, dis_fun, row_id }) => {
       }
     );
 
-    const json = await response.json();
     if (response.ok) {
       setloading(false);
       onHide();
-      dis_fun(json);
+      dis_fun();
     }
     if (!response.ok) {
       setloading(false);
-      toasts_error(json.error);
+      toasts_error("Error while Deleting the files. Try Again");
     }
   };
 

@@ -35,7 +35,7 @@ function Select_field({
           data-content={placeholder ? `${placeholder} *` : ""}
         >
           <Select
-            className="form-control selector"
+            className="form-control p-0"
             styles={selectStyles}
             options={options}
             placeholder={placeholder ? `${placeholder} *` : ""}
@@ -49,7 +49,7 @@ function Select_field({
       ) : (
         <div className={value && "select_class"} data-content={placeholder}>
           <Select
-            className="form-control selector"
+            className="form-control p-0"
             styles={selectStyles}
             options={options}
             placeholder={placeholder}

@@ -118,9 +118,11 @@ function Layout() {
                 button: ({ level, active, disabled }) => {
                   if (level === 0 || level === 1) {
                     return {
-                      color: active ? "#fff" : undefined,
+                      color: active ? "#1679FF" : undefined,
+                      backgroundColor: active ? "#fff" : undefined,
                       "&:hover": {
-                        color: "#fff !important",
+                        backgroundColor: "#fff !important",
+                        color: "#1679FF !important",
                         borderRadius: "0px !important",
                         fontWeight: "bold !important",
                       },
