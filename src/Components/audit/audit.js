@@ -106,7 +106,7 @@ function Audit() {
 
   useEffect(() => {
     dispatch_auth({ type: "Set_menuitem", payload: "audit" });
-
+    dispatch({ type: "Set_data", payload: [] });
     const fetchvendors = async () => {
       const response = await fetch(`${route}/api/vendor-file-formats/`, {
         headers: { Authorization: `Bearer ${user.access}` },
@@ -167,6 +167,12 @@ function Audit() {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "description",
+      text: "Description",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "packagesize_billing",
       text: "Package Size",
       sort: true,
@@ -179,6 +185,10 @@ function Audit() {
       headerFormatter: headerstyle,
     },
   ]);
+
+  const vendor_formatter = (cell, row, rowIndex) => {
+    return Number(cell) * Number(row.packagesize_billing);
+  };
 
   const rowstyle = { height: "10px" };
   const makepdf = () => {
@@ -351,6 +361,10 @@ function Audit() {
     }
   };
 
+  const vendor_sum_formatter = (cell, row, rowIndex) => {
+    return cell?.toFixed(2);
+  };
+
   const handlegeneratereport = async () => {
     setisloading(true);
 
@@ -381,6 +395,12 @@ function Audit() {
           headerFormatter: headerstyle,
         },
         {
+          dataField: "description",
+          text: "Description",
+          sort: true,
+          headerFormatter: headerstyle,
+        },
+        {
           dataField: "packagesize_billing",
           text: "Package Size",
           sort: true,
@@ -400,10 +420,44 @@ function Audit() {
           text: item,
           sort: true,
           headerFormatter: headerstyle,
+          formatter: vendor_formatter,
         });
       });
+
+      new_columns.push({
+        dataField: "vendor_sum",
+        text: "Vendor Total",
+        sort: true,
+        headerFormatter: headerstyle,
+        formatter: vendor_sum_formatter,
+      });
+      new_columns.push({
+        dataField: "result_unit",
+        text: "Result (Unit)",
+        sort: true,
+        headerFormatter: headerstyle,
+        formatter: vendor_sum_formatter,
+      });
+      new_columns.push({
+        dataField: "result_package",
+        text: "Result (Pkg)",
+        sort: true,
+        headerFormatter: headerstyle,
+        formatter: vendor_sum_formatter,
+      });
+
       setcolumns(new_columns);
-      dispatch({ type: "Set_data", payload: json.data });
+
+      let optimize = json.data.map((item) => {
+        let sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+
+        item["vendor_sum"] = sum;
+        item["result_unit"] = sum - item.quantity_billing;
+        item["result_package"] =
+          (sum - item.quantity_billing) / item.packagesize_billing;
+        return item;
+      });
+      dispatch({ type: "Set_data", payload: optimize });
       setisloading(false);
       custom_toast(json.message);
     }
