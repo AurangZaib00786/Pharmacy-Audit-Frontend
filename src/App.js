@@ -22,17 +22,13 @@ function Routing() {
           <Route path="/" element={<Layout />}>
             <Route
               index
-              element={!user ? <Login /> : <Navigate to={"/user"} />}
+              element={!user ? <Login /> : <Navigate to={"/audit"} />}
             ></Route>
             <Route
               path="/sign-up"
-              element={!user ? <SignUp /> : <Navigate to={"/user"} />}
+              element={!user ? <SignUp /> : <Navigate to={"/audit"} />}
             ></Route>
 
-            <Route
-              path="/dashboard"
-              element={user ? <Dashboard /> : <Navigate to={"/"} />}
-            ></Route>
             <Route
               path="/user"
               element={user ? <User /> : <Navigate to={"/"} />}

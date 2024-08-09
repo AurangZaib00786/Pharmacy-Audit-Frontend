@@ -183,7 +183,9 @@ function Header(props) {
           className="cursor-pointer d-flex align-items-center header_right pb-1 me-3 ps-1"
         >
           <Avatar className="mt-1" src={selected_branch?.logo} />
-          <h6 className="mt-2 me-5 ms-4">{current_user?.username}</h6>
+          <h6 className="mt-2 me-5 ms-4 fw-bold">
+            {current_user?.username?.toUpperCase()}
+          </h6>
         </div>
       </div>
 

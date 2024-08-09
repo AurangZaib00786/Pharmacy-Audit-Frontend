@@ -14,7 +14,7 @@ import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import { useAuthContext } from "../../hooks/useauthcontext";
-
+import filterFactory from "react-bootstrap-table2-filter";
 import Button from "react-bootstrap/Button";
 import Alert_before_delete from "../alerts/alert_before_delete";
 import { ToastContainer } from "react-toastify";
@@ -656,8 +656,8 @@ function Audit() {
               keyField="ndc"
               data={Data}
               columns={columns}
+              exportCSV={{ onlyExportFiltered: true, exportAll: false }}
               search
-              exportCSV
             >
               {(props) => (
                 <div>
@@ -710,6 +710,7 @@ function Audit() {
                     condensed
                     wrapperClasses="table-resposive"
                     classes="audit-table"
+                    filter={filterFactory()}
                   />
                 </div>
               )}
