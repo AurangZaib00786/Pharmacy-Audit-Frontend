@@ -49,7 +49,12 @@ function Audit() {
   const [callagain_vendor, setcallagain_vendor] = useState(false);
   const [callagain_billing, setcallagain_billing] = useState(false);
   const [vendor, setvendor] = useState("");
+  const [report_type, setreport_type] = useState({
+    value: "combine",
+    label: "Combine Report",
+  });
   const [allvendors, setallvendors] = useState([]);
+  const [alldata, setalldata] = useState([]);
 
   const { logout } = useLogout();
   useEffect(() => {
@@ -190,7 +195,6 @@ function Audit() {
     return Number(cell) * Number(row.packagesize_billing);
   };
 
-  const rowstyle = { height: "10px" };
   const makepdf = () => {
     const body = Data?.map((item, index) => {
       return [
@@ -362,12 +366,15 @@ function Audit() {
   };
 
   const vendor_sum_formatter = (cell, row, rowIndex) => {
-    return cell?.toFixed(2);
+    return cell !== "Not Exist" ? cell?.toFixed(2) : cell;
   };
 
   const handlegeneratereport = async () => {
     setisloading(true);
-
+    setreport_type({
+      value: "combine",
+      label: "Combine Report",
+    });
     const response = await fetch(`${route}/api/audit-report/`, {
       headers: { Authorization: `Bearer ${user.access}` },
     });
@@ -454,16 +461,46 @@ function Audit() {
         item["vendor_sum"] = sum;
         item["result_unit"] = sum - item.quantity_billing;
         item["result_package"] =
-          (sum - item.quantity_billing) / item.packagesize_billing;
+          item.packagesize_billing > 0
+            ? (sum - item.quantity_billing) / item.packagesize_billing
+            : "Not Exist";
         return item;
       });
       dispatch({ type: "Set_data", payload: optimize });
+      setalldata(optimize);
       setisloading(false);
       custom_toast(json.message);
     }
   };
   const handledeletereport = async () => {
     setdelete_user(true);
+  };
+  // const rowStyle = { height: "10px" };
+
+  const rowStyle = (row, rowIndex) => {
+    const style = {};
+    if (row.result_package < 0) {
+      style.color = "red";
+    } else if (row.result_package == 0) {
+      style.color = "green";
+    } else if (row.result_package == "Not Exist") {
+      style.color = "blue";
+    }
+
+    return style;
+  };
+
+  const handlereportchange = (e) => {
+    setreport_type(e);
+    if (e.value === "zero") {
+      var optimize = alldata.filter((item) => item.result_package == 0);
+    } else if (e.value === "negative") {
+      var optimize = alldata.filter((item) => item.result_package < 0);
+    } else {
+      var optimize = alldata;
+    }
+
+    dispatch({ type: "Set_data", payload: optimize });
   };
 
   return (
@@ -624,6 +661,18 @@ function Audit() {
             >
               {(props) => (
                 <div>
+                  <div className="col-6 col-md-2">
+                    <Select
+                      options={[
+                        { value: "combine", label: "Combine Report" },
+                        { value: "negative", label: "Negtive Report" },
+                        { value: "zero", label: "Zero Report" },
+                      ]}
+                      placeholder={"Report Type"}
+                      value={report_type}
+                      funct={handlereportchange}
+                    />
+                  </div>
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <div>
                       <ExportCSVButton
@@ -656,8 +705,7 @@ function Audit() {
 
                   <BootstrapTable
                     {...props.baseProps}
-                    rowStyle={rowstyle}
-                    striped
+                    rowStyle={rowStyle}
                     bootstrap4
                     condensed
                     wrapperClasses="table-resposive"

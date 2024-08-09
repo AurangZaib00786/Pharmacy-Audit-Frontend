@@ -10,6 +10,7 @@ import Login from "./Pages/login";
 import Dashboard from "./Components/dashboard/dashboard";
 import SignUp from "./Pages/signup";
 import Audit from "./Components/audit/audit";
+import Fileformat from "./Components/file-format/file-format";
 
 function Routing() {
   const { user } = useAuthContext();
@@ -39,6 +40,10 @@ function Routing() {
             <Route
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/file-format"
+              element={user ? <Fileformat /> : <Navigate to={"/"} />}
             ></Route>
           </Route>
 

@@ -33,7 +33,7 @@ const Alert_before_delete = ({ show, onHide, url, dis_fun, row_id }) => {
     if (response.ok) {
       setloading(false);
       onHide();
-      dis_fun();
+      dis_fun(row_id);
     }
     if (!response.ok) {
       setloading(false);

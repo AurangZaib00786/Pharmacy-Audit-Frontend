@@ -24,10 +24,7 @@ import { UseaddheaderContext } from "../hooks/useaddheadercontext";
 import SettingsApplicationsIcon from "@material-ui/icons/SettingsApplications";
 import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
-import ArchiveIcon from "@material-ui/icons/Archive";
-import AccountTreeIcon from "@material-ui/icons/AccountTree";
-import ReplayIcon from "@material-ui/icons/Replay";
-import { ToastContainer } from "react-toastify";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 function Layout() {
   const { user, route, menu_status } = useAuthContext();
 
@@ -84,14 +81,14 @@ function Layout() {
     <div
       id="app"
       className={user && "d-flex "}
-      style={{ zoom: user ? "0.85" : "1" }}
+      style={{ zoom: user ? "0.8" : "1" }}
     >
       {user ? (
         <>
           <Sidebar
             breakPoint="md"
             defaultCollapsed={true}
-            rootStyles={{ color: "#fff" }}
+            rootStyles={{ color: "#fff", fontFamily: "Times New Roman" }}
             backgroundColor="#1679FF"
           >
             <div
@@ -113,7 +110,7 @@ function Layout() {
               onMouseLeave={handlemouseleave}
               closeOnClick={true}
               className="sidebarclass"
-              style={{ height: "105vh", overflow: "auto" }}
+              style={{ height: "116vh", overflow: "auto" }}
               menuItemStyles={{
                 button: ({ level, active, disabled }) => {
                   if (level === 0 || level === 1) {
@@ -155,10 +152,24 @@ function Layout() {
               >
                 Audit
               </MenuItem>
+              <MenuItem
+                active={menu_status === "file"}
+                icon={<FileCopyIcon />}
+                component={<Link to="/file-format" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
+              >
+                File Format
+              </MenuItem>
             </Menu>
           </Sidebar>
 
-          <div className="content" style={{ width: "95%" }}>
+          <div
+            className="content"
+            style={{ width: "95%", fontFamily: "Times New Roman" }}
+          >
             <div className="header ">
               {user && (
                 <Header
@@ -172,7 +183,7 @@ function Layout() {
 
             <div
               style={{
-                height: "100vh",
+                height: "105vh",
                 overflow: "auto",
                 backgroundColor: "rgb(241, 245, 245)",
               }}

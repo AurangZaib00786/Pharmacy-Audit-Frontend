@@ -10,7 +10,7 @@ const addDatareducer = (state, action) => {
       };
     case "Create_data":
       return {
-        Data: [action.payload, ...state.Data],
+        Data: [...state.Data, action.payload],
       };
     case "Delete_data":
       return {
