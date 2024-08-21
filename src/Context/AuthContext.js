@@ -33,12 +33,12 @@ export const AuthContextProvider = ({ children }) => {
   } else {
     uservalue = null;
   }
-
+  // https://api.pharmacyauditpro.com
   const [state, dispatch_auth] = useReducer(authReducer, {
     user: uservalue,
     menu_status: "dashboard",
   });
-  const [route, setroute] = useState("https://api.pharmacyauditpro.com");
+  const [route, setroute] = useState("http://127.0.0.1:8000");
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch_auth, route, setroute }}>

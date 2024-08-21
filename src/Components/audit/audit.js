@@ -192,7 +192,9 @@ function Audit() {
   ]);
 
   const vendor_formatter = (cell, row, rowIndex) => {
-    return Number(cell) * Number(row.packagesize_billing);
+    return row.packagesize_billing > 0
+      ? Number(cell) * Number(row.packagesize_billing)
+      : Number(cell);
   };
 
   const makepdf = () => {
@@ -428,6 +430,7 @@ function Audit() {
           sort: true,
           headerFormatter: headerstyle,
           formatter: vendor_formatter,
+          csvFormatter: vendor_formatter,
         });
       });
 
@@ -456,7 +459,14 @@ function Audit() {
       setcolumns(new_columns);
 
       let optimize = json.data.map((item) => {
-        let sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+        if (item.packagesize_billing > 0) {
+          var sum = json.vendor_files.reduce(
+            (acc, row) => acc + item[row] * item.packagesize_billing,
+            0
+          );
+        } else {
+          var sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+        }
 
         item["vendor_sum"] = sum;
         item["result_unit"] = sum - item.quantity_billing;
