@@ -1,7 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+.interfont{
+  font-family: 'Inter';
+}
+
+#app{
+  font-family: 'Inter';
+  background-color: white;
+}
+
 .header_right{
     margin-right: 3%;
-    
-
 }
 
 .custom_popover{

@@ -11,6 +11,9 @@ import Dashboard from "./Components/dashboard/dashboard";
 import SignUp from "./Pages/signup";
 import Audit from "./Components/audit/audit";
 import Fileformat from "./Components/file-format/file-format";
+import Insurance from "./Components/insurance/insurance";
+import Bin from "./Components/bin/bin";
+import Insurancereport from "./Components/insurancereport/insurancereport";
 
 function Routing() {
   const { user } = useAuthContext();
@@ -32,6 +35,18 @@ function Routing() {
             <Route
               path="/user"
               element={user ? <User /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/bin"
+              element={user ? <Bin /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/insurance-report"
+              element={user ? <Insurancereport /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/insurance"
+              element={user ? <Insurance /> : <Navigate to={"/"} />}
             ></Route>
             <Route
               path="/audit"

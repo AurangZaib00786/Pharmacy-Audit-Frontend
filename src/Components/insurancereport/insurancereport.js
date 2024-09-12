@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./audit.css";
+import "./insurancereport.css";
 import { IconButton } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteRoundedIcon from "@material-ui/icons/DeleteRounded";
@@ -28,7 +28,7 @@ import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
 
-function Audit() {
+function Insurancereport() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
@@ -57,6 +57,36 @@ function Audit() {
   const [alldata, setalldata] = useState([]);
 
   const { logout } = useLogout();
+
+  useEffect(() => {
+    dispatch({ type: "Set_data", payload: [] });
+    dispatch_auth({ type: "Set_menuitem", payload: "insurancereport" });
+    const fetchvendors = async () => {
+      const response = await fetch(`${route}/api/vendor-file-formats/`, {
+        headers: { Authorization: `Bearer ${user.access}` },
+      });
+
+      const json = await response.json();
+      if (json.code === "token_not_valid") {
+        logout();
+      }
+      if (!response.ok) {
+        went_wrong_toast(json.error);
+      }
+      if (response.ok) {
+        setallvendors(
+          json.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          })
+        );
+      }
+    };
+    fetchvendors();
+  }, []);
+
   useEffect(() => {
     setisloading(true);
     const fetchvendorfiles = async () => {
@@ -88,7 +118,7 @@ function Audit() {
 
     const fetchbillingfiles = async () => {
       const response = await fetch(
-        `${route}/api/manage-files/?directory=billing_files`,
+        `${route}/api/manage-files/?directory=insurance_billing_files`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -108,36 +138,6 @@ function Audit() {
     };
     fetchbillingfiles();
   }, [callagain_billing]);
-
-  useEffect(() => {
-    dispatch_auth({ type: "Set_menuitem", payload: "audit" });
-    dispatch({ type: "Set_data", payload: [] });
-    const fetchvendors = async () => {
-      const response = await fetch(`${route}/api/vendor-file-formats/`, {
-        headers: { Authorization: `Bearer ${user.access}` },
-      });
-
-      const json = await response.json();
-      if (json.code === "token_not_valid") {
-        logout();
-      }
-      if (!response.ok) {
-        went_wrong_toast(json.error);
-      }
-      if (response.ok) {
-        setallvendors(
-          json.map((item) => {
-            return {
-              value: item.id,
-              label: item.name,
-            };
-          })
-        );
-      }
-    };
-
-    fetchvendors();
-  }, []);
 
   const headerstyle = (column, colIndex, { sortElement }) => {
     return (
@@ -195,70 +195,6 @@ function Audit() {
     return row.packagesize_billing > 0
       ? Number(cell) * Number(row.packagesize_billing)
       : Number(cell);
-  };
-
-  const makepdf = () => {
-    const body = Data?.map((item, index) => {
-      return [
-        index + 1,
-        item.ndc,
-        item.packagesize_billing,
-        item.quantity_billing,
-      ];
-    });
-    body.splice(0, 0, ["#", "NDC", "Package Size", "Billing Qty"]);
-
-    const documentDefinition = {
-      content: [
-        { text: "Audit Report", style: "header" },
-        // { text: `Project Name: ${selected_branch?.name}`, style: "body" },
-        {
-          canvas: [
-            { type: "line", x1: 0, y1: 10, x2: 510, y2: 10, lineWidth: 1 },
-          ],
-        },
-
-        {
-          table: {
-            // headers are automatically repeated if the table spans over multiple pages
-            // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: [30, "*", "*", "*"],
-            body: body,
-          },
-          style: "tableStyle",
-        },
-      ],
-      styles: {
-        tableStyle: {
-          width: "100%", // Set the width of the table to 100%
-          marginTop: 20,
-        },
-
-        header: {
-          fontSize: 22,
-          bold: true,
-          alignment: "center",
-        },
-        body: {
-          fontSize: 12,
-          bold: true,
-          alignment: "center",
-          marginBottom: 10,
-        },
-      },
-    };
-    return documentDefinition;
-  };
-
-  const download = () => {
-    const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).download("Audit.pdf");
-  };
-
-  const print = () => {
-    const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).print();
   };
 
   function getExtension(filename) {
@@ -343,13 +279,16 @@ function Audit() {
       setisloading(true);
       const formData = new FormData();
       formData.append(`file`, Fileurl_billing.file);
-      const response = await fetch(`${route}/api/upload-billing-file/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.access}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `${route}/api/upload-insurance-billing-file/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.access}`,
+          },
+          body: formData,
+        }
+      );
       const json = await response.json();
 
       if (!response.ok) {
@@ -377,7 +316,7 @@ function Audit() {
       value: "combine",
       label: "Combine Report",
     });
-    const response = await fetch(`${route}/api/audit-report/`, {
+    const response = await fetch(`${route}/api/insurance-audit-report/`, {
       headers: { Authorization: `Bearer ${user.access}` },
     });
 
@@ -458,23 +397,31 @@ function Audit() {
 
       setcolumns(new_columns);
 
-      let optimize = json.data.map((item) => {
-        if (item.packagesize_billing > 0) {
-          var sum = json.vendor_files.reduce(
-            (acc, row) => acc + item[row] * item.packagesize_billing,
-            0
-          );
-        } else {
-          var sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
-        }
+      let optimize = json.reports.map((report) => {
+        let new_data = report.data.map((item) => {
+          if (item.packagesize_billing > 0) {
+            var sum = json.vendor_files.reduce(
+              (acc, row) => acc + item[row] * item.packagesize_billing,
+              0
+            );
+          } else {
+            var sum = json.vendor_files.reduce(
+              (acc, row) => acc + item[row],
+              0
+            );
+          }
 
-        item["vendor_sum"] = sum;
-        item["result_unit"] = sum - item.quantity_billing;
-        item["result_package"] =
-          item.packagesize_billing > 0
-            ? (sum - item.quantity_billing) / item.packagesize_billing
-            : "Not Exist";
-        return item;
+          item["vendor_sum"] = sum;
+          item["result_unit"] = sum - item.quantity_billing;
+          item["result_package"] =
+            item.packagesize_billing > 0
+              ? (sum - item.quantity_billing) / item.packagesize_billing
+              : "Not Exist";
+          return item;
+        });
+        report["data"] = new_data;
+        report["hide"] = false;
+        return report;
       });
       dispatch({ type: "Set_data", payload: optimize });
       setalldata(optimize);
@@ -503,15 +450,25 @@ function Audit() {
   const handlereportchange = (e) => {
     setreport_type(e);
     if (e.value === "zero") {
-      var optimize = alldata.filter((item) => item.result_package == 0);
+      var optimize = alldata?.filter((item) => item.result_package == 0);
     } else if (e.value === "negative") {
-      var optimize = alldata.filter((item) => item.result_package < 0);
+      var optimize = alldata?.filter((item) => item.result_package < 0);
     } else {
       var optimize = alldata;
     }
 
     dispatch({ type: "Set_data", payload: optimize });
   };
+
+  function handlehideclick(company) {
+    let optimize = Data.map((item) => {
+      if (item.insurance_company_name === company) {
+        item["hide"] = !item.hide;
+      }
+      return item;
+    });
+    dispatch({ type: "Set_data", payload: optimize });
+  }
 
   return (
     <div className="user_main">
@@ -662,69 +619,60 @@ function Audit() {
       <div className="card me-3 mt-3">
         <div className="card-body">
           <div style={{ zoom: ".8" }}>
-            <ToolkitProvider
-              keyField="ndc"
-              data={Data}
-              columns={columns}
-              exportCSV={{ onlyExportFiltered: true, exportAll: false }}
-              search
-            >
-              {(props) => (
-                <div>
-                  <div className="col-6 col-md-2">
-                    <Select
-                      options={[
-                        { value: "combine", label: "Combine Report" },
-                        { value: "negative", label: "Negtive Report" },
-                        { value: "zero", label: "Zero Report" },
-                      ]}
-                      placeholder={"Report Type"}
-                      value={report_type}
-                      funct={handlereportchange}
-                    />
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center mt-3">
-                    <div>
-                      <ExportCSVButton
-                        {...props.csvProps}
-                        className="csvbutton  border bg-secondary text-light me-2"
-                      >
-                        Export CSV
-                      </ExportCSVButton>
-                      <Button
-                        type="button"
-                        className="p-1 ps-3 pe-3 me-2"
-                        variant="outline-primary"
-                        onClick={download}
-                      >
-                        <PictureAsPdfIcon /> PDF
-                      </Button>
-                      <Button
-                        type="button"
-                        className="p-1 ps-3 pe-3"
-                        variant="outline-success"
-                        onClick={print}
-                      >
-                        <PrintIcon /> Print
-                      </Button>
+            {Data?.map((item) => {
+              return (
+                <ToolkitProvider
+                  keyField="ndc"
+                  data={item.data ? item.data : []}
+                  columns={columns}
+                  exportCSV={{ onlyExportFiltered: true, exportAll: false }}
+                  search
+                >
+                  {(props) => (
+                    <div className="mb-3">
+                      <h4 className="mb-2 fw-bold">
+                        {item.insurance_company_name} Report
+                      </h4>
+                      <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
+                        <div>
+                          <ExportCSVButton
+                            {...props.csvProps}
+                            className="csvbutton  border bg-secondary text-light me-2"
+                          >
+                            Export CSV
+                          </ExportCSVButton>
+                          <Button
+                            onClick={() =>
+                              handlehideclick(item.insurance_company_name)
+                            }
+                            variant="secondary"
+                            shadow
+                          >
+                            {item.hide ? "View" : "Hide"}
+                          </Button>
+                        </div>
+                        <SearchBar {...props?.searchProps} />
+                      </div>
+
+                      {!item.hide && (
+                        <>
+                          <BootstrapTable
+                            {...props.baseProps}
+                            rowStyle={rowStyle}
+                            bootstrap4
+                            condensed
+                            wrapperClasses="table-resposive"
+                            classes="audit-table"
+                            filter={filterFactory()}
+                          />
+                          <hr />
+                        </>
+                      )}
                     </div>
-                    <SearchBar {...props.searchProps} />
-                  </div>
-
-                  <hr />
-
-                  <BootstrapTable
-                    {...props.baseProps}
-                    rowStyle={rowStyle}
-                    bootstrap4
-                    condensed
-                    wrapperClasses="table-resposive"
-                    classes="audit-table"
-                    filter={filterFactory()}
-                  />
-                </div>
-              )}
-            </ToolkitProvider>
+                  )}
+                </ToolkitProvider>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -743,4 +691,4 @@ function Audit() {
   );
 }
 
-export default Audit;
+export default Insurancereport;

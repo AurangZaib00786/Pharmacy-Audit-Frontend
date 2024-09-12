@@ -13,15 +13,15 @@ import MenuIcon from "@material-ui/icons/Menu";
 import PersonIcon from "@material-ui/icons/Person";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import StoreIcon from "@material-ui/icons/Store";
-import BusinessCenterIcon from "@material-ui/icons/BusinessCenter";
+import ColorizeIcon from "@material-ui/icons/Colorize";
 import { Link } from "react-router-dom";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import AssessmentIcon from "@material-ui/icons/Assessment";
 import { useAuthContext } from "../hooks/useauthcontext";
 import Header from "../Components/header";
 import Footer from "../Components/footer";
-import ApartmentIcon from "@material-ui/icons/Apartment";
+import MoneyIcon from "@material-ui/icons/Money";
 import { UseaddheaderContext } from "../hooks/useaddheadercontext";
-import SettingsApplicationsIcon from "@material-ui/icons/SettingsApplications";
+import BusinessIcon from "@material-ui/icons/Business";
 import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -88,7 +88,7 @@ function Layout() {
           <Sidebar
             breakPoint="md"
             defaultCollapsed={true}
-            rootStyles={{ color: "#fff", fontFamily: "Times New Roman" }}
+            rootStyles={{ color: "#fff" }}
             backgroundColor="#1679FF"
           >
             <div
@@ -143,7 +143,7 @@ function Layout() {
               )}
               <MenuItem
                 active={menu_status === "audit"}
-                icon={<PersonIcon />}
+                icon={<ColorizeIcon />}
                 component={<Link to="/audit" />}
                 rootStyles={{
                   color: "#ffff",
@@ -163,13 +163,43 @@ function Layout() {
               >
                 File Format
               </MenuItem>
+              <MenuItem
+                active={menu_status === "insurance"}
+                icon={<BusinessIcon />}
+                component={<Link to="/insurance" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
+              >
+                Insurance Company
+              </MenuItem>
+              <MenuItem
+                active={menu_status === "bin"}
+                icon={<MoneyIcon />}
+                component={<Link to="/bin" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
+              >
+                Bin Number
+              </MenuItem>
+              <MenuItem
+                active={menu_status === "insurancereport"}
+                icon={<AssessmentIcon />}
+                component={<Link to="/insurance-report" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
+              >
+                Insurance Report
+              </MenuItem>
             </Menu>
           </Sidebar>
 
-          <div
-            className="content"
-            style={{ width: "95%", fontFamily: "Times New Roman" }}
-          >
+          <div className="content" style={{ width: "95%" }}>
             <div className="header ">
               {user && (
                 <Header
