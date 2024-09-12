@@ -185,12 +185,6 @@ function Audit() {
     },
   ]);
 
-  const vendor_formatter = (cell, row, rowIndex) => {
-    return row.packagesize_billing > 0
-      ? Number(cell) * Number(row.packagesize_billing)
-      : Number(cell);
-  };
-
   function getExtension(filename) {
     return filename.split("/").shift();
   }
@@ -359,8 +353,6 @@ function Audit() {
           text: item,
           sort: true,
           headerFormatter: headerstyle,
-          formatter: vendor_formatter,
-          csvFormatter: vendor_formatter,
         });
       });
 
@@ -393,6 +385,10 @@ function Audit() {
           var sum = json.vendor_files.reduce(
             (acc, row) => acc + item[row] * item.packagesize_billing,
             0
+          );
+          json.vendor_files.map(
+            (row) =>
+              (item[row] = Number(item[row]) * Number(item.packagesize_billing))
           );
         } else {
           var sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
@@ -443,7 +439,14 @@ function Audit() {
   };
 
   const handleExportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(Data);
+    let header = [];
+    columns.slice(1).map((item) => {
+      header.push(item.dataField);
+    });
+
+    const ws = XLSX.utils.json_to_sheet(Data, {
+      header: header,
+    });
 
     const redcolor = {
       font: { color: { rgb: "FF0000" } },
