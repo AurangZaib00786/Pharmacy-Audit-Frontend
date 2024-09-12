@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./audit.css";
-import { IconButton } from "@material-ui/core";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import DeleteRoundedIcon from "@material-ui/icons/DeleteRounded";
-import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import BootstrapTable from "react-bootstrap-table-next";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import ToolkitProvider, {
   Search,
   CSVExport,
@@ -22,8 +17,7 @@ import custom_toast from "../alerts/custom_toast";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
-import PrintIcon from "@material-ui/icons/Print";
+import XLSX from "xlsx-js-style";
 import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
@@ -43,7 +37,7 @@ function Audit() {
   const [billing_filesdata, setbilling_filesdata] = useState([]);
 
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/`;
+  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,vendor_files`;
 
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
@@ -195,70 +189,6 @@ function Audit() {
     return row.packagesize_billing > 0
       ? Number(cell) * Number(row.packagesize_billing)
       : Number(cell);
-  };
-
-  const makepdf = () => {
-    const body = Data?.map((item, index) => {
-      return [
-        index + 1,
-        item.ndc,
-        item.packagesize_billing,
-        item.quantity_billing,
-      ];
-    });
-    body.splice(0, 0, ["#", "NDC", "Package Size", "Billing Qty"]);
-
-    const documentDefinition = {
-      content: [
-        { text: "Audit Report", style: "header" },
-        // { text: `Project Name: ${selected_branch?.name}`, style: "body" },
-        {
-          canvas: [
-            { type: "line", x1: 0, y1: 10, x2: 510, y2: 10, lineWidth: 1 },
-          ],
-        },
-
-        {
-          table: {
-            // headers are automatically repeated if the table spans over multiple pages
-            // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: [30, "*", "*", "*"],
-            body: body,
-          },
-          style: "tableStyle",
-        },
-      ],
-      styles: {
-        tableStyle: {
-          width: "100%", // Set the width of the table to 100%
-          marginTop: 20,
-        },
-
-        header: {
-          fontSize: 22,
-          bold: true,
-          alignment: "center",
-        },
-        body: {
-          fontSize: 12,
-          bold: true,
-          alignment: "center",
-          marginBottom: 10,
-        },
-      },
-    };
-    return documentDefinition;
-  };
-
-  const download = () => {
-    const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).download("Audit.pdf");
-  };
-
-  const print = () => {
-    const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).print();
   };
 
   function getExtension(filename) {
@@ -485,7 +415,6 @@ function Audit() {
   const handledeletereport = async () => {
     setdelete_user(true);
   };
-  // const rowStyle = { height: "10px" };
 
   const rowStyle = (row, rowIndex) => {
     const style = {};
@@ -511,6 +440,52 @@ function Audit() {
     }
 
     dispatch({ type: "Set_data", payload: optimize });
+  };
+
+  const handleExportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(Data);
+
+    const redcolor = {
+      font: { color: { rgb: "FF0000" } },
+    };
+    const greencolor = {
+      font: { color: { rgb: "008000" } },
+    };
+    const bluecolor = {
+      font: { color: { rgb: "0000FF" } },
+    };
+    const blackcolor = {
+      font: { color: { rgb: "000000" } },
+    };
+
+    const rowsToColor = Array.from({ length: Data.length }, (_, i) => i);
+
+    // Apply the style to each cell in the specified rows
+    rowsToColor.forEach((row) => {
+      const item = Data[row];
+      var color = blackcolor;
+      if (item.result_package < 0) {
+        color = redcolor;
+      } else if (item.result_package == 0) {
+        color = greencolor;
+      } else if (item.result_package == "Not Exist") {
+        color = bluecolor;
+      }
+
+      const colsInRow = Object.keys(item).length;
+      for (let col = 0; col < colsInRow; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: row + 1, c: col });
+        if (!ws[cellAddress]) ws[cellAddress] = {};
+        ws[cellAddress].s = color;
+      }
+    });
+
+    // Create workbook and add worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet 01");
+
+    // Generate Excel file
+    XLSX.writeFile(wb, "Audit Report.xlsx");
   };
 
   return (
@@ -666,7 +641,11 @@ function Audit() {
               keyField="ndc"
               data={Data}
               columns={columns}
-              exportCSV={{ onlyExportFiltered: true, exportAll: false }}
+              exportCSV={{
+                onlyExportFiltered: true,
+                exportAll: false,
+                fileName: "Audit Report.csv",
+              }}
               search
             >
               {(props) => (
@@ -692,20 +671,11 @@ function Audit() {
                         Export CSV
                       </ExportCSVButton>
                       <Button
-                        type="button"
-                        className="p-1 ps-3 pe-3 me-2"
-                        variant="outline-primary"
-                        onClick={download}
+                        onClick={handleExportToExcel}
+                        variant="success"
+                        shadow
                       >
-                        <PictureAsPdfIcon /> PDF
-                      </Button>
-                      <Button
-                        type="button"
-                        className="p-1 ps-3 pe-3"
-                        variant="outline-success"
-                        onClick={print}
-                      >
-                        <PrintIcon /> Print
+                        Export Excel
                       </Button>
                     </div>
                     <SearchBar {...props.searchProps} />

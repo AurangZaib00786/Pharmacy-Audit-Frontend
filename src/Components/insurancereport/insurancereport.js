@@ -22,8 +22,7 @@ import custom_toast from "../alerts/custom_toast";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
-import PrintIcon from "@material-ui/icons/Print";
+import XLSX from "xlsx-js-style";
 import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
@@ -43,7 +42,7 @@ function Insurancereport() {
   const [billing_filesdata, setbilling_filesdata] = useState([]);
 
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/`;
+  const url_to_delete = `${route}/api/manage-files/?directory=insurance_billing_files,vendor_files`;
 
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
@@ -470,6 +469,52 @@ function Insurancereport() {
     dispatch({ type: "Set_data", payload: optimize });
   }
 
+  const handleExportToExcel = (data, company) => {
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    const redcolor = {
+      font: { color: { rgb: "FF0000" } },
+    };
+    const greencolor = {
+      font: { color: { rgb: "008000" } },
+    };
+    const bluecolor = {
+      font: { color: { rgb: "0000FF" } },
+    };
+    const blackcolor = {
+      font: { color: { rgb: "000000" } },
+    };
+
+    const rowsToColor = Array.from({ length: data.length }, (_, i) => i);
+
+    // Apply the style to each cell in the specified rows
+    rowsToColor.forEach((row) => {
+      const item = data[row];
+      var color = blackcolor;
+      if (item.result_package < 0) {
+        color = redcolor;
+      } else if (item.result_package == 0) {
+        color = greencolor;
+      } else if (item.result_package == "Not Exist") {
+        color = bluecolor;
+      }
+
+      const colsInRow = Object.keys(item).length;
+      for (let col = 0; col < colsInRow; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: row + 1, c: col });
+        if (!ws[cellAddress]) ws[cellAddress] = {};
+        ws[cellAddress].s = color;
+      }
+    });
+
+    // Create workbook and add worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet 01");
+
+    // Generate Excel file
+    XLSX.writeFile(wb, `${company} Insurance Report .xlsx`);
+  };
+
   return (
     <div className="user_main">
       <h1>Audit</h1>
@@ -641,6 +686,19 @@ function Insurancereport() {
                           >
                             Export CSV
                           </ExportCSVButton>
+                          <Button
+                            onClick={() =>
+                              handleExportToExcel(
+                                item.data,
+                                item.insurance_company_name
+                              )
+                            }
+                            className="me-2"
+                            variant="success"
+                            shadow
+                          >
+                            Export Excel
+                          </Button>
                           <Button
                             onClick={() =>
                               handlehideclick(item.insurance_company_name)

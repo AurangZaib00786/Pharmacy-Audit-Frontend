@@ -20,15 +20,12 @@ const Alert_before_delete = ({ show, onHide, url, dis_fun, row_id }) => {
   const handel_ok = async () => {
     setloading(true);
 
-    const response = await fetch(
-      `${url}?directory=billing_files,vendor_files`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${user.access}`,
-        },
-      }
-    );
+    const response = await fetch(`${url}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.access}`,
+      },
+    });
 
     if (response.ok) {
       setloading(false);

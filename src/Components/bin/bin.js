@@ -26,6 +26,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import useLogout from "../../hooks/uselogout";
 import PrintIcon from "@material-ui/icons/Print";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
+import Select_field from "../selectfield/select";
 
 function Bin() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -36,6 +37,7 @@ function Bin() {
   const [showmodel, setshowmodel] = useState(false);
   const [data, setdata] = useState("");
   const [allinsurance, setallinsurance] = useState([]);
+  const [insurance, setinsurance] = useState({ value: "all", label: "All" });
   const [showmodelupdate, setshowmodelupdate] = useState(false);
   const [delete_user, setdelete_user] = useState(false);
   const [url_to_delete, seturl_to_delete] = useState("");
@@ -46,7 +48,6 @@ function Bin() {
   useEffect(() => {
     dispatch_auth({ type: "Set_menuitem", payload: "bin" });
     dispatch({ type: "Set_data", payload: [] });
-    setisloading(true);
 
     const fetchinsurance = async () => {
       const response = await fetch(`${route}/api/insurance-companies/`, {
@@ -66,29 +67,35 @@ function Bin() {
             };
           })
         );
-        setisloading(false);
       }
     };
 
+    fetchinsurance();
+  }, []);
+
+  useEffect(() => {
+    setisloading(true);
     const fetchWorkouts = async () => {
-      const response = await fetch(`${route}/api/bin-numbers/`, {
+      var url = `${route}/api/bin-numbers/`;
+      if (insurance.value !== "all") {
+        url = `${url}?insurance_company_id=${insurance.value}`;
+      }
+      const response = await fetch(url, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
 
       const json = await response.json();
+      setisloading(false);
       if (json.code === "token_not_valid") {
         logout();
       }
       if (response.ok) {
         dispatch({ type: "Set_data", payload: json });
-        setisloading(false);
       }
     };
 
     fetchWorkouts();
-    fetchinsurance();
-  }, []);
-
+  }, [insurance]);
   const headerstyle = (column, colIndex, { sortElement }) => {
     return (
       <div
@@ -266,7 +273,7 @@ function Bin() {
             variant="outline-success"
             onClick={() => setshowmodel(!showmodel)}
           >
-            <PersonAddIcon /> Add Insurance
+            <PersonAddIcon /> Add Bin Number
           </Button>
         </div>
 
@@ -280,6 +287,14 @@ function Bin() {
           >
             {(props) => (
               <div>
+                <div className="mt-3 col-6 col-md-2">
+                  <Select_field
+                    options={[{ value: "all", label: "All" }, ...allinsurance]}
+                    value={insurance}
+                    funct={(e) => setinsurance(e)}
+                    placeholder={"Insurance Company"}
+                  />
+                </div>
                 <div className="d-flex justify-content-between align-items-center mt-3">
                   <div>
                     <ExportCSVButton

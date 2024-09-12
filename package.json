@@ -41,7 +41,8 @@
     "react-select": "^5.7.2",
     "react-to-print": "^2.14.12",
     "react-toastify": "^9.1.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx-js-style": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

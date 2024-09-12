@@ -141,6 +141,53 @@ function Layout() {
                   User
                 </MenuItem>
               )}
+
+              <SubMenu
+                active={
+                  menu_status === "user" ||
+                  menu_status === "branch" ||
+                  menu_status === "branch_management" ||
+                  menu_status === "user_mange"
+                }
+                open={open === "user"}
+                onClick={() => handleopen("user")}
+                label="Basic Menu"
+                icon={<MenuIcon />}
+              >
+                <MenuItem
+                  active={menu_status === "file"}
+                  icon={<FileCopyIcon />}
+                  component={<Link to="/file-format" />}
+                  rootStyles={{
+                    color: "#ffff",
+                    backgroundColor: "#1679FF",
+                  }}
+                >
+                  File Format
+                </MenuItem>
+                <MenuItem
+                  active={menu_status === "insurance"}
+                  icon={<BusinessIcon />}
+                  component={<Link to="/insurance" />}
+                  rootStyles={{
+                    color: "#ffff",
+                    backgroundColor: "#1679FF",
+                  }}
+                >
+                  Insurance Company
+                </MenuItem>
+                <MenuItem
+                  active={menu_status === "bin"}
+                  icon={<MoneyIcon />}
+                  component={<Link to="/bin" />}
+                  rootStyles={{
+                    color: "#ffff",
+                    backgroundColor: "#1679FF",
+                  }}
+                >
+                  Bin Number
+                </MenuItem>
+              </SubMenu>
               <MenuItem
                 active={menu_status === "audit"}
                 icon={<ColorizeIcon />}
@@ -150,41 +197,9 @@ function Layout() {
                   backgroundColor: "#1679FF",
                 }}
               >
-                Audit
+                Audit Report
               </MenuItem>
-              <MenuItem
-                active={menu_status === "file"}
-                icon={<FileCopyIcon />}
-                component={<Link to="/file-format" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                File Format
-              </MenuItem>
-              <MenuItem
-                active={menu_status === "insurance"}
-                icon={<BusinessIcon />}
-                component={<Link to="/insurance" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                Insurance Company
-              </MenuItem>
-              <MenuItem
-                active={menu_status === "bin"}
-                icon={<MoneyIcon />}
-                component={<Link to="/bin" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                Bin Number
-              </MenuItem>
+
               <MenuItem
                 active={menu_status === "insurancereport"}
                 icon={<AssessmentIcon />}
