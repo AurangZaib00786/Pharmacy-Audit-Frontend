@@ -1,42 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../../hooks/useauthcontext";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import Modal from "react-bootstrap/Modal";
 import TextField from "@mui/material/TextField";
 import went_wrong_toast from "../alerts/went_wrong_toast";
-import success_toast from "../alerts/success_toast";
-import Save_button from "../buttons/save_button";
+import Update_button from "../buttons/update_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import "./file-format.css";
-function Form(props) {
-  const { dispatch } = UseaddDataContext();
+import custom_toast from "../alerts/custom_toast";
+
+function Update({ show, onHide, data }) {
   const { user, route } = useAuthContext();
-  const [name, setname] = useState("");
-  const [row_number, setrow_number] = useState("");
-  const [ndc_column, setndc_column] = useState("");
-  const [description_column, setdescription_column] = useState("");
-  const [quantity_column, setquantity_column] = useState("");
   const [isloading, setisloading] = useState(false);
+  const { dispatch } = UseaddDataContext();
+  const [name, setname] = useState(data.name);
+  const [row_number, setrow_number] = useState(data.row_number);
+  const [ndc_column, setndc_column] = useState(data.ndc_column);
+  const [description_column, setdescription_column] = useState(
+    data.description_column
+  );
+  const [quantity_column, setquantity_column] = useState(data.quantity_column);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setisloading(true);
-    const response = await fetch(`${route}/api/vendor-file-formats/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.access}`,
-      },
-      body: JSON.stringify({
-        name,
-        row_number,
-        ndc_column,
-        reference: "vendor",
-        description_column,
-        quantity_column,
-      }),
-    });
+
+    const response = await fetch(
+      `${route}/api/vendor-file-formats/${data.id}/`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: JSON.stringify({
+          name,
+          row_number,
+          ndc_column,
+          description_column,
+          quantity_column,
+        }),
+      }
+    );
     const json = await response.json();
 
     if (!response.ok) {
@@ -46,24 +51,23 @@ function Form(props) {
     }
 
     if (response.ok) {
-      dispatch({ type: "Create_data", payload: json });
       setisloading(false);
-      setname("");
-      setdescription_column("");
-      setrow_number("");
-      setndc_column("");
-      setquantity_column("");
-      success_toast();
+      dispatch({ type: "Update_data", payload: json });
+      onHide();
+      custom_toast("Update ");
     }
   };
+
   return (
-    <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter">
+    <Modal
+      show={show}
+      onHide={onHide}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+    >
       <Modal.Header closeButton>
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="d-flex align-items-center"
-        >
-          Add Vendor File Format
+        <Modal.Title className="model-heading">
+          Edit Billing File Format
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -72,7 +76,7 @@ function Form(props) {
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control "
-                label="name"
+                label="Name"
                 value={name}
                 onChange={(e) => {
                   setname(e.target.value);
@@ -130,9 +134,10 @@ function Form(props) {
               />
             </div>
           </div>
+
           <hr />
-          <div className=" d-flex flex-row-reverse mt-2 me-2">
-            <Save_button isloading={isloading} />
+          <div className="d-flex flex-row-reverse mt-2 me-2">
+            <Update_button isloading={isloading} />
           </div>
         </form>
       </Modal.Body>
@@ -140,4 +145,4 @@ function Form(props) {
   );
 }
 
-export default Form;
+export default Update;

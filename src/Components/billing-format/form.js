@@ -32,7 +32,7 @@ function Form(props) {
         name,
         row_number,
         ndc_column,
-        reference: "vendor",
+        reference: "billing",
         description_column,
         quantity_column,
       }),
@@ -63,7 +63,7 @@ function Form(props) {
           id="contained-modal-title-vcenter"
           className="d-flex align-items-center"
         >
-          Add Vendor File Format
+          Add Billing File Format
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -72,7 +72,7 @@ function Form(props) {
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control "
-                label="name"
+                label="Name"
                 value={name}
                 onChange={(e) => {
                   setname(e.target.value);

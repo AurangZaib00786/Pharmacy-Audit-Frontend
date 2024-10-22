@@ -54,16 +54,20 @@ function Insurancereport() {
   });
   const [allvendors, setallvendors] = useState([]);
   const [alldata, setalldata] = useState([]);
-
+  const [billing, setbilling] = useState("");
+  const [allbillings, setallbillings] = useState([]);
   const { logout } = useLogout();
 
   useEffect(() => {
     dispatch({ type: "Set_data", payload: [] });
     dispatch_auth({ type: "Set_menuitem", payload: "insurancereport" });
     const fetchvendors = async () => {
-      const response = await fetch(`${route}/api/vendor-file-formats/`, {
-        headers: { Authorization: `Bearer ${user.access}` },
-      });
+      const response = await fetch(
+        `${route}/api/vendor-file-formats/?reference=vendor`,
+        {
+          headers: { Authorization: `Bearer ${user.access}` },
+        }
+      );
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
@@ -83,7 +87,35 @@ function Insurancereport() {
         );
       }
     };
+    const fetchbilling = async () => {
+      const response = await fetch(
+        `${route}/api/vendor-file-formats/?reference=billing`,
+        {
+          headers: { Authorization: `Bearer ${user.access}` },
+        }
+      );
+
+      const json = await response.json();
+      if (json.code === "token_not_valid") {
+        logout();
+      }
+      if (!response.ok) {
+        went_wrong_toast(json.error);
+      }
+      if (response.ok) {
+        setallbillings(
+          json.map((item) => {
+            return {
+              value: item.id,
+              label: item.name,
+            };
+          })
+        );
+      }
+    };
+
     fetchvendors();
+    fetchbilling();
   }, []);
 
   useEffect(() => {
@@ -272,6 +304,7 @@ function Insurancereport() {
       setisloading(true);
       const formData = new FormData();
       formData.append(`file`, Fileurl_billing.file);
+      formData.append(`billing_file_format_id `, billing.value);
       const response = await fetch(
         `${route}/api/upload-insurance-billing-file/`,
         {
@@ -565,7 +598,7 @@ function Insurancereport() {
                     onChange={handleimageselection_vendor}
                     id="select-file"
                     type="file"
-                    accept=".xlsx"
+                    accept=".xlsx,.xls,.csv"
                     ref={inputFile_vendor}
                     style={{ display: "none" }}
                   />
@@ -592,7 +625,7 @@ function Insurancereport() {
               </div>
             </form>
 
-            <div className="d-flex flex-wrap border-top  pt-3 ">
+            <div className="d-flex flex-wrap border-top col-11 pt-3 ">
               {vendor_filesdata.map((item) => {
                 return (
                   <div key={item.name} className="background p-2 me-3 rounded ">
@@ -610,18 +643,26 @@ function Insurancereport() {
           <div className="col-md-6 p-3">
             <h5>Billing Files</h5>
 
-            <form
-              onSubmit={handlesubmitbilling_files}
-              className="d-flex justify-content-between align-items-center"
-            >
-              <p>{Fileurl_billing?.name}</p>
-              <div className="d-flex">
+            <form onSubmit={handlesubmitbilling_files} className="mt-3 p-0">
+              <div className="d-flex jsutify-content-between align-items-center ">
+                <div className="col-md-5 me-3">
+                  <Select
+                    options={allbillings}
+                    value={billing}
+                    funct={(e) => setbilling(e)}
+                    placeholder={"Billing"}
+                    required={true}
+                  />
+                </div>
+                <p className="col-md-7">{Fileurl_billing?.name}</p>
+              </div>
+              <div className="d-flex justify-content-end">
                 <div className="me-3 text-end">
                   <input
                     onChange={handleimageselection_billing}
                     id="select-file"
                     type="file"
-                    accept=".xlsx"
+                    accept=".xlsx,.xls,.csv"
                     ref={inputFile_billing}
                     style={{ display: "none" }}
                   />
@@ -648,7 +689,7 @@ function Insurancereport() {
               </div>
             </form>
 
-            <div className="border-top  pt-3 d-flex flex-wrap">
+            <div className="border-top col-11  pt-3 d-flex flex-wrap">
               {billing_filesdata.map((item) => {
                 return (
                   <div key={item.name} className="background p-2 me-3 rounded ">

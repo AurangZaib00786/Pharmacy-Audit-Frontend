@@ -28,7 +28,7 @@ import useLogout from "../../hooks/uselogout";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import PrintIcon from "@material-ui/icons/Print";
 
-function Fileformat() {
+function BillingFileformat() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
@@ -44,12 +44,12 @@ function Fileformat() {
   const { selected_branch } = UseaddheaderContext();
   const { logout } = useLogout();
   useEffect(() => {
-    dispatch_auth({ type: "Set_menuitem", payload: "file" });
+    dispatch_auth({ type: "Set_menuitem", payload: "billing" });
     dispatch({ type: "Set_data", payload: [] });
     setisloading(true);
     const fetchWorkouts = async () => {
       const response = await fetch(
-        `${route}/api/vendor-file-formats/?reference=vendor`,
+        `${route}/api/vendor-file-formats/?reference=billing`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -128,7 +128,7 @@ function Fileformat() {
     },
     {
       dataField: "name",
-      text: "Vendor Name",
+      text: " Name",
       sort: true,
       headerFormatter: headerstyle,
     },
@@ -208,7 +208,7 @@ function Fileformat() {
     });
     body.splice(0, 0, [
       "#",
-      "Vendor Name",
+      " Name",
       "Row No",
       "NDC Column",
       "Description Column",
@@ -260,7 +260,7 @@ function Fileformat() {
 
   const download = () => {
     const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).download("users.pdf");
+    pdfMake.createPdf(documentDefinition).download("Biilingformat.pdf");
   };
 
   const print = () => {
@@ -270,7 +270,7 @@ function Fileformat() {
 
   return (
     <div className="user_main">
-      <h1>Vendor File Formats</h1>
+      <h1>Billing File Formats</h1>
       <div className="card me-3">
         <div className="card-header bg-white  d-flex justify-content-between">
           <h3>Format list</h3>
@@ -369,4 +369,4 @@ function Fileformat() {
   );
 }
 
-export default Fileformat;
+export default BillingFileformat;

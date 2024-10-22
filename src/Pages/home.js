@@ -29,7 +29,7 @@ function Layout() {
   const { user, route, menu_status } = useAuthContext();
 
   const { collapseSidebar, toggleSidebar, broken, collapsed } = useProSidebar();
-  const { logout } = useLogout();
+
   const { selected_branch, current_user } = UseaddheaderContext();
   const [check_collapse, setcheck_collapse] = useState(true);
   const [open, setopen] = useState("");
@@ -88,7 +88,7 @@ function Layout() {
           <Sidebar
             breakPoint="md"
             defaultCollapsed={true}
-            rootStyles={{ color: "#fff" }}
+            rootStyles={{ color: "#fff", fontSize: 14 }}
             backgroundColor="#1679FF"
           >
             <div
@@ -157,13 +157,24 @@ function Layout() {
                 <MenuItem
                   active={menu_status === "file"}
                   icon={<FileCopyIcon />}
-                  component={<Link to="/file-format" />}
+                  component={<Link to="/vendor-file-format" />}
                   rootStyles={{
                     color: "#ffff",
                     backgroundColor: "#1679FF",
                   }}
                 >
-                  File Format
+                  Vendor File Format
+                </MenuItem>
+                <MenuItem
+                  active={menu_status === "billing"}
+                  icon={<FileCopyIcon />}
+                  component={<Link to="/billing-file-format" />}
+                  rootStyles={{
+                    color: "#ffff",
+                    backgroundColor: "#1679FF",
+                  }}
+                >
+                  Billing File Format
                 </MenuItem>
                 <MenuItem
                   active={menu_status === "insurance"}
