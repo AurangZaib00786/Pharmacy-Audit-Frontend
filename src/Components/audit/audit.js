@@ -475,12 +475,14 @@ function Audit() {
 
   const handleExportToExcel = () => {
     let header = [];
+    let header_datafield = [];
     columns.slice(1).map((item) => {
       header.push(item.text);
+      header_datafield.push(item.dataField);
     });
 
     const ws = XLSX.utils.json_to_sheet(Data, {
-      header: header,
+      header: header_datafield,
     });
 
     const redcolor = {
@@ -519,6 +521,18 @@ function Audit() {
     });
 
     // Create workbook and add worksheet
+    XLSX.utils.sheet_add_aoa(ws, [header], { origin: "A1" });
+
+    ws["!cols"] = [
+      { wch: 15 },
+      { wch: 50 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+    ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet 01");
 
