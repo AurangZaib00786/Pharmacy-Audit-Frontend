@@ -263,7 +263,7 @@ function Bin() {
 
   return (
     <div className="user_main">
-      <h1>Bin Number</h1>
+      <h1 className="mb-2">Bin Number</h1>
       <div className="card me-3">
         <div className="card-header bg-white  d-flex justify-content-between">
           <h3>Bin Number list</h3>
@@ -336,7 +336,7 @@ function Bin() {
                   striped
                   bootstrap4
                   condensed
-                  wrapperClasses="table-resposive"
+                  wrapperClasses="table-responsive"
                 />
               </div>
             )}

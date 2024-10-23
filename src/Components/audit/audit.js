@@ -464,6 +464,8 @@ function Audit() {
       var optimize = alldata.filter((item) => item.result_package == 0);
     } else if (e.value === "negative") {
       var optimize = alldata.filter((item) => item.result_package < 0);
+    } else if (e.value === "positive") {
+      var optimize = alldata.filter((item) => item.result_package > 0);
     } else {
       var optimize = alldata;
     }
@@ -474,7 +476,7 @@ function Audit() {
   const handleExportToExcel = () => {
     let header = [];
     columns.slice(1).map((item) => {
-      header.push(item.dataField);
+      header.push(item.text);
     });
 
     const ws = XLSX.utils.json_to_sheet(Data, {
@@ -526,7 +528,7 @@ function Audit() {
 
   return (
     <div className="user_main">
-      <h1>Audit</h1>
+      <h1 className="mb-2">Audit</h1>
       {isloading && (
         <div className="text-center">
           <Spinner animation="border" variant="primary" />
@@ -546,8 +548,8 @@ function Audit() {
             Generate Report
           </Button>
         </div>
-        <div className="d-flex card-body p-0">
-          <div className="col-md-6 border-end border-secondary p-3">
+        <div className="d-md-flex card-body p-0">
+          <div className="col-md-6 border-md-end border-secondary p-3">
             <h5>Vendor Files</h5>
 
             <form onSubmit={handlesubmitvendor_files} className=" mt-3 p-0">
@@ -600,7 +602,10 @@ function Audit() {
             <div className="d-flex flex-wrap border-top col-11 pt-3 ">
               {vendor_filesdata.map((item) => {
                 return (
-                  <div key={item.name} className="background p-2 me-3 rounded ">
+                  <div
+                    key={item.name}
+                    className="background p-2 me-3 col-4 text-center  mb-2 rounded "
+                  >
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() => openimage(item)}
@@ -664,7 +669,10 @@ function Audit() {
             <div className="border-top  pt-3 d-flex col-11 flex-wrap">
               {billing_filesdata.map((item) => {
                 return (
-                  <div key={item.name} className="background p-2 me-3 rounded ">
+                  <div
+                    key={item.name}
+                    className="background p-2 me-3 col-4 text-center  mb-2 rounded "
+                  >
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() => openimage(item)}
@@ -698,6 +706,7 @@ function Audit() {
                     <Select
                       options={[
                         { value: "combine", label: "Combine Report" },
+                        { value: "positive", label: "Positive Report" },
                         { value: "negative", label: "Negtive Report" },
                         { value: "zero", label: "Zero Report" },
                       ]}
@@ -732,9 +741,8 @@ function Audit() {
                     rowStyle={rowStyle}
                     bootstrap4
                     condensed
-                    wrapperClasses="table-resposive"
-                    classes="audit-table"
                     filter={filterFactory()}
+                    wrapperClasses="table-responsive"
                   />
                 </div>
               )}

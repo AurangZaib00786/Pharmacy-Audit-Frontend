@@ -554,7 +554,7 @@ function Insurancereport() {
 
   return (
     <div className="user_main">
-      <h1>Audit</h1>
+      <h1 className="mb-2">Insurance Report </h1>
       {isloading && (
         <div className="text-center">
           <Spinner animation="border" variant="primary" />
@@ -574,8 +574,8 @@ function Insurancereport() {
             Generate Report
           </Button>
         </div>
-        <div className="d-flex card-body p-0">
-          <div className="col-md-6 border-end border-secondary p-3">
+        <div className="d-md-flex card-body p-0">
+          <div className="col-md-6 border-md-end border-secondary p-3">
             <h5>Vendor Files</h5>
 
             <form onSubmit={handlesubmitvendor_files} className=" mt-3 p-0">
@@ -625,10 +625,13 @@ function Insurancereport() {
               </div>
             </form>
 
-            <div className="d-flex flex-wrap border-top col-11 pt-3 ">
+            <div className="d-flex flex-wrap border-top  pt-3 ">
               {vendor_filesdata.map((item) => {
                 return (
-                  <div key={item.name} className="background p-2 me-3 rounded ">
+                  <div
+                    key={item.name}
+                    className="background p-2 me-3 col-4 text-center mb-2 rounded "
+                  >
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() => openimage(item)}
@@ -692,7 +695,10 @@ function Insurancereport() {
             <div className="border-top col-11  pt-3 d-flex flex-wrap">
               {billing_filesdata.map((item) => {
                 return (
-                  <div key={item.name} className="background p-2 me-3 rounded ">
+                  <div
+                    key={item.name}
+                    className="background p-2 me-3 col-4 text-center  mb-2  rounded "
+                  >
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={() => openimage(item)}
@@ -758,18 +764,17 @@ function Insurancereport() {
                       </div>
 
                       {!item.hide && (
-                        <>
+                        <div>
                           <BootstrapTable
                             {...props.baseProps}
                             rowStyle={rowStyle}
                             bootstrap4
                             condensed
-                            wrapperClasses="table-resposive"
-                            classes="audit-table"
                             filter={filterFactory()}
+                            wrapperClasses="table-responsive"
                           />
                           <hr />
-                        </>
+                        </div>
                       )}
                     </div>
                   )}

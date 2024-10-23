@@ -270,7 +270,7 @@ function Fileformat() {
 
   return (
     <div className="user_main">
-      <h1>Vendor File Formats</h1>
+      <h1 className="mb-2">Vendor File Formats</h1>
       <div className="card me-3">
         <div className="card-header bg-white  d-flex justify-content-between">
           <h3>Format list</h3>
@@ -335,7 +335,7 @@ function Fileformat() {
                   striped
                   bootstrap4
                   condensed
-                  wrapperClasses="table-resposive"
+                  wrapperClasses="table-responsive"
                 />
               </div>
             )}

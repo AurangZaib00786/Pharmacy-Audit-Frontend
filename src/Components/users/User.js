@@ -320,7 +320,7 @@ function User() {
   //                 striped
   //                 bootstrap4
   //                 condensed
-  //                 wrapperClasses="table-resposive"
+  //                 wrapperClasses="table-responsive"
   //               />
   //             </div>
   //           )}

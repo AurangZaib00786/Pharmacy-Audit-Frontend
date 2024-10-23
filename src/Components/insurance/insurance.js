@@ -227,7 +227,7 @@ function Insurance() {
 
   return (
     <div className="user_main">
-      <h1>Insurance Company</h1>
+      <h1 className="mb-2">Insurance Company</h1>
       <div className="card me-3">
         <div className="card-header bg-white  d-flex justify-content-between">
           <h3>Insurance Companies list</h3>
@@ -292,7 +292,7 @@ function Insurance() {
                   striped
                   bootstrap4
                   condensed
-                  wrapperClasses="table-resposive"
+                  wrapperClasses="table-responsive"
                 />
               </div>
             )}
