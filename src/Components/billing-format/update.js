@@ -15,6 +15,8 @@ function Update({ show, onHide, data }) {
   const { dispatch } = UseaddDataContext();
   const [name, setname] = useState(data.name);
   const [row_number, setrow_number] = useState(data.row_number);
+  const [packagesize, setpackagesize] = useState(data.bin_number);
+  const [bin_number, setbin_number] = useState(data.packagesize);
   const [ndc_column, setndc_column] = useState(data.ndc_column);
   const [description_column, setdescription_column] = useState(
     data.description_column
@@ -37,6 +39,8 @@ function Update({ show, onHide, data }) {
           name,
           row_number,
           ndc_column,
+          packagesize,
+          bin_number,
           description_column,
           quantity_column,
         }),
@@ -87,7 +91,6 @@ function Update({ show, onHide, data }) {
             </div>{" "}
             <div className="col-md-6 mb-3">
               <TextField
-                type="number"
                 className="form-control"
                 label="Row Number"
                 value={row_number}
@@ -98,6 +101,30 @@ function Update({ show, onHide, data }) {
                 required
               />
             </div>{" "}
+            <div className="col-md-6 mb-3">
+              <TextField
+                type="number"
+                className="form-control"
+                label="Bin Number"
+                value={bin_number}
+                onChange={(e) => {
+                  setbin_number(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <TextField
+                type="number"
+                className="form-control"
+                label="Package Size"
+                value={packagesize}
+                onChange={(e) => {
+                  setpackagesize(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control "

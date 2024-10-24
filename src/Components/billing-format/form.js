@@ -14,6 +14,8 @@ function Form(props) {
   const [name, setname] = useState("");
   const [row_number, setrow_number] = useState("");
   const [ndc_column, setndc_column] = useState("");
+  const [packagesize, setpackagesize] = useState("");
+  const [bin_number, setbin_number] = useState("");
   const [description_column, setdescription_column] = useState("");
   const [quantity_column, setquantity_column] = useState("");
   const [isloading, setisloading] = useState(false);
@@ -32,6 +34,8 @@ function Form(props) {
         name,
         row_number,
         ndc_column,
+        packagesize,
+        bin_number,
         reference: "billing",
         description_column,
         quantity_column,
@@ -52,6 +56,8 @@ function Form(props) {
       setdescription_column("");
       setrow_number("");
       setndc_column("");
+      setbin_number("");
+      setpackagesize("");
       setquantity_column("");
       success_toast();
     }
@@ -93,7 +99,30 @@ function Form(props) {
                 size="small"
                 required
               />
-            </div>{" "}
+            </div>
+            <div className="col-md-6 mb-3">
+              <TextField
+                className="form-control"
+                label="Bin Number"
+                value={bin_number}
+                onChange={(e) => {
+                  setbin_number(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <TextField
+                type="number"
+                className="form-control"
+                label="Package Size"
+                value={packagesize}
+                onChange={(e) => {
+                  setpackagesize(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control "

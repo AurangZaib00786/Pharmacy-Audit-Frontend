@@ -28,8 +28,6 @@ function Audit() {
   const { user, route, dispatch_auth } = useAuthContext();
   const { SearchBar } = Search;
   const { ExportCSVButton } = CSVExport;
-  const inputFile_vendor = useRef(null);
-  const inputFile_billing = useRef(null);
 
   const [Fileurl_vendor, setFileurl_vendor] = useState("");
   const [Fileurl_billing, setFileurl_billing] = useState("");
@@ -51,8 +49,8 @@ function Audit() {
   const [billing, setbilling] = useState("");
   const [allbillings, setallbillings] = useState([]);
   const [alldata, setalldata] = useState([]);
-
   const { logout } = useLogout();
+
   useEffect(() => {
     setisloading(true);
     const fetchvendorfiles = async () => {
@@ -221,34 +219,26 @@ function Audit() {
     return filename.split("/").shift();
   }
 
-  const onButtonClick_vendor = () => {
-    // `current` points to the mounted file input element
-    inputFile_vendor.current.click();
+  const handleimageselection_vendor = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFileurl_vendor({
+        file: file,
+        type: getExtension(file["type"]).toLowerCase(),
+        name: file["name"],
+      });
+    }
   };
 
-  const handleimageselection_vendor = (event) => {
-    const file = event.target.files[0];
-    setFileurl_vendor({
-      file: file,
-      type: getExtension(file["type"]).toLowerCase(),
-      name: file["name"],
-    });
-    event.target.value = "";
-  };
-
-  const onButtonClick_billing = () => {
-    // `current` points to the mounted file input element
-    inputFile_billing.current.click();
-  };
-
-  const handleimageselection_billing = (event) => {
-    const file = event.target.files[0];
-    setFileurl_billing({
-      file: file,
-      type: getExtension(file["type"]).toLowerCase(),
-      name: file["name"],
-    });
-    event.target.value = "";
+  const handleimageselection_billing = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFileurl_billing({
+        file: file,
+        type: getExtension(file["type"]).toLowerCase(),
+        name: file["name"],
+      });
+    }
   };
 
   const openimage = (item) => {
@@ -563,42 +553,37 @@ function Audit() {
           </Button>
         </div>
         <div className="d-md-flex card-body p-0">
-          <div className="col-md-6 border-md-end border-secondary p-3">
+          <div
+            className="col-md-6 p-3"
+            style={{ borderRight: "1px solid gray" }}
+          >
             <h5>Vendor Files</h5>
 
             <form onSubmit={handlesubmitvendor_files} className=" mt-3 p-0">
-              <div className="d-flex jsutify-content-between align-items-center ">
-                <div className="col-md-5 me-3">
+              <div className="row mb-3 ">
+                <div className="col-6 ">
                   <Select
                     options={allvendors}
                     value={vendor}
                     funct={(e) => setvendor(e)}
                     placeholder={"Vendor"}
                     required={true}
+                    disable_margin={true}
                   />
                 </div>
-                <p className="col-md-7">{Fileurl_vendor?.name}</p>
+
+                <div className="col-6">
+                  <input
+                    onChange={handleimageselection_vendor}
+                    type="file"
+                    className="form-control"
+                    accept=".xlsx,.xls,.csv"
+                    required={true}
+                  />
+                </div>
               </div>
 
               <div className="d-flex justify-content-end">
-                <div className="me-3 text-end">
-                  <input
-                    onChange={handleimageselection_vendor}
-                    id="select-file"
-                    type="file"
-                    accept=".xlsx,.xls,.csv"
-                    ref={inputFile_vendor}
-                    style={{ display: "none" }}
-                  />
-                  <Button
-                    style={{ width: "130px" }}
-                    className="mb-2"
-                    onClick={onButtonClick_vendor}
-                    shadow
-                  >
-                    Choose file
-                  </Button>
-                </div>
                 <div className=" text-end">
                   <Button
                     style={{ width: "110px" }}
@@ -613,12 +598,12 @@ function Audit() {
               </div>
             </form>
 
-            <div className="d-flex flex-wrap border-top col-11 pt-3 ">
+            <div className=" border-top col-11 pt-3 ">
               {vendor_filesdata.map((item) => {
                 return (
                   <div
                     key={item.name}
-                    className="background p-2 me-3 col-4 text-center  mb-2 rounded "
+                    className="background p-2 col-4 text-center me-2 mb-2 rounded "
                   >
                     <div
                       style={{ cursor: "pointer" }}
@@ -635,37 +620,28 @@ function Audit() {
             <h5>Billing Files</h5>
 
             <form onSubmit={handlesubmitbilling_files} className="mt-3 p-0">
-              <div className="d-flex jsutify-content-between align-items-center ">
-                <div className="col-md-5 me-3">
+              <div className="row mb-3">
+                <div className="col-6">
                   <Select
                     options={allbillings}
                     value={billing}
                     funct={(e) => setbilling(e)}
                     placeholder={"Billing"}
                     required={true}
+                    disable_margin={true}
                   />
                 </div>
-                <p className="col-md-7">{Fileurl_billing?.name}</p>
-              </div>
-              <div className="d-flex justify-content-end">
-                <div className="me-3 text-end">
+                <div className="col-6">
                   <input
                     onChange={handleimageselection_billing}
-                    id="select-file"
                     type="file"
+                    className="form-control"
                     accept=".xlsx,.xls,.csv"
-                    ref={inputFile_billing}
-                    style={{ display: "none" }}
+                    required={true}
                   />
-                  <Button
-                    style={{ width: "130px" }}
-                    className="mb-2"
-                    onClick={onButtonClick_billing}
-                    shadow
-                  >
-                    Choose file
-                  </Button>
                 </div>
+              </div>
+              <div className="d-flex justify-content-end">
                 <div className=" text-end">
                   <Button
                     style={{ width: "110px" }}
@@ -680,12 +656,12 @@ function Audit() {
               </div>
             </form>
 
-            <div className="border-top  pt-3 d-flex col-11 flex-wrap">
+            <div className="border-top  pt-3 row col-11 ">
               {billing_filesdata.map((item) => {
                 return (
                   <div
                     key={item.name}
-                    className="background p-2 me-3 col-4 text-center  mb-2 rounded "
+                    className="background p-2 col-4 text-center me-2  mb-2 rounded "
                   >
                     <div
                       style={{ cursor: "pointer" }}

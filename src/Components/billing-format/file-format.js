@@ -140,6 +140,18 @@ function BillingFileformat() {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "bin_number",
+      text: "Bin No",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "packagesize",
+      text: "Pkg Size",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "ndc_column",
       text: "NDC Column",
       sort: true,
