@@ -103,7 +103,6 @@ function Update({ show, onHide, data }) {
             </div>{" "}
             <div className="col-md-6 mb-3">
               <TextField
-                type="number"
                 className="form-control"
                 label="Bin Number"
                 value={bin_number}
@@ -115,7 +114,6 @@ function Update({ show, onHide, data }) {
             </div>
             <div className="col-md-6 mb-3">
               <TextField
-                type="number"
                 className="form-control"
                 label="Package Size"
                 value={packagesize}
