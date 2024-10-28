@@ -146,6 +146,12 @@ function Fileformat() {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "date_column",
+      text: "Date Column",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "description_column",
       text: "Description Column",
       sort: true,

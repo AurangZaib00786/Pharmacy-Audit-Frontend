@@ -210,6 +210,17 @@ function Layout() {
               >
                 Audit Report
               </MenuItem>
+              <MenuItem
+                active={menu_status === "auditdetail"}
+                icon={<ColorizeIcon />}
+                component={<Link to="/audit-details" />}
+                rootStyles={{
+                  color: "#ffff",
+                  backgroundColor: "#1679FF",
+                }}
+              >
+                Audit Details Report
+              </MenuItem>
 
               <MenuItem
                 active={menu_status === "insurancereport"}

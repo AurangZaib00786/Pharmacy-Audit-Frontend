@@ -146,6 +146,12 @@ function BillingFileformat() {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "date_column",
+      text: "Date Column",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "packagesize",
       text: "Pkg Size",
       sort: true,

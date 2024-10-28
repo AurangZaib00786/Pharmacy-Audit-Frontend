@@ -14,6 +14,7 @@ function Update({ show, onHide, data }) {
   const [isloading, setisloading] = useState(false);
   const { dispatch } = UseaddDataContext();
   const [name, setname] = useState(data.name);
+  const [date_column, setdate_column] = useState(data.date_column);
   const [row_number, setrow_number] = useState(data.row_number);
   const [ndc_column, setndc_column] = useState(data.ndc_column);
   const [description_column, setdescription_column] = useState(
@@ -37,6 +38,7 @@ function Update({ show, onHide, data }) {
           name,
           row_number,
           ndc_column,
+          date_column,
           description_column,
           quantity_column,
         }),
@@ -109,6 +111,17 @@ function Update({ show, onHide, data }) {
                 size="small"
               />
             </div>{" "}
+            <div className="col-md-6 mb-3">
+              <TextField
+                className="form-control "
+                label="Date Column"
+                value={date_column}
+                onChange={(e) => {
+                  setdate_column(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control  "

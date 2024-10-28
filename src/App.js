@@ -15,6 +15,7 @@ import Insurance from "./Components/insurance/insurance";
 import Bin from "./Components/bin/bin";
 import Insurancereport from "./Components/insurancereport/insurancereport";
 import BillingFileformat from "./Components/billing-format/file-format";
+import AuditDetails from "./Components/audit details/auditdetails";
 
 function Routing() {
   const { user } = useAuthContext();
@@ -52,6 +53,10 @@ function Routing() {
             <Route
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/audit-details"
+              element={user ? <AuditDetails /> : <Navigate to={"/"} />}
             ></Route>
             <Route
               path="/vendor-file-format"

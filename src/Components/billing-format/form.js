@@ -12,6 +12,7 @@ function Form(props) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
   const [name, setname] = useState("");
+  const [date_column, setdate_column] = useState("");
   const [row_number, setrow_number] = useState("");
   const [ndc_column, setndc_column] = useState("");
   const [packagesize, setpackagesize] = useState("");
@@ -35,6 +36,7 @@ function Form(props) {
         row_number,
         ndc_column,
         packagesize,
+        date_column,
         bin_number,
         reference: "billing",
         description_column,
@@ -107,6 +109,17 @@ function Form(props) {
                 value={bin_number}
                 onChange={(e) => {
                   setbin_number(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <TextField
+                className="form-control "
+                label="Date Column"
+                value={date_column}
+                onChange={(e) => {
+                  setdate_column(e.target.value);
                 }}
                 size="small"
               />

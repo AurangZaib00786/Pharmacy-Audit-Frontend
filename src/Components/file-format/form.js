@@ -14,6 +14,7 @@ function Form(props) {
   const [name, setname] = useState("");
   const [row_number, setrow_number] = useState("");
   const [ndc_column, setndc_column] = useState("");
+  const [date_column, setdate_column] = useState("");
   const [description_column, setdescription_column] = useState("");
   const [quantity_column, setquantity_column] = useState("");
   const [isloading, setisloading] = useState(false);
@@ -33,6 +34,7 @@ function Form(props) {
         row_number,
         ndc_column,
         reference: "vendor",
+        date_column,
         description_column,
         quantity_column,
       }),
@@ -105,6 +107,17 @@ function Form(props) {
                 size="small"
               />
             </div>{" "}
+            <div className="col-md-6 mb-3">
+              <TextField
+                className="form-control "
+                label="Date Column"
+                value={date_column}
+                onChange={(e) => {
+                  setdate_column(e.target.value);
+                }}
+                size="small"
+              />
+            </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control  "
