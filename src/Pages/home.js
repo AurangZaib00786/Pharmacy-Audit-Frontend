@@ -24,6 +24,7 @@ import { UseaddheaderContext } from "../hooks/useaddheadercontext";
 import BusinessIcon from "@material-ui/icons/Business";
 import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
+import TableChartIcon from "@material-ui/icons/TableChart";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 function Layout() {
   const { user, route, menu_status } = useAuthContext();
@@ -212,7 +213,7 @@ function Layout() {
               </MenuItem>
               <MenuItem
                 active={menu_status === "auditdetail"}
-                icon={<ColorizeIcon />}
+                icon={<TableChartIcon />}
                 component={<Link to="/audit-details" />}
                 rootStyles={{
                   color: "#ffff",

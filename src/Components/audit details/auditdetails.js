@@ -1,15 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import "./auditdetails.css";
-import BootstrapTable from "react-bootstrap-table-next";
-import ToolkitProvider, {
-  Search,
-  CSVExport,
-} from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
-import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
-import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import { useAuthContext } from "../../hooks/useauthcontext";
-import filterFactory from "react-bootstrap-table2-filter";
 import Button from "react-bootstrap/Button";
 import Alert_before_delete from "../alerts/alert_before_delete";
 import { ToastContainer } from "react-toastify";
@@ -17,26 +9,24 @@ import custom_toast from "../alerts/custom_toast";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import XLSX from "xlsx-js-style";
 import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
 import { useReactToPrint } from "react-to-print";
-
+import TextField from "@mui/material/TextField";
 function AuditDetails() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
-  const { SearchBar } = Search;
-  const { ExportCSVButton } = CSVExport;
 
   const [Fileurl_vendor, setFileurl_vendor] = useState("");
+  const [search, setsearch] = useState("");
   const [Fileurl_billing, setFileurl_billing] = useState("");
   const [vendor_filesdata, setvendor_filesdata] = useState([]);
   const [billing_filesdata, setbilling_filesdata] = useState([]);
 
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,vendor_files_datewise`;
+  const url_to_delete = `${route}/api/manage-files/?directory=billing_files_datewise,vendor_files_datewise`;
 
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
@@ -56,7 +46,7 @@ function AuditDetails() {
     setisloading(true);
     const fetchvendorfiles = async () => {
       const response = await fetch(
-        `${route}/api/manage-files/?directory=vendor_files`,
+        `${route}/api/manage-files/?directory=vendor_files_datewise`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -83,7 +73,7 @@ function AuditDetails() {
 
     const fetchbillingfiles = async () => {
       const response = await fetch(
-        `${route}/api/manage-files/?directory=billing_files`,
+        `${route}/api/manage-files/?directory=billing_files_datewise`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -109,7 +99,7 @@ function AuditDetails() {
     dispatch({ type: "Set_data", payload: [] });
     const fetchvendors = async () => {
       const response = await fetch(
-        `${route}/api/vendor-file-formats/?reference=vendor_files_datewise`,
+        `${route}/api/vendor-file-formats/?reference=vendor`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -287,10 +277,6 @@ function AuditDetails() {
     }
   };
 
-  const vendor_sum_formatter = (cell, row, rowIndex) => {
-    return cell !== "Not Exist" ? cell?.toFixed(2) : cell;
-  };
-
   const handlegeneratereport = async () => {
     setisloading(true);
     setreport_type({
@@ -325,6 +311,16 @@ function AuditDetails() {
     pageStyle: "@page { size: A4 ; }",
     onAfterPrint: () => {},
   });
+
+  const Searchndc = useMemo(() => {
+    if (search) {
+      return alldata.filter((item) =>
+        JSON.stringify(item.ndc).includes(search.toLowerCase())
+      );
+    } else {
+      return alldata;
+    }
+  }, [search, alldata]);
 
   return (
     <div className="user_main">
@@ -474,18 +470,37 @@ function AuditDetails() {
       </div>
       <div className="card me-3 mt-3">
         <div className="card-body">
-          <Button
-            onClick={handleprint}
-            variant="success"
-            className="mb-3"
-            disabled={alldata?.length === 0}
-            shadow
-          >
-            Print PDF
-          </Button>
+          <div className="d-flex justify-content-between">
+            <Button
+              onClick={handleprint}
+              variant="success"
+              className="mb-3"
+              disabled={alldata?.length === 0}
+              shadow
+            >
+              Print PDF
+            </Button>
+            <div className="col-6 col-md-3 mb-3">
+              <TextField
+                className="form-control "
+                label="Search by NDC"
+                value={search}
+                onChange={(e) => {
+                  setsearch(e.target.value);
+                }}
+                // onBlur={(e) => {
+                //   setsearch(e.target.value);
+                // }}
+                size="small"
+                InputLabelProps={{ shrink: true }}
+              />
+            </div>
+          </div>
           <div style={{ zoom: ".8" }} ref={componentRef}>
-            <h3 className="text-center">Audit Details Report</h3>
-            {alldata.map((item) => {
+            {alldata?.length !== 0 && (
+              <h3 className="text-center">Audit Details Report</h3>
+            )}
+            {Searchndc.map((item) => {
               return (
                 <div key={item.ndc} className="d-flex">
                   <div className="col-6">
