@@ -14,6 +14,8 @@ import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
 import { useReactToPrint } from "react-to-print";
 import TextField from "@mui/material/TextField";
+import { FixedSizeList as List } from "react-window";
+
 function AuditDetails() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
@@ -322,6 +324,90 @@ function AuditDetails() {
     }
   }, [search, alldata]);
 
+  const makeitem = ({ index, style, data }) => {
+    const item = data[index];
+    return (
+      <div key={item.ndc} className="d-flex">
+        <div className="col-6">
+          <table className="table table-bordered">
+            <thead className="bg-success fw-bold">
+              <tr>
+                <td>NDC No: {item.ndc}</td>
+                <td colSpan={2}>
+                  {item?.billing_data.length > 0
+                    ? item?.billing_data[0]?.description
+                    : ""}
+                </td>
+              </tr>
+              <tr>
+                <td>Billing Date</td>
+                <td>Qty Bill</td>
+                <td>Source</td>
+              </tr>
+            </thead>
+            <tbody>
+              {item?.billing_data.length > 0 ? (
+                item?.billing_data?.map((bill, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{bill.date}</td>
+                      <td>{bill.quantity}</td>
+                      <td>{bill.source}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td className="text-center text-danger" colSpan={3}>
+                    No Data
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="col-6">
+          <table className="table table-bordered">
+            <thead className="bg-success fw-bold">
+              <tr>
+                <td>NDC No: {item.ndc}</td>
+                <td colSpan={2}>
+                  {item?.vendor_data.length > 0
+                    ? item?.vendor_data[0]?.description
+                    : ""}
+                </td>
+              </tr>
+              <tr>
+                <td>Purchase Date</td>
+                <td>Qty Purchase</td>
+                <td>Source</td>
+              </tr>
+            </thead>
+            <tbody>
+              {item?.vendor_data.length > 0 ? (
+                item?.vendor_data?.map((bill, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{bill.date}</td>
+                      <td>{bill.quantity}</td>
+                      <td>{bill.source}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td className="text-center text-danger" colSpan={3}>
+                    No Data
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="user_main">
       <h1 className="mb-2">Audit Details</h1>
@@ -500,88 +586,15 @@ function AuditDetails() {
             {alldata?.length !== 0 && (
               <h3 className="text-center">Audit Details Report</h3>
             )}
-            {Searchndc.map((item) => {
-              return (
-                <div key={item.ndc} className="d-flex">
-                  <div className="col-6">
-                    <table className="table table-bordered">
-                      <thead className="bg-success fw-bold">
-                        <tr>
-                          <td>NDC No: {item.ndc}</td>
-                          <td colSpan={2}>
-                            {item?.billing_data.length > 0
-                              ? item?.billing_data[0]?.description
-                              : ""}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Billing Date</td>
-                          <td>Qty Bill</td>
-                          <td>Source</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {item?.billing_data.length > 0 ? (
-                          item?.billing_data?.map((bill, index) => {
-                            return (
-                              <tr key={index}>
-                                <td>{bill.date}</td>
-                                <td>{bill.quantity}</td>
-                                <td>{bill.source}</td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td className="text-center text-danger" colSpan={3}>
-                              No Data
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="col-6">
-                    <table className="table table-bordered">
-                      <thead className="bg-success fw-bold">
-                        <tr>
-                          <td>NDC No: {item.ndc}</td>
-                          <td colSpan={2}>
-                            {item?.vendor_data.length > 0
-                              ? item?.vendor_data[0]?.description
-                              : ""}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Purchase Date</td>
-                          <td>Qty Purchase</td>
-                          <td>Source</td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {item?.vendor_data.length > 0 ? (
-                          item?.vendor_data?.map((bill, index) => {
-                            return (
-                              <tr key={index}>
-                                <td>{bill.date}</td>
-                                <td>{bill.quantity}</td>
-                                <td>{bill.source}</td>
-                              </tr>
-                            );
-                          })
-                        ) : (
-                          <tr>
-                            <td className="text-center text-danger" colSpan={3}>
-                              No Data
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              );
-            })}
+            <List
+              height={600}
+              itemCount={alldata?.length}
+              itemSize={100}
+              width="100%"
+              itemData={Searchndc}
+            >
+              {makeitem}
+            </List>
           </div>
         </div>
       </div>
