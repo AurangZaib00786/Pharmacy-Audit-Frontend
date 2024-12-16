@@ -211,7 +211,7 @@ function Layout() {
               >
                 Audit Report
               </MenuItem>
-              <MenuItem
+              {/* <MenuItem
                 active={menu_status === "auditdetail"}
                 icon={<TableChartIcon />}
                 component={<Link to="/audit-details" />}
@@ -233,7 +233,7 @@ function Layout() {
                 }}
               >
                 Insurance Report
-              </MenuItem>
+              </MenuItem> */}
             </Menu>
           </Sidebar>
 

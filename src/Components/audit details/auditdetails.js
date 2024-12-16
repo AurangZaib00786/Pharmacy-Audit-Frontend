@@ -410,14 +410,18 @@ function AuditDetails() {
 
   return (
     <div className="user_main">
-      <h1 className="mb-2">Audit Details</h1>
+      {/* <h1 className="mb-2">Audit Details</h1> */}
       {isloading && (
         <div className="text-center">
           <Spinner animation="border" variant="primary" />
         </div>
       )}
       <div className="card me-3">
-        <div className="card-header d-flex justify-content-end ">
+      <div className="card-header d-flex align-items-center justify-content-between ">
+          <div>
+            <h1 className='' style={{ fontSize: '20px' }}>Audit details report</h1>
+          </div>
+          <div>
           <Button
             className="me-3"
             onClick={handledeletereport}
@@ -429,6 +433,7 @@ function AuditDetails() {
           <Button onClick={handlegeneratereport} variant="success" shadow>
             Generate Report
           </Button>
+          </div>
         </div>
         <div className="d-md-flex card-body p-0">
           <div

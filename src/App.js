@@ -42,14 +42,14 @@ function Routing() {
               path="/bin"
               element={user ? <Bin /> : <Navigate to={"/"} />}
             ></Route>
-            <Route
+            {/* <Route
               path="/insurance-report"
               element={user ? <Insurancereport /> : <Navigate to={"/"} />}
-            ></Route>
-            <Route
+            ></Route> */}
+            {/* <Route
               path="/insurance"
               element={user ? <Insurance /> : <Navigate to={"/"} />}
-            ></Route>
+            ></Route> */}
             <Route
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
