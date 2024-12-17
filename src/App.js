@@ -46,18 +46,18 @@ function Routing() {
               path="/insurance-report"
               element={user ? <Insurancereport /> : <Navigate to={"/"} />}
             ></Route> */}
-            {/* <Route
+            <Route
               path="/insurance"
               element={user ? <Insurance /> : <Navigate to={"/"} />}
-            ></Route> */}
+            ></Route>
             <Route
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
             ></Route>
-            <Route
+            {/* <Route
               path="/audit-details"
               element={user ? <AuditDetails /> : <Navigate to={"/"} />}
-            ></Route>
+            ></Route> */}
             <Route
               path="/vendor-file-format"
               element={user ? <Fileformat /> : <Navigate to={"/"} />}

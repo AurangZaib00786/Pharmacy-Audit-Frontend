@@ -46,6 +46,11 @@ function Audit() {
     value: "combine",
     label: "Combine Report",
   });
+
+  const [insurance_report_type, setinsurance_report_type] = useState({
+    value: "combine",
+    label: "Combine Report",
+  });
   const [search, setsearch] = useState("");
 
   const [audit_report_type, setaudit_report_type] = useState({
@@ -59,9 +64,11 @@ function Audit() {
   const [billing, setbilling] = useState("");
   const [allbillings, setallbillings] = useState([]);
   const [alldata, setalldata] = useState([]);
+  const [auditdata, setauditdata] = useState([]);
+  const [insurancedata, setinsurancedata] = useState([]);
   const { logout } = useLogout();
 
-  console.log(alldata)
+  // console.log(alldata)
   useEffect(() => {
     setisloading(true);
     const fetchvendorfiles = async () => {
@@ -262,13 +269,14 @@ function Audit() {
 
   const Searchndc = useMemo(() => {
     if (search) {
-      return alldata.filter((item) =>
-        JSON.stringify(item.ndc).includes(search.toLowerCase())
-      );
+      return alldata.filter((item) => item.ndc === Number(search));
     } else {
       return alldata;
     }
   }, [search, alldata]);
+
+
+
 
   const openimage = (item) => {
     if (item.file instanceof File) {
@@ -349,11 +357,12 @@ function Audit() {
 
   const handlegeneratereport = async () => {
     setisloading(true);
-    setreport_type({
-      value: "combine",
-      label: "Combine Report",
-    });
+
     if (audit_report_type.value === "audit") {
+      setreport_type({
+        value: "combine",
+        label: "Combine Report",
+      });
       const response = await fetch(`${route}/api/audit-report/`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
@@ -455,7 +464,7 @@ function Audit() {
           return item;
         });
         dispatch({ type: "Set_data", payload: optimize });
-        setalldata(optimize);
+        setauditdata(optimize);
         setisloading(false);
         custom_toast(json.message);
       }
@@ -463,10 +472,7 @@ function Audit() {
     }
     if (audit_report_type.value === "audit_detail") {
       setisloading(true);
-      setreport_type({
-        value: "combine",
-        label: "Combine Report",
-      });
+
       const response = await fetch(`${route}/api/audit-report-detail/`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
@@ -487,7 +493,7 @@ function Audit() {
 
     if (audit_report_type.value === "insurance") {
       setisloading(true);
-      setreport_type({
+      setinsurance_report_type({
         value: "combine",
         label: "Combine Report",
       });
@@ -602,7 +608,7 @@ function Audit() {
           return report;
         });
         dispatch({ type: "Set_data", payload: optimize });
-        setalldata(optimize);
+        setinsurancedata(optimize);
         setisloading(false);
         custom_toast(json.message);
       }
@@ -629,17 +635,44 @@ function Audit() {
   const handlereportchange = (e) => {
     setreport_type(e);
     if (e.value === "zero") {
-      var optimize = alldata.filter((item) => item.result_package == 0);
+      var optimize = auditdata.filter((item) => item.result_package == 0);
     } else if (e.value === "negative") {
-      var optimize = alldata.filter((item) => item.result_package < 0);
+      var optimize = auditdata.filter((item) => item.result_package < 0);
     } else if (e.value === "positive") {
-      var optimize = alldata.filter((item) => item.result_package > 0);
+      var optimize = auditdata.filter((item) => item.result_package > 0);
     } else {
-      var optimize = alldata;
+      var optimize = auditdata;
     }
 
     dispatch({ type: "Set_data", payload: optimize });
   };
+
+  const [filteredData, setFilteredData] = useState([]); // New state for filtered data
+
+  const handleinsurancereportchange = (e) => {
+    setinsurance_report_type(e);
+
+    let filteredReports = insurancedata.map((report) => {
+      let filteredData = [];
+      if (e.value === "zero") {
+        filteredData = report.data.filter((item) => item.result_package === 0);
+      } else if (e.value === "negative") {
+        filteredData = report.data.filter((item) => item.result_package < 0);
+      } else if (e.value === "positive") {
+        filteredData = report.data.filter((item) => item.result_package > 0);
+      } else {
+        filteredData = report.data; // Default case: all data
+      }
+      return { ...report, data: filteredData }; // Update filtered data for the report
+    });
+
+    setFilteredData(filteredReports); // Update the state with filtered data
+  };
+
+  useEffect(() => {
+    setFilteredData(insurancedata); // Set initial filtered data when insurancedata is updated
+  }, [insurancedata]);
+
 
   const handleExportToExcel = () => {
     let header = [];
@@ -707,18 +740,78 @@ function Audit() {
     // Generate Excel file
     XLSX.writeFile(wb, "Audit Report.xlsx");
   };
+  const handleExportToExcelInsurance = (insuranceData, insuranceCompanyName) => {
+    // Extract header and data fields
+    let header = [];
+    let header_datafield = [];
+    columns.slice(1).map((item) => {
+      header.push(item.text);
+      header_datafield.push(item.dataField);
+    });
+
+    // Convert JSON to worksheet
+    const ws = XLSX.utils.json_to_sheet(insuranceData, {
+      header: header_datafield,
+    });
+
+    // Define color styles
+    const redcolor = { font: { color: { rgb: "FF0000" } } };
+    const greencolor = { font: { color: { rgb: "008000" } } };
+    const bluecolor = { font: { color: { rgb: "0000FF" } } };
+    const blackcolor = { font: { color: { rgb: "000000" } } };
+
+    // Apply row coloring based on conditions
+    insuranceData.forEach((row, rowIndex) => {
+      let color = blackcolor;
+      if (row.result_package < 0) {
+        color = redcolor;
+      } else if (row.result_package === 0) {
+        color = greencolor;
+      } else if (row.result_package === "Not Exist") {
+        color = bluecolor;
+      }
+
+      const colsInRow = Object.keys(row).length;
+      for (let col = 0; col < colsInRow; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: rowIndex + 1, c: col });
+        if (!ws[cellAddress]) ws[cellAddress] = {};
+        ws[cellAddress].s = color;
+      }
+    });
+
+    // Add header to worksheet
+    XLSX.utils.sheet_add_aoa(ws, [header], { origin: "A1" });
+
+    // Set column widths
+    ws["!cols"] = [
+      { wch: 15 },
+      { wch: 50 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+      { wch: 10 },
+    ];
+
+    // Create workbook and append worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet 01");
+
+    // Generate Excel file dynamically named
+    const fileName = `${insuranceCompanyName}_Audit_Report.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   const PageSize = 20;
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  // Calculate the start and end index for the current page
   const startIndex = currentPage * PageSize;
   const endIndex = startIndex + PageSize;
 
-  // Get the data for the current page
   const currentPageData = Searchndc.slice(startIndex, endIndex);
 
-  // Handler to change the page
   const goToNextPage = () => {
     if (currentPage < Math.ceil(Searchndc.length / PageSize) - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -828,6 +921,18 @@ function Audit() {
     });
     dispatch({ type: "Set_data", payload: optimize });
   }
+
+
+const handleHideClickInsurance = (company) => {
+  const updatedData = filteredData.map((item) => {
+    if (item.insurance_company_name === company) {
+      return { ...item, hide: !item.hide }; // Toggle the 'hide' property
+    }
+    return item;
+  });
+  setFilteredData(updatedData); // Update local state
+};
+
 
   return (
     <div className="user_main mt-4">
@@ -994,14 +1099,14 @@ function Audit() {
                     { value: "negative", label: "Negtive Report" },
                     { value: "zero", label: "Zero Report" },
                   ]}
-                  placeholder={"Report Type"}
+                  placeholder={"Filters"}
                   value={report_type}
                   funct={handlereportchange}
                 />
               </div>
             )}
 
-            {audit_report_type.value === "audit_detail" && (
+            {/* {audit_report_type.value === "audit_detail" && (
               <div className="col-6 col-md-2">
                 <Select
                   options={[
@@ -1016,7 +1121,28 @@ function Audit() {
                 />
               </div>
 
+            )} */}
+
+            {audit_report_type.value === "insurance" && (
+              <div className="col-6 col-md-2">
+                <Select
+                  options={[
+                    { value: "combine", label: "Combine Report" },
+                    { value: "positive", label: "Positive Report" },
+                    { value: "negative", label: "Negative Report" },
+                    { value: "zero", label: "Zero Report" },
+                  ]}
+                  placeholder={"Filters"}
+                  value={insurance_report_type}
+                  funct={handleinsurancereportchange} // Ensure onChange is used here
+                />
+              </div>
             )}
+
+            {/* Use filteredData for display */}
+            {/* <TableComponent data={filteredData} /> */}
+
+
 
             <div className="col-6 col-md-2">
               <Select
@@ -1116,18 +1242,17 @@ function Audit() {
 
               <div className="col-6 col-md-3 mb-3">
                 <TextField
-                  className="form-control "
+                  className="form-control"
                   label="Search by NDC"
                   value={search}
                   onChange={(e) => {
                     setsearch(e.target.value);
                   }}
-                  // onBlur={(e) => {
-                  //   setsearch(e.target.value);
-                  // }}
+                  type="number"
                   size="small"
                   InputLabelProps={{ shrink: true }}
                 />
+
               </div>
             </div>
             <div style={{ zoom: ".8" }} ref={componentRef}>
@@ -1176,11 +1301,11 @@ function Audit() {
         <div className="card me-3 mt-3">
           <div className="card-body">
             <div style={{ zoom: ".8" }}>
-              {Data?.map((item) => {
+              {filteredData?.map((item) => {
                 return (
                   <ToolkitProvider
                     keyField="ndc"
-                    data={item.data ? item.data : []}
+                    data={item.data ? item.data : []} // Filtered data passed here
                     columns={columns}
                     exportCSV={{ onlyExportFiltered: true, exportAll: false }}
                     search
@@ -1194,16 +1319,13 @@ function Audit() {
                           <div>
                             <ExportCSVButton
                               {...props.csvProps}
-                              className="csvbutton  border bg-secondary text-light me-2"
+                              className="csvbutton border bg-secondary text-light me-2"
                             >
                               Export CSV
                             </ExportCSVButton>
                             <Button
                               onClick={() =>
-                                handleExportToExcel(
-                                  item.data,
-                                  item.insurance_company_name
-                                )
+                                handleExportToExcelInsurance(item.data, item.insurance_company_name)
                               }
                               className="me-2"
                               variant="success"
@@ -1211,15 +1333,15 @@ function Audit() {
                             >
                               Export Excel
                             </Button>
+
                             <Button
-                              onClick={() =>
-                                handlehideclick(item.insurance_company_name)
-                              }
-                              variant="secondary"
-                              shadow
-                            >
-                              {item.hide ? "View" : "Hide"}
-                            </Button>
+  onClick={() => handleHideClickInsurance(item.insurance_company_name)}
+  variant="secondary"
+  shadow
+>
+  {item.hide ? "View" : "Hide"}
+</Button>
+
                           </div>
                           <SearchBar {...props?.searchProps} />
                         </div>
@@ -1242,6 +1364,7 @@ function Audit() {
                   </ToolkitProvider>
                 );
               })}
+
             </div>
           </div>
         </div>
