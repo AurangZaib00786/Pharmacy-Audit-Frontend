@@ -34,6 +34,7 @@ export const AuthContextProvider = ({ children }) => {
     uservalue = null;
   }
   // https://api.pharmacyauditpro.com
+  // http://127.0.0.1:8000 
   const [state, dispatch_auth] = useReducer(authReducer, {
     user: uservalue,
     menu_status: "dashboard",
