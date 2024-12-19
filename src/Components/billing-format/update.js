@@ -16,8 +16,8 @@ function Update({ show, onHide, data }) {
   const [name, setname] = useState(data.name);
   const [date_column, setdate_column] = useState(data.date_column);
   const [row_number, setrow_number] = useState(data.row_number);
-  const [packagesize, setpackagesize] = useState(data.bin_number);
-  const [bin_number, setbin_number] = useState(data.packagesize);
+  const [packagesize, setpackagesize] = useState(data.packagesize);
+  const [bin_number, setbin_number] = useState(data.bin_number);
   const [ndc_column, setndc_column] = useState(data.ndc_column);
   const [description_column, setdescription_column] = useState(
     data.description_column

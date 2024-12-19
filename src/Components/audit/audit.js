@@ -37,7 +37,7 @@ function Audit() {
   const [vendor_filesdata, setvendor_filesdata] = useState([]);
   const [billing_filesdata, setbilling_filesdata] = useState([]);
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,vendor_files`;
+  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,billing_files_datewise,consolidated_reports,insurance_billing_files,vendor_files,vendor_files_datewise`;
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
   const [callagain_billing, setcallagain_billing] = useState(false);
@@ -259,13 +259,20 @@ function Audit() {
     }
   };
 
+
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
     bodyClass: "print_class_purchase",
-    pageStyle: "@page { size: A4 ; }",
-    onAfterPrint: () => { },
+    pageStyle: `
+      @page { size: A4; margin: 20mm; }
+      .pagination, .pagination * { display: none !important; } /* Hide pagination controls */
+      .List { overflow: visible !important; } /* Ensure no scroll is visible */
+      .print-container { zoom: 1; width: 100%; } /* Reset zoom for print */
+    `,
+  
   });
+  
 
   const Searchndc = useMemo(() => {
     if (search) {
@@ -274,9 +281,33 @@ function Audit() {
       return alldata;
     }
   }, [search, alldata]);
-
-
-
+  
+  const PageSize = 20;
+  const [currentPage, setCurrentPage] = useState(0);
+  
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [search]);
+  
+  const startIndex = currentPage * PageSize;
+  const endIndex = startIndex + PageSize;
+  
+  const currentPageData = useMemo(() => {
+    return Searchndc.slice(startIndex, endIndex);
+  }, [Searchndc, startIndex, endIndex]);
+  
+  const goToNextPage = () => {
+    if (currentPage < Math.ceil(Searchndc.length / PageSize) - 1) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+  
+  const goToPreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+  console.log(currentPageData)
 
   const openimage = (item) => {
     if (item.file instanceof File) {
@@ -803,39 +834,20 @@ function Audit() {
     XLSX.writeFile(wb, fileName);
   };
 
-  const PageSize = 20;
-
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const startIndex = currentPage * PageSize;
-  const endIndex = startIndex + PageSize;
-
-  const currentPageData = Searchndc.slice(startIndex, endIndex);
-
-  const goToNextPage = () => {
-    if (currentPage < Math.ceil(Searchndc.length / PageSize) - 1) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
+ 
 
   const makeitem = ({ index, style, data }) => {
     const item = data[index];
+  
     return (
-      <div style={style} key={item.ndc} className="d-flex">
-        {/* Table layout remains the same as your original code */}
-        <div className="col-6">
+      <div style={{ ...style, minHeight: "auto", overflow: "hidden" }} key={item.ndc} className="d-flex flex-wrap">
+        <div className="col-6" style={{ minHeight: "100%", overflowY: "auto" }}>
           <table className="table table-bordered">
             <thead className="bg-success fw-bold">
               <tr>
                 <td>NDC No: {item.ndc}</td>
                 <td colSpan={2}>
-                  {item?.billing_data.length > 0 ? item?.billing_data[0]?.description : ""}
+                  {item?.billing_data.length > 0 ? item.billing_data[0]?.description : ""}
                 </td>
               </tr>
               <tr>
@@ -846,8 +858,8 @@ function Audit() {
             </thead>
             <tbody>
               {item?.billing_data.length > 0 ? (
-                item?.billing_data.map((bill, idx) => (
-                  <tr key={idx}>
+                item.billing_data.map((bill, idx) => (
+                  <tr key={idx} style={{ minHeight: "40px" }}>
                     <td>{bill.date}</td>
                     <td>{bill.quantity}</td>
                     <td>{bill.source}</td>
@@ -863,13 +875,15 @@ function Audit() {
             </tbody>
           </table>
         </div>
-        <div className="col-6">
+  
+        {/* Vendor Data Table */}
+        <div className="col-6" style={{ minHeight: "100%", overflowY: "auto" }}>
           <table className="table table-bordered">
             <thead className="bg-success fw-bold">
               <tr>
                 <td>NDC No: {item.ndc}</td>
                 <td colSpan={5}>
-                  {item?.vendor_data.length > 0 ? item?.vendor_data[0]?.description : ""}
+                  {item?.vendor_data.length > 0 ? item.vendor_data[0]?.description : ""}
                 </td>
               </tr>
               <tr>
@@ -882,14 +896,16 @@ function Audit() {
             </thead>
             <tbody>
               {item?.vendor_data.length > 0 ? (
-                item?.vendor_data.map((vendor, idx) => {
-                  const packageSize = item?.billing_data[idx]?.packagesize || 0;
-                  const total = vendor.quantity * packageSize;
+                item.vendor_data.map((vendor, idx) => {
+                  const packageSize = item?.billing_data[0]?.packagesize || 0; // Take the first `packagesize` value
+                  const vendorQuantity = vendor.quantity || 0;
+                  const total = packageSize * vendorQuantity;
+  
                   return (
-                    <tr key={idx}>
+                    <tr key={idx} style={{ minHeight: "40px" }}>
                       <td>{vendor.date}</td>
                       <td>{vendor.quantity}</td>
-                      <td>{packageSize}</td>
+                      <td>{packageSize || "0"}</td>
                       <td>{total || "null"}</td>
                       <td>{vendor.source}</td>
                     </tr>
@@ -908,7 +924,8 @@ function Audit() {
       </div>
     );
   };
-
+  
+  
 
 
 
@@ -1260,8 +1277,8 @@ const handleHideClickInsurance = (company) => {
                 <h3 className="text-center">Audit Details Report</h3>
               )}
               <List
-                height={600}
-                itemCount={currentPageData.length}
+                height={6500}
+                itemCount={ currentPageData.length}
                 itemSize={300}
                 width="100%"
                 itemData={currentPageData}

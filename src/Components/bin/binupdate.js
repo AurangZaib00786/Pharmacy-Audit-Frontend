@@ -75,6 +75,7 @@ function Binupdate({ show, onHide, data, allinsurance }) {
             label=" Number"
             value={name}
             onChange={(e) => {
+            
               setname(e.target.value);
             }}
             size="small"
