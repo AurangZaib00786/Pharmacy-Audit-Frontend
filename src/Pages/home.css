@@ -8,6 +8,8 @@
   font-family: 'Inter';
   background-color: white;
 }
+/* Add this to your CSS file or Tailwind's custom styles */
+
 
 .header_right{
     margin-right: 3%;

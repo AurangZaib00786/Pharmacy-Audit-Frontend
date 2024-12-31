@@ -259,20 +259,22 @@ function Audit() {
     }
   };
 
+  const [isprint, setisprint] = useState(false);
+
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
     content: () => componentRef.current,
     bodyClass: "print_class_purchase",
-    pageStyle: `
-      @page { size: A4; margin: 20mm; }
-      .pagination, .pagination * { display: none !important; } /* Hide pagination controls */
-      .List { overflow: visible !important; } /* Ensure no scroll is visible */
-      .print-container { zoom: 1; width: 100%; } /* Reset zoom for print */
-    `,
-  
+    pageStyle: "@page { size: A4 ; }",
+    onBeforePrint: () => {
+      setisprint(true);
+    },
+    onAfterPrint: () => {
+      setisprint(false);
+    },
   });
-  
+
 
   const Searchndc = useMemo(() => {
     if (search) {
@@ -281,27 +283,27 @@ function Audit() {
       return alldata;
     }
   }, [search, alldata]);
-  
+
   const PageSize = 20;
   const [currentPage, setCurrentPage] = useState(0);
-  
+
   useEffect(() => {
     setCurrentPage(0);
   }, [search]);
-  
+
   const startIndex = currentPage * PageSize;
   const endIndex = startIndex + PageSize;
-  
+
   const currentPageData = useMemo(() => {
     return Searchndc.slice(startIndex, endIndex);
   }, [Searchndc, startIndex, endIndex]);
-  
+
   const goToNextPage = () => {
     if (currentPage < Math.ceil(Searchndc.length / PageSize) - 1) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
-  
+
   const goToPreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage((prevPage) => prevPage - 1);
@@ -834,11 +836,11 @@ function Audit() {
     XLSX.writeFile(wb, fileName);
   };
 
- 
+
 
   const makeitem = ({ index, style, data }) => {
     const item = data[index];
-  
+
     return (
       <div style={{ ...style, minHeight: "auto", overflow: "hidden" }} key={item.ndc} className="d-flex flex-wrap">
         <div className="col-6" style={{ minHeight: "100%", overflowY: "auto" }}>
@@ -875,7 +877,7 @@ function Audit() {
             </tbody>
           </table>
         </div>
-  
+
         {/* Vendor Data Table */}
         <div className="col-6" style={{ minHeight: "100%", overflowY: "auto" }}>
           <table className="table table-bordered">
@@ -900,7 +902,7 @@ function Audit() {
                   const packageSize = item?.billing_data[0]?.packagesize || 0; // Take the first `packagesize` value
                   const vendorQuantity = vendor.quantity || 0;
                   const total = packageSize * vendorQuantity;
-  
+
                   return (
                     <tr key={idx} style={{ minHeight: "40px" }}>
                       <td>{vendor.date}</td>
@@ -924,8 +926,8 @@ function Audit() {
       </div>
     );
   };
-  
-  
+
+
 
 
 
@@ -940,15 +942,15 @@ function Audit() {
   }
 
 
-const handleHideClickInsurance = (company) => {
-  const updatedData = filteredData.map((item) => {
-    if (item.insurance_company_name === company) {
-      return { ...item, hide: !item.hide }; // Toggle the 'hide' property
-    }
-    return item;
-  });
-  setFilteredData(updatedData); // Update local state
-};
+  const handleHideClickInsurance = (company) => {
+    const updatedData = filteredData.map((item) => {
+      if (item.insurance_company_name === company) {
+        return { ...item, hide: !item.hide }; // Toggle the 'hide' property
+      }
+      return item;
+    });
+    setFilteredData(updatedData); // Update local state
+  };
 
 
   return (
@@ -1276,15 +1278,15 @@ const handleHideClickInsurance = (company) => {
               {alldata?.length !== 0 && (
                 <h3 className="text-center">Audit Details Report</h3>
               )}
-              <List
-                height={6500}
-                itemCount={ currentPageData.length}
-                itemSize={300}
-                width="100%"
-                itemData={currentPageData}
-              >
-                {makeitem}
-              </List>
+          <List
+  height={6500}
+  itemCount={isprint ? alldata?.length : currentPageData.length}
+  itemSize={300}
+  width="100%"
+  itemData={isprint ? Searchndc : currentPageData}
+>
+  {makeitem}
+</List>;
 
               {/* Pagination Controls */}
               <div className="pagination d-flex justify-content-center align-items-center my-3">
@@ -1352,12 +1354,12 @@ const handleHideClickInsurance = (company) => {
                             </Button>
 
                             <Button
-  onClick={() => handleHideClickInsurance(item.insurance_company_name)}
-  variant="secondary"
-  shadow
->
-  {item.hide ? "View" : "Hide"}
-</Button>
+                              onClick={() => handleHideClickInsurance(item.insurance_company_name)}
+                              variant="secondary"
+                              shadow
+                            >
+                              {item.hide ? "View" : "Hide"}
+                            </Button>
 
                           </div>
                           <SearchBar {...props?.searchProps} />
