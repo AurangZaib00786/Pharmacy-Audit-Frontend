@@ -25,6 +25,8 @@ import TextField from "@mui/material/TextField";
 import { useReactToPrint } from "react-to-print";
 import { FixedSizeList as List } from "react-window";
 import { useMemo } from "react";
+import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
+import PrintIcon from "@material-ui/icons/Print";
 
 function Audit() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -928,6 +930,17 @@ function Audit() {
   };
 
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("Report type");
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const selectItem = (item) => {
+    setSelectedItem(item);
+    setIsOpen(false);
+  };
 
 
 
@@ -960,20 +973,21 @@ function Audit() {
           <Spinner animation="border" variant="primary" />
         </div>
       )}
-      <div className="card me-3">
-        <div className="card-header d-flex align-items-center justify-content-between ">
+      <div className=" me-3">
+        <div className="card-header d-flex align-items-center justify-content-end ">
+
           <div>
-            <h1 className='' style={{ fontSize: '20px' }}> Reports</h1>
-          </div>
-          <div>
-            <Button
-              className="me-3"
+            <button
+              className=" flex gap-1 mb-2 items-center   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-red-600 font-normal py-2 px-3  border-2 border-white rounded-xl"
               onClick={handledeletereport}
-              variant="secondary"
               shadow
             >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+
               Clear Record
-            </Button>
+            </button>
             {/* <Button onClick={handlegeneratereport} variant="success" shadow>
             Generate Report
           </Button> */}
@@ -981,51 +995,51 @@ function Audit() {
         </div>
         <div className="d-md-flex card-body p-0">
           <div
-            className="col-md-6 p-3"
-            style={{ borderRight: "1px solid gray" }}
+            className="col-md-6   "
           >
-            <h5>Vendor Files</h5>
+            <div className="w-full h-14 flex p-1 justify-center items-center bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
+              <form onSubmit={handlesubmitvendor_files} className=" mt-3 flex p-0">
+                <div className="row mb-3 ">
+                  <div className="col-6 ">
+                    <Select
+                      options={allvendors}
+                      value={vendor}
+                      funct={(e) => setvendor(e)}
+                      placeholder={"Select Vendor"}
+                      required={true}
+                      disable_margin={true}
+                    />
+                  </div>
 
-            <form onSubmit={handlesubmitvendor_files} className=" mt-3 p-0">
-              <div className="row mb-3 ">
-                <div className="col-6 ">
-                  <Select
-                    options={allvendors}
-                    value={vendor}
-                    funct={(e) => setvendor(e)}
-                    placeholder={"Vendor"}
-                    required={true}
-                    disable_margin={true}
-                  />
+                  <div className="col-6">
+                    <input
+                      onChange={handleimageselection_vendor}
+                      type="file"
+                      className="form-control"
+                      accept=".xlsx,.xls,.csv"
+                      required={true}
+                    />
+                  </div>
                 </div>
 
-                <div className="col-6">
-                  <input
-                    onChange={handleimageselection_vendor}
-                    type="file"
-                    className="form-control"
-                    accept=".xlsx,.xls,.csv"
-                    required={true}
-                  />
+                <div className="d-flex justify-content-end">
+                  <div className=" text-end">
+                    <button
+                      style={{ width: "110px" }}
+                      type="submit"
+                      className=" text-white py-2 rounded-lg bg-gray-500"
+                      shadow
+                    >
+                      Upload
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </form>
+            </div>
 
-              <div className="d-flex justify-content-end">
-                <div className=" text-end">
-                  <Button
-                    style={{ width: "110px" }}
-                    type="submit"
-                    variant="success"
-                    className="mb-2"
-                    shadow
-                  >
-                    Upload file
-                  </Button>
-                </div>
-              </div>
-            </form>
 
-            <div className=" border-top col-11 pt-3 ">
+
+            <div className=" col-11 pt-3 ">
               {vendor_filesdata.map((item) => {
                 return (
                   <div
@@ -1043,47 +1057,47 @@ function Audit() {
               })}
             </div>
           </div>
-          <div className="col-md-6 p-3">
-            <h5>Billing Files</h5>
+          <div className="col-md-6 ">
+            <div className="w-full h-14 flex p-1 justify-center items-center bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-300 shadow-lg rounded-lg">
 
-            <form onSubmit={handlesubmitbilling_files} className="mt-3 p-0">
-              <div className="row mb-3">
-                <div className="col-6">
-                  <Select
-                    options={allbillings}
-                    value={billing}
-                    funct={(e) => setbilling(e)}
-                    placeholder={"Billing"}
-                    required={true}
-                    disable_margin={true}
-                  />
+              <form onSubmit={handlesubmitbilling_files} className="mt-3 flex p-0">
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <Select
+                      options={allbillings}
+                      value={billing}
+                      funct={(e) => setbilling(e)}
+                      placeholder={"Billing"}
+                      required={true}
+                      disable_margin={true}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <input
+                      onChange={handleimageselection_billing}
+                      type="file"
+                      className="form-control"
+                      accept=".xlsx,.xls,.csv"
+                      required={true}
+                    />
+                  </div>
                 </div>
-                <div className="col-6">
-                  <input
-                    onChange={handleimageselection_billing}
-                    type="file"
-                    className="form-control"
-                    accept=".xlsx,.xls,.csv"
-                    required={true}
-                  />
+                <div className="d-flex justify-content-end">
+                  <div className=" text-end">
+                    <button
+                      style={{ width: "110px" }}
+                      type="submit"
+                      className=" text-white py-2 rounded-lg bg-gray-500"
+                      shadow
+                    >
+                      Upload
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="d-flex justify-content-end">
-                <div className=" text-end">
-                  <Button
-                    style={{ width: "110px" }}
-                    type="submit"
-                    variant="success"
-                    className="mb-2"
-                    shadow
-                  >
-                    Upload file
-                  </Button>
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
 
-            <div className="border-top  pt-3 row col-11 ">
+            <div className="  pt-3 row col-11 ">
               {billing_filesdata.map((item) => {
                 return (
                   <div
@@ -1104,9 +1118,104 @@ function Audit() {
         </div>
       </div>
 
-      {/* selection of reports and generate report */}
+      <div className="w-full h-auto  flex justify-end">
+        <button
+          className=" flex gap-2  bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
 
-      <div className="card me-3 mt-3">
+          onClick={handlegeneratereport} >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+
+          Generate 
+        </button>
+      </div>
+
+
+
+      <ul class=" w-full text-sm font-medium text-gray-900 flex justify-start gap-16 items-center  rounded-lg ">
+        <li class=" ">
+          <div class="flex items-center ">
+            <input
+              id="angular-checkbox-list"
+              type="checkbox"
+              value=""
+              class="custom-checkbox"
+            />            <label for="vue-checkbox-list" class="w-full py-3 ms-2 text-xl font-medium text-gray-800 ">Audit report</label>
+          </div>
+        </li>
+        <li class=" ">
+          <div class="flex items-center ">
+            <input
+              id="angular-checkbox-list"
+              type="checkbox"
+              value=""
+              class="custom-checkbox"
+            />            <label for="react-checkbox-list" class="w-full py-3 ms-2 text-xl font-medium text-gray-800 ">Detailed audit report</label>
+          </div>
+        </li>
+        <li class="  ">
+          <div class="flex items-center ">
+            <input
+              id="angular-checkbox-list"
+              type="checkbox"
+              value=""
+              class="custom-checkbox"
+            />
+            <label for="angular-checkbox-list" class="w-full py-3 ms-2 text-xl font-medium text-gray-800 ">Insurance report</label>
+          </div>
+        </li>
+
+      </ul>
+
+
+      <div className="w-full h-auto  flex justify-start">
+        <div className="relative w-64">
+          {/* Input field */}
+          <button
+            onClick={toggleDropdown}
+            className="flex w-full justify-between items-center rounded-md bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            <span>{selectedItem}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-5 w-5 transform transition-transform ${isOpen ? "rotate-180" : ""
+                }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {/* Dropdown items */}
+          {isOpen && (
+            <ul className="absolute z-10 w-full divide-y divide-gray-200 rounded-md bg-white shadow-lg">
+              {["Combine report", "Positive report", "Negative report", "Zero report"].map(
+                (item, index) => (
+                  <li
+                    key={index}
+                    onClick={() => selectItem(item)}
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-700"
+                  >
+                    {item}
+                  </li>
+                )
+              )}
+            </ul>
+          )}
+        </div>
+
+
+      </div>
+
+      {/* <div className="card me-3 mt-3">
         <div className="card-body pb-0">
           <div className="row">
             {audit_report_type.value === "audit" && (
@@ -1125,7 +1234,7 @@ function Audit() {
               </div>
             )}
 
-            {/* {audit_report_type.value === "audit_detail" && (
+            {audit_report_type.value === "audit_detail" && (
               <div className="col-6 col-md-2">
                 <Select
                   options={[
@@ -1140,7 +1249,7 @@ function Audit() {
                 />
               </div>
 
-            )} */}
+            )}
 
             {audit_report_type.value === "insurance" && (
               <div className="col-6 col-md-2">
@@ -1158,8 +1267,8 @@ function Audit() {
               </div>
             )}
 
-            {/* Use filteredData for display */}
-            {/* <TableComponent data={filteredData} /> */}
+            Use filteredData for display
+            <TableComponent data={filteredData} />
 
 
 
@@ -1186,11 +1295,80 @@ function Audit() {
 
           </div>
         </div>
-      </div>
+      </div> */}
+      
 
       {audit_report_type.value === "audit" && (
-        <div className="card me-3 mt-3">
-          <div className="card-body">
+        <div className=" me-3 mt-3">
+          <div className="  d-flex justify-content-between">
+            <div className="d-flex  w-full justify-content-between align-items-center mt-3">
+              <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
+                <form className="w-full">
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      id="voice-search"
+                      className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
+                      placeholder="Search"
+                      required
+                    />
+                    <button type="button" className="absolute inset-y-0 end-0 flex items-center pe-3">
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div className="w-1/2  flex justify-end gap-2 ">
+
+                <button
+                  className=" flex gap-1 bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                  </svg>
+
+                  Export excel
+                </button>
+                <button
+                  type="button"
+                  className=" flex gap-1 items-center    hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                  </svg> Export csv
+                </button>
+                <button
+                  type="button"
+                  className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                  </svg>
+                  Filter
+                </button>
+
+
+              </div>
+              {/* <SearchBar {...props.searchProps} /> */}
+            </div>
+
+          </div>
+          <div className="card-body mt-3">
             <div style={{ zoom: ".8" }}>
               <ToolkitProvider
                 keyField="ndc"
@@ -1206,7 +1384,7 @@ function Audit() {
                 {(props) => (
                   <div>
 
-                    <div className="d-flex justify-content-between align-items-center mt-3">
+                    {/* <div className="d-flex justify-content-between align-items-center mt-3">
                       <div>
                         <ExportCSVButton
                           {...props.csvProps}
@@ -1223,9 +1401,8 @@ function Audit() {
                         </Button>
                       </div>
                       <SearchBar {...props.searchProps} />
-                    </div>
+                    </div> */}
 
-                    <hr />
 
                     <BootstrapTable
                       {...props.baseProps}
@@ -1233,7 +1410,7 @@ function Audit() {
                       bootstrap4
                       condensed
                       filter={filterFactory()}
-                      wrapperClasses="table-responsive"
+                      classes="custom-table"
                     />
 
                   </div>
@@ -1278,15 +1455,15 @@ function Audit() {
               {alldata?.length !== 0 && (
                 <h3 className="text-center">Audit Details Report</h3>
               )}
-          <List
-  height={6500}
-  itemCount={isprint ? alldata?.length : currentPageData.length}
-  itemSize={300}
-  width="100%"
-  itemData={isprint ? Searchndc : currentPageData}
->
-  {makeitem}
-</List>;
+              <List
+                height={6500}
+                itemCount={isprint ? alldata?.length : currentPageData.length}
+                itemSize={300}
+                width="100%"
+                itemData={isprint ? Searchndc : currentPageData}
+              >
+                {makeitem}
+              </List>;
 
               {/* Pagination Controls */}
               <div className="pagination d-flex justify-content-center align-items-center my-3">

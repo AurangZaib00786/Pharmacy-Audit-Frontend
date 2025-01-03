@@ -26,6 +26,7 @@ import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
 import TableChartIcon from "@material-ui/icons/TableChart";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
+import GlobalBackTab from "../Components/GlobalBackTab";
 function Layout() {
   const { user, route, menu_status } = useAuthContext();
 
@@ -86,158 +87,9 @@ function Layout() {
     >
       {user ? (
         <>
-          <Sidebar
-            breakPoint="md"
-            defaultCollapsed={true}
-            rootStyles={{ color: "#fff", fontSize: 14 }}
-            backgroundColor="#1679FF"
-          >
-            <div
-              style={{
-                textAlign: "center",
-                borderBottom: "1px solid #dee2e6",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                className="mt-1 mb-1 ms-3 me-4"
-                src={selected_branch?.logo}
-              />
-              {current_user && <h5>{current_user.username}</h5>}
-            </div>
-            <Menu
-              onMouseEnter={handlemouseenter}
-              onMouseLeave={handlemouseleave}
-              closeOnClick={true}
-              className="sidebarclass"
-              style={{ height: "116vh", overflow: "auto" }}
-              menuItemStyles={{
-                button: ({ level, active, disabled }) => {
-                  if (level === 0 || level === 1) {
-                    return {
-                      color: active ? "#1679FF" : undefined,
-                      backgroundColor: active ? "#fff" : undefined,
-                      "&:hover": {
-                        backgroundColor: "#fff !important",
-                        color: "#1679FF !important",
-                        borderRadius: "0px !important",
-                        fontWeight: "bold !important",
-                      },
-                    };
-                  }
-                },
-              }}
-            >
-              {current_user?.id === 1 && (
-                <MenuItem
-                  active={menu_status === "user"}
-                  icon={<PersonIcon />}
-                  component={<Link to="/user" />}
-                  rootStyles={{
-                    color: "#ffff",
-                    backgroundColor: "#1679FF",
-                  }}
-                >
-                  User
-                </MenuItem>
-              )}
+        
 
-              <SubMenu
-                active={
-                  menu_status === "user" ||
-                  menu_status === "branch" ||
-                  menu_status === "branch_management" ||
-                  menu_status === "user_mange"
-                }
-                open={open === "user"}
-                onClick={() => handleopen("user")}
-                label="Basic Menu"
-                icon={<MenuIcon />}
-              >
-                <MenuItem
-                  active={menu_status === "file"}
-                  icon={<FileCopyIcon />}
-                  component={<Link to="/vendor-file-format" />}
-                  rootStyles={{
-                    color: "#ffff",
-                    backgroundColor: "#1679FF",
-                  }}
-                >
-                  Vendor File Format
-                </MenuItem>
-                <MenuItem
-                  active={menu_status === "billing"}
-                  icon={<FileCopyIcon />}
-                  component={<Link to="/billing-file-format" />}
-                  rootStyles={{
-                    color: "#ffff",
-                    backgroundColor: "#1679FF",
-                  }}
-                >
-                  Billing File Format
-                </MenuItem>
-                <MenuItem
-                  active={menu_status === "insurance"}
-                  icon={<BusinessIcon />}
-                  component={<Link to="/insurance" />}
-                  rootStyles={{
-                    color: "#ffff",
-                    backgroundColor: "#1679FF",
-                  }}
-                >
-                  Insurance Company
-                </MenuItem>
-                <MenuItem
-                  active={menu_status === "bin"}
-                  icon={<MoneyIcon />}
-                  component={<Link to="/bin" />}
-                  rootStyles={{
-                    color: "#ffff",
-                    backgroundColor: "#1679FF",
-                  }}
-                >
-                  Bin Number
-                </MenuItem>
-              </SubMenu>
-              <MenuItem
-                active={menu_status === "audit"}
-                icon={<ColorizeIcon />}
-                component={<Link to="/audit" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                Audit Report
-              </MenuItem>
-              {/* <MenuItem
-                active={menu_status === "auditdetail"}
-                icon={<TableChartIcon />}
-                component={<Link to="/audit-details" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                Audit Details Report
-              </MenuItem>
-
-              <MenuItem
-                active={menu_status === "insurancereport"}
-                icon={<AssessmentIcon />}
-                component={<Link to="/insurance-report" />}
-                rootStyles={{
-                  color: "#ffff",
-                  backgroundColor: "#1679FF",
-                }}
-              >
-                Insurance Report
-              </MenuItem> */}
-            </Menu>
-          </Sidebar>
-
-          <div className="content" style={{ width: "95%" }}>
+          <div className=" home-container   lg:px-24 " style={{ width: "100%" }}>
             <div className="header ">
               {user && (
                 <Header
@@ -248,13 +100,16 @@ function Layout() {
                 />
               )}
             </div>
+            <GlobalBackTab />
+
 
             <div
               style={{
                 height: "105vh",
                 overflow: "auto",
-                backgroundColor: "rgb(241, 245, 245)",
+                backgroundColor: "transparent",
               }}
+              className="mt-6 "
             >
               <Outlet />
             </div>

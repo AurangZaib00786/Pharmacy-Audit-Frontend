@@ -5,7 +5,7 @@ import SaveIcon from "@material-ui/icons/Save";
 
 function Save_button(props) {
   return (
-    <Button type="submit" variant="primary" style={{ borderRadius: "33px" }}>
+    <button type="submit"  className=" w-full rounded border-2 py-1.5 hover:bg-[#15e6cd] hover:text-white hover:border-2 hover:border-white border-black" >
       {props.isloading && (
         <Spinner
           as="span"
@@ -16,7 +16,7 @@ function Save_button(props) {
         />
       )}
       <SaveIcon /> Save
-    </Button>
+    </button>
   );
 }
 

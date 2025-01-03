@@ -59,97 +59,92 @@ function Form(props) {
     }
   };
   return (
-    <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter">
-      <Modal.Header closeButton>
-        <Modal.Title
-          id="contained-modal-title-vcenter"
-          className="d-flex align-items-center"
-        >
-          Add Vendor File Format
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <form onSubmit={handleSubmit}>
-          <div className="row">
-            <div className="col-md-6 mb-3">
-              <TextField
-                className="form-control "
-                label="name"
-                value={name}
-                onChange={(e) => {
-                  setname(e.target.value);
-                }}
-                size="small"
-                required
-              />
-            </div>{" "}
-            <div className="col-md-6 mb-3">
-              <TextField
-                type="number"
-                className="form-control"
-                label="Row Number"
-                value={row_number}
-                onChange={(e) => {
-                  setrow_number(e.target.value);
-                }}
-                size="small"
-                required
-              />
-            </div>{" "}
-            <div className="col-md-6 mb-3">
-              <TextField
-                className="form-control "
-                label="NDC Column"
-                value={ndc_column}
-                onChange={(e) => {
-                  setndc_column(e.target.value);
-                }}
-                size="small"
-              />
-            </div>{" "}
-            <div className="col-md-6 mb-3">
-              <TextField
-                className="form-control "
-                label="Date Column"
-                value={date_column}
-                onChange={(e) => {
-                  setdate_column(e.target.value);
-                }}
-                size="small"
-              />
-            </div>
-            <div className="col-md-6 mb-3">
-              <TextField
-                className="form-control  "
-                label="Description Column"
-                value={description_column}
-                onChange={(e) => {
-                  setdescription_column(e.target.value);
-                }}
-                size="small"
-                required
-              />
-            </div>{" "}
-            <div className="col-md-6 mb-3">
-              <TextField
-                className="form-control  "
-                label="Qty Column"
-                value={quantity_column}
-                onChange={(e) => {
-                  setquantity_column(e.target.value);
-                }}
-                size="small"
-                required
-              />
-            </div>
+    <Modal
+    {...props}
+    size="lg"
+    aria-labelledby="contained-modal-title-vcenter"
+    centered
+    className="custom-modal" // Add a custom class for styling
+  >
+    <Modal.Header
+      closeButton
+      style={{ borderTop: 'none' }}
+    >
+      <Modal.Title className="d-flex align-items-center">
+        Add vendor file formate
+      </Modal.Title>
+    </Modal.Header>
+  
+    <Modal.Body>
+      <form onSubmit={handleSubmit}>
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="Name"
+              value={name}
+              onChange={(e) => setname(e.target.value)}
+              size="small"
+              required
+            />
           </div>
-          <hr />
-          <div className=" d-flex flex-row-reverse mt-2 me-2">
-            <Save_button isloading={isloading} />
+          <div className="col-md-6 mb-3">
+            <TextField
+              type="number"
+              className="form-control"
+              label="Row Number"
+              value={row_number}
+              onChange={(e) => setrow_number(e.target.value)}
+              size="small"
+              required
+            />
           </div>
-        </form>
-      </Modal.Body>
-    </Modal>
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="NDC Column"
+              value={ndc_column}
+              onChange={(e) => setndc_column(e.target.value)}
+              size="small"
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="Date Column"
+              value={date_column}
+              onChange={(e) => setdate_column(e.target.value)}
+              size="small"
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="Description Column"
+              value={description_column}
+              onChange={(e) => setdescription_column(e.target.value)}
+              size="small"
+              required
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="Qty Column"
+              value={quantity_column}
+              onChange={(e) => setquantity_column(e.target.value)}
+              size="small"
+              required
+            />
+          </div>
+        </div>
+        <div className="d-flex flex-row-reverse mt-2 me-2">
+          <Save_button isloading={isloading} />
+        </div>
+      </form>
+    </Modal.Body>
+  </Modal>
+  
   );
 }
 

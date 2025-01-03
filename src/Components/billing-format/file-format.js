@@ -147,7 +147,7 @@ function BillingFileformat() {
     },
     {
       dataField: "date_column",
-      text: "Date Column",
+      text: "Date ",
       sort: true,
       headerFormatter: headerstyle,
     },
@@ -159,19 +159,19 @@ function BillingFileformat() {
     },
     {
       dataField: "ndc_column",
-      text: "NDC Column",
+      text: "NDC ",
       sort: true,
       headerFormatter: headerstyle,
     },
     {
       dataField: "description_column",
-      text: "Description Column",
+      text: "Description ",
       sort: true,
       headerFormatter: headerstyle,
     },
     {
       dataField: "quantity_column",
-      text: "Qty Column",
+      text: "Qty ",
       sort: true,
       headerFormatter: headerstyle,
     },
@@ -287,22 +287,84 @@ function BillingFileformat() {
   };
 
   return (
-    <div className="user_main">
-      <h1 className="mb-2">Billing File Formats</h1>
-      <div className="card me-3">
-        <div className="card-header bg-white  d-flex justify-content-between">
-          <h3>Format list</h3>
-          <Button
-            type="button"
-            className="mb-2"
-            variant="outline-success"
-            onClick={() => setshowmodel(!showmodel)}
-          >
-            Add Format
-          </Button>
+    <div className="">
+      <div className=" me-3">
+      <div className="  d-flex justify-content-between">
+          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
+            <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
+              <form className="w-full">
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    id="voice-search"
+                    className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
+                    placeholder="Search"
+                    required
+                  />
+                  <button type="button" className="absolute inset-y-0 end-0 flex items-center pe-3">
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="w-1/2  flex justify-end gap-2 ">
+              <button
+                type="button"
+                className=" flex   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
+                onClick={() => setshowmodel(!showmodel)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 font-semibold">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+
+                Add format
+              </button>
+              <button
+                className=" flex gap-1 hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+
+               Export
+              </button>
+              <button
+                type="button"
+                className=" flex gap-1   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                onClick={download}
+              >
+                <PictureAsPdfIcon /> PDF
+              </button>
+              <button
+                type="button"
+                className=" flex gap-1   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                onClick={print}
+              >
+                <PrintIcon /> Print
+              </button>
+
+            </div>
+            {/* <SearchBar {...props.searchProps} /> */}
+          </div>
+
         </div>
 
-        <div className="card-body pt-0">
+        <div className="card-body mt-8">
           <ToolkitProvider
             keyField="id"
             data={Data}
@@ -312,35 +374,8 @@ function BillingFileformat() {
           >
             {(props) => (
               <div>
-                <div className="d-flex justify-content-between align-items-center mt-3">
-                  <div>
-                    <ExportCSVButton
-                      {...props.csvProps}
-                      className="csvbutton  border bg-secondary text-light me-2"
-                    >
-                      Export CSV
-                    </ExportCSVButton>
-                    <Button
-                      type="button"
-                      className="p-1 ps-3 pe-3 me-2"
-                      variant="outline-primary"
-                      onClick={download}
-                    >
-                      <PictureAsPdfIcon /> PDF
-                    </Button>
-                    <Button
-                      type="button"
-                      className="p-1 ps-3 pe-3"
-                      variant="outline-success"
-                      onClick={print}
-                    >
-                      <PrintIcon /> Print
-                    </Button>
-                  </div>
-                  <SearchBar {...props.searchProps} />
-                </div>
+               
 
-                <hr />
                 {isloading && (
                   <div className="text-center">
                     <Spinner animation="border" variant="primary" />
@@ -350,10 +385,9 @@ function BillingFileformat() {
                   {...props.baseProps}
                   pagination={paginationFactory(options)}
                   rowStyle={rowstyle}
-                  striped
                   bootstrap4
                   condensed
-                  wrapperClasses="table-responsive"
+                  classes="custom-table"
                 />
               </div>
             )}

@@ -30,4 +30,8 @@
   .sidebarclass::-webkit-scrollbar {
     display: none;
 }
-
+.home-container{
+  background-image: url('../assets/backgrounds/home-bg.png');
+  background-size: cover;
+  background-position: center;
+}

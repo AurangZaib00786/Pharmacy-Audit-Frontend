@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom';
 const HomePage = () => {
     return (
         <div>
-            <div className="w-full lg:p-6 lg:px-16 h-auto bg-gradient-to-r from-[#1CCAD8F5] to-[#587291F5]">
+            <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
                 <div className='top-container p-2 flex justify-between w-full  h-22'>
                     <div className='top-container-inner w-64 h-full flex justify-start items-center '>
                         <img src={logo} />

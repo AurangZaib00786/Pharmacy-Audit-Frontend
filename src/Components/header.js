@@ -12,6 +12,9 @@ import jwtDecode from "jwt-decode";
 import useLogout from "../hooks/uselogout";
 import custom_toast from "./alerts/custom_toast";
 import Userupdate from "./users/userupdateform";
+import logo from '../assets/logo.png';
+import profile from '../assets/profile.png';
+import GlobalBackTab from "./GlobalBackTab";
 function Header(props) {
   const { user, route, dispatch_auth } = useAuthContext();
   const { selected_branch, current_user, dispatch } = UseaddheaderContext();
@@ -149,8 +152,19 @@ function Header(props) {
   // }, [current_user]);
 
   return (
-    <div className="d-flex border-bottom justify-content-between header">
-      {props.broken ? (
+  
+    <div className=" w-full pt-16 h-auto ">
+    <div className='top-container p-2 flex justify-between w-full  h-22'>
+        <div className='top-container-inner w-64 h-full flex justify-start items-center '>
+            <img src={logo} />
+        </div>
+        <div className='top-container-inner w-32 flex justify-center items-center h-full '>
+            <img src={profile} />
+        </div>
+    </div>
+
+    {/* <div className="d-flex justify-content-between header"> */}
+      {/* {props.broken ? (
         <IconButton onClick={() => props.togglefun()}>
           <MenuIcon />
         </IconButton>
@@ -158,8 +172,8 @@ function Header(props) {
         <IconButton onClick={handlecollapsefun}>
           <MenuIcon />
         </IconButton>
-      )}
-      <div className="d-flex align-items-center  ">
+      )} */}
+      {/* <div className="d-flex align-items-center  "> */}
         {/* {selected_branch && (
           <span className="fw-bold">{selected_branch.name}</span>
         )}
@@ -177,7 +191,7 @@ function Header(props) {
           </Dropdown>
         )} */}
 
-        <div
+        {/* <div
           ref={ref}
           onClick={handlestate}
           className="cursor-pointer d-flex align-items-center header_right pb-1 me-3 ps-1"
@@ -186,10 +200,10 @@ function Header(props) {
           <h6 className="mt-2 me-5 ms-4 fw-bold">
             {current_user?.username?.toUpperCase()}
           </h6>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
 
-      <Overlay
+      {/* <Overlay
         show={show}
         target={target}
         placement="bottom"
@@ -226,7 +240,7 @@ function Header(props) {
             </div>
           </Popover.Body>
         </Popover>
-      </Overlay>
+      </Overlay> */}
 
       {showmodelupdate && (
         <Userupdate
@@ -237,6 +251,7 @@ function Header(props) {
         />
       )}
     </div>
+    // </div>
   );
 }
 
