@@ -87,7 +87,7 @@ function Layout() {
     >
       {user ? (
         <>
-        
+
 
           <div className=" home-container   lg:px-24 " style={{ width: "100%" }}>
             <div className="header ">
@@ -100,7 +100,7 @@ function Layout() {
                 />
               )}
             </div>
-            <GlobalBackTab />
+            {/* <GlobalBackTab /> */}
 
 
             <div
@@ -108,8 +108,11 @@ function Layout() {
                 height: "105vh",
                 overflow: "auto",
                 backgroundColor: "transparent",
+                scrollbarWidth: "thin", // For Firefox
+
+                scrollbarColor: "#1ccad8 #f0f0f0", // Thumb and track color for Firefox
               }}
-              className="mt-6 "
+              className="mt-6 custom-scrollbar"
             >
               <Outlet />
             </div>

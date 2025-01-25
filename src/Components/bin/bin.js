@@ -27,6 +27,8 @@ import useLogout from "../../hooks/uselogout";
 import PrintIcon from "@material-ui/icons/Print";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import Select_field from "../selectfield/select";
+import Select from "react-select"
+import GlobalBackTab from "../GlobalBackTab";
 
 function Bin() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -263,8 +265,9 @@ function Bin() {
 
   return (
     <div className="">
-      <div className=" me-3">
-      <div className="  d-flex justify-content-between">
+      <GlobalBackTab title="Bin Number" />
+      <div className=" me-3 mt-3">
+        <div className="  d-flex justify-content-between">
           <div className="d-flex  w-full justify-content-between align-items-center mt-3">
             <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
               <form className="w-full">
@@ -316,7 +319,7 @@ function Bin() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                 </svg>
 
-               Export
+                Export
               </button>
               <button
                 type="button"
@@ -350,14 +353,26 @@ function Bin() {
             {(props) => (
               <div>
                 <div className="mt-3 col-6 col-md-2">
-                  <Select_field
+                  {/* <select
+                    options={[{ value: "all", label: "All" }, ...allinsurance]}
+
+                    className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                   border border-green-300 rounded-lg shadow-md text-black 
+                   cursor-pointer appearance-none"
+                    value={insurance}
+                    onChange={(e) => setinsurance(e)}
+                    placeholder={"Insurance Company"}
+                  /> */}
+{/* 
+                  <Select
                     options={[{ value: "all", label: "All" }, ...allinsurance]}
                     value={insurance}
                     funct={(e) => setinsurance(e)}
                     placeholder={"Insurance Company"}
-                  />
+                  /> */}
                 </div>
-               
+                
+
                 {isloading && (
                   <div className="text-center">
                     <Spinner animation="border" variant="primary" />
@@ -370,7 +385,7 @@ function Bin() {
                   bootstrap4
                   condensed
                   classes="custom-table"
-                  />
+                />
               </div>
             )}
           </ToolkitProvider>

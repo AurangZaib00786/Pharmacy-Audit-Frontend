@@ -9,6 +9,7 @@ import Save_button from "../buttons/save_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import "./bin.css";
 import Select_field from "../selectfield/select";
+import Select from "react-select"
 function Binform(props) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
@@ -46,7 +47,15 @@ function Binform(props) {
 
       success_toast();
     }
+  }; const selectStyles = {
+    menu: (base) => ({
+      ...base,
+      zIndex: 100,
+    }),
   };
+
+
+
   return (
     <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton>
@@ -60,16 +69,17 @@ function Binform(props) {
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={handleSubmit}>
-          <Select_field
+          <Select
             options={props.allinsurance}
             value={insurance}
+            styles={selectStyles}
             funct={(e) => setinsurance(e)}
             placeholder={"Insurance Company"}
             required={true}
           />
           <TextField
             type="number"
-            className="form-control"
+            className="form-control mt-3"
             label=" Number"
             value={name}
             onChange={(e) => {

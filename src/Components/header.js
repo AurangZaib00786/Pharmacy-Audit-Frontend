@@ -151,16 +151,54 @@ function Header(props) {
   //   };
   // }, [current_user]);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+
   return (
   
     <div className=" w-full pt-16 h-auto ">
-    <div className='top-container p-2 flex justify-between w-full  h-22'>
-        <div className='top-container-inner w-64 h-full flex justify-start items-center '>
-            <img src={logo} />
+   <div className="top-container p-2 flex justify-between w-full h-22 relative">
+      {/* Logo Section */}
+      <div className="top-container-inner w-64 h-full flex justify-start items-center">
+        <img src={logo} alt="Logo" className="h-12 w-auto" />
+      </div>
+
+      {/* Profile Section */}
+      <div className="relative">
+        <div
+          className="top-container-inner w-32 flex justify-center items-center h-full cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <img
+            src={profile}
+            alt="Profile"
+            className="h-12 w-12 rounded-full border border-gray-300 shadow-md hover:shadow-lg transition"
+          />
         </div>
-        <div className='top-container-inner w-32 flex justify-center items-center h-full '>
-            <img src={profile} />
-        </div>
+
+        {/* Dropdown */}
+        {isOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
+            <ul className="py-2 text-gray-700">
+              <li
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  setshowmodelupdate(true);
+                  setshow(false);
+                }}
+              >
+                Profile
+              </li>
+              <li
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={logout}
+              >
+                Logout
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
 
     {/* <div className="d-flex justify-content-between header"> */}
@@ -172,9 +210,9 @@ function Header(props) {
         <IconButton onClick={handlecollapsefun}>
           <MenuIcon />
         </IconButton>
-      )} */}
-      {/* <div className="d-flex align-items-center  "> */}
-        {/* {selected_branch && (
+      )}
+      <div className="d-flex align-items-center  ">
+        {selected_branch && (
           <span className="fw-bold">{selected_branch.name}</span>
         )}
         {current_user && (
@@ -189,9 +227,9 @@ function Header(props) {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        )} */}
+        )}
 
-        {/* <div
+        <div
           ref={ref}
           onClick={handlestate}
           className="cursor-pointer d-flex align-items-center header_right pb-1 me-3 ps-1"
@@ -200,10 +238,10 @@ function Header(props) {
           <h6 className="mt-2 me-5 ms-4 fw-bold">
             {current_user?.username?.toUpperCase()}
           </h6>
-        </div> */}
-      {/* </div> */}
-
-      {/* <Overlay
+        </div> 
+      </div> */}
+{/* 
+       <Overlay
         show={show}
         target={target}
         placement="bottom"
@@ -240,7 +278,7 @@ function Header(props) {
             </div>
           </Popover.Body>
         </Popover>
-      </Overlay> */}
+      </Overlay>  */}
 
       {showmodelupdate && (
         <Userupdate

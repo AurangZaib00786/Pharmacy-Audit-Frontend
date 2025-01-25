@@ -27,8 +27,9 @@ import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 import useLogout from "../../hooks/uselogout";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import PrintIcon from "@material-ui/icons/Print";
+import GlobalBackTab from "../GlobalBackTab";
 
-function Fileformat() {
+function Fileformat(props) {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
@@ -276,17 +277,21 @@ function Fileformat() {
     const documentDefinition = makepdf();
     pdfMake.createPdf(documentDefinition).print();
   };
+  
 
   return (
     <div className="">
+                  <GlobalBackTab title="Vendor file format" />
+      
 
-      <div className=" me-3 ">
+      <div className=" me-3 mt-3 ">
         <div className="  d-flex justify-content-between">
           <div className="d-flex  w-full justify-content-between align-items-center mt-3">
             <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
               <form className="w-full">
                 <div className="relative w-full">
                   <input
+                  {...props.searchProps}
                     type="text"
                     id="voice-search"
                     className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
@@ -324,7 +329,7 @@ function Fileformat() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
 
-                Add formate
+                Add format
               </button>
               <button
                 className=" flex gap-1 hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"

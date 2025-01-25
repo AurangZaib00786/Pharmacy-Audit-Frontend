@@ -28,11 +28,11 @@ function Routing() {
           <Route path="/" element={<Layout />}>
             <Route
               index
-              element={!user ? <Login /> : <Navigate to={"/audit"} />}
+              element={!user ? <Login /> : <Navigate to={"/home"} />}
             ></Route>
             <Route
               path="/sign-up"
-              element={!user ? <SignUp /> : <Navigate to={"/audit"} />}
+              element={!user ? <SignUp /> : <Navigate to={"/home"} />}
             ></Route>
 
             <Route

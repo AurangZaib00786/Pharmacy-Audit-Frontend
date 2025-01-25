@@ -9,3 +9,27 @@
 .audit-table>tbody>tr:first-child {
     width: 130px !important;
 } */
+
+.custom-file-upload {
+    background-color: transparent; /* Transparent background */
+    border: none; /* No border */
+    color: #000; /* Text color */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor */
+    border-radius: 5px; /* Optional: rounded corners */
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #f0f0f0; /* Light hover background */
+  }
+  
+  .custom-file-upload input[type="file"] {
+    display: none; /* Hide the default file input */
+  }
+  
+  .upload-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: #000; /* Icon color */
+  }
+  

@@ -33,5 +33,24 @@
 .home-container{
   background-image: url('../assets/backgrounds/home-bg.png');
   background-size: cover;
+  background-repeat: repeat-y;
   background-position: center;
 }
+.custom-scrollbar {
+  border-radius: 12px; /* Rounded corners for the container */
+  scroll-behavior: smooth; /* Smooth scrolling */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  border-radius: 12px; /* Make scrollbar rounded */
+}
+
+
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 12px; /* Rounded corners for the track */
+}
+
+

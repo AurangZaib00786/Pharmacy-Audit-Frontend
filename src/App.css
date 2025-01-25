@@ -16,6 +16,7 @@
 .home-container{
   background-image: url('assets/backgrounds/home-bg.png');
   background-size: cover;
+  background-repeat: repeat-y;
   background-position: center;
 }
 .App-link {
@@ -26,6 +27,20 @@
 }
 .custom-table thead {
   background: linear-gradient(to bottom, white, #c5e9f9); /* Gradient from white to #e6f5fd */
+}
+
+.modal-content {
+  box-shadow: none !important; /* Remove any shadow */
+  border: none !important; /* Remove border */
+}
+
+.modal-dialog {
+  outline: none !important; /* Remove focus outline */
+}
+
+.modal-header {
+  border-bottom: none; /* If there's a header with a border */
+  padding: 0; /* Adjust padding if necessary */
 }
 
 .custom-table thead th {

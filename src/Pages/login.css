@@ -40,6 +40,22 @@
 background: linear-gradient(144deg, rgba(162,78,82,1) 9%, rgba(156,81,90,1) 16%, rgba(52,80,140,1) 64%, rgba(171,93,109,1) 87%);
 } */
 
+.login-main{
+  background-image: url("../assets/backgrounds/Loging\ page\ -\ AuditPro.png");
+  background-position: center;
+  background-size: cover;
+}
+.login-child-main{
+  background-image: url("../assets/backgrounds/Frame\ 150.png");
+  background-position: center;
+  background-size: cover;
+}
+.login-form-bg{
+  background-image: url("../assets/backgrounds/Frame\ 151.png");
+  background-position: center;
+  background-size: cover;
+
+}
 .body{
 background-color: #F0F2F5;
 background: linear-gradient(129deg, #F0F2F5 50%, #167EE680 98%);

@@ -26,6 +26,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import useLogout from "../../hooks/uselogout";
 import PrintIcon from "@material-ui/icons/Print";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
+import GlobalBackTab from "../GlobalBackTab";
 
 function Insurance() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -227,7 +228,8 @@ function Insurance() {
 
   return (
     <div className="">
-      <div className="me-3">
+      <GlobalBackTab title="Insurance"/>
+      <div className="me-3 mt-3">
       <div className="  d-flex justify-content-between">
           <div className="d-flex  w-full justify-content-between align-items-center mt-3">
             <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">

@@ -57,131 +57,226 @@ function Login() {
   };
 
   return (
-    <div
-      className=" d-flex align-items-center justify-content-center body"
-      style={{ minHeight: "100vh", zoom: ".9" }}
-    >
-      <div className=" text-dark  " style={{ width: "65%" }}>
-        <p className="welcomback text-center">Welcome Back</p>
-        <p
-          className="loginaccount text-center"
-          style={{ marginBottom: "25px" }}
-        >
-          Login into Your Account{" "}
-        </p>
-        {/* <div className="text-center " style={{ marginTop: "37px" }}>
-          <block className="google p-3 me-3">
-            <img src="/google.png" className="me-3" alt="image" />
-            <span className="text-box">Google</span>
-          </block>
-          <block className="google p-3">
-            <img src="/facebook.png" className="me-3" alt="image" />
-            <span className="text-box">Facebook</span>
-          </block>
-        </div> */}
-        {/* <div
-          className="d-flex justify-content-center align-items-center mt-3"
-          style={{ marginBottom: "25px" }}
-        >
-          <img src="line.png" alt="image" />
-          <p className="continue ms-3 me-3">or continue with</p>
-          <img src="line.png" alt="image" />
-        </div> */}
+    // <div
+    //   className=" d-flex align-items-center justify-content-center body"
+    //   style={{ minHeight: "100vh", zoom: ".9" }}
+    // >
+    //   <div className=" text-dark  " style={{ width: "65%" }}>
+    //     <p className="welcomback text-center">Welcome Back</p>
+    //     <p
+    //       className="loginaccount text-center"
+    //       style={{ marginBottom: "25px" }}
+    //     >
+    //       Login into Your Account{" "}
+    //     </p>
+    //     {/* <div className="text-center " style={{ marginTop: "37px" }}>
+    //       <block className="google p-3 me-3">
+    //         <img src="/google.png" className="me-3" alt="image" />
+    //         <span className="text-box">Google</span>
+    //       </block>
+    //       <block className="google p-3">
+    //         <img src="/facebook.png" className="me-3" alt="image" />
+    //         <span className="text-box">Facebook</span>
+    //       </block>
+    //     </div> */}
+    //     {/* <div
+    //       className="d-flex justify-content-center align-items-center mt-3"
+    //       style={{ marginBottom: "25px" }}
+    //     >
+    //       <img src="line.png" alt="image" />
+    //       <p className="continue ms-3 me-3">or continue with</p>
+    //       <img src="line.png" alt="image" />
+    //     </div> */}
 
-        <form onSubmit={handleSubmit}>
-          <h6 className=" text-center text-danger mt-3">{error}</h6>
-          <div className="d-flex flex-column justify-content-center align-items-center">
-            <div className="col-10 col-md-6 ">
-              <p className="label">Username</p>
-              <div className="w-100" style={{ marginBottom: "14px" }}>
-                <input
-                  className="form-control"
-                  style={{
-                    background: "#FFFFFF",
-                    color: "#4A4A4A",
-                    borderColor: "#CED4DA",
-                  }}
-                  placeholder="Enter Name"
-                  value={email}
-                  onChange={(e) => {
-                    setemail(e.target.value);
-                    seterror("");
-                  }}
-                  size="small"
-                  required
-                />
-              </div>
+
+
+    //     <p className="text-center mb-5 noaccount" style={{ marginTop: "91px" }}>
+    //       Don't Have an Account?{" "}
+    //       <Link to={"/sign-up"} className="signup">
+    //         Sign Up!
+    //       </Link>
+    //     </p>
+    //   </div>
+    //   <div className="text-end" style={{ width: "35%" }}>
+    //     <img src="/loginpic.png" alt="Image" className="loginpic" />
+    //   </div>
+    //   <ToastContainer autoClose={2000} hideProgressBar={true} theme="dark" />
+    // </div>
+    <div className="min-h-screen login-main flex items-center justify-center ">
+      <div className="w-2/3 h-96 login-child-main flex">
+
+        <div style={{ height: "100%" }} className="w-1/2  login-form-bg ml-28 max-w-md rounde shadow-md">
+          <div className="w-full h-8 flex justify-center items-center   bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe]">
+            <h1 className="text-sm">LOG IN</h1>
+          </div>
+          <form onSubmit={handleSubmit} className="p-8 ">
+            <div class="flex items-center border-b border-white-500 py-2">
+              <input
+                value={email}
+                onChange={(e) => {
+                  setemail(e.target.value);
+                }}
+                required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Username" aria-label="Full name" />
+
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-gray-200">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+
             </div>
+            <div class="flex items-center border-b border-white-500 mt-4 py-2">
+              <input
+                value={password}
+                onChange={(e) => {
+                  setpassword(e.target.value);
+                }}
+                required
 
-            <div className="col-10 col-md-6   ">
-              <p className="label">Password</p>
-              <div className="w-100" style={{ marginBottom: "14px" }}>
+
+                class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type={show ? "text" : "password"}
+                placeholder="Password" aria-label="Full name" />
+
+              <button
+                type="button"
+                onClick={() => setshow(!show)}
+                className=""
+              >
+                {show ? "🙈" : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-gray-200">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+                }
+              </button>
+
+            </div>
+            {/* <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Username</label>
+              <input
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                type="text"
+                placeholder="Enter Username"
+                value={email}
+                onChange={(e) => {
+                  setemail(e.target.value);
+                }}
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+              <div className="relative">
                 <input
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                   type={show ? "text" : "password"}
-                  className="form-control"
-                  style={{
-                    background: "#FFFFFF",
-                    color: "#4A4A4A",
-                    borderColor: "#CED4DA",
-                  }}
                   placeholder="Enter Password"
                   value={password}
                   onChange={(e) => {
                     setpassword(e.target.value);
-                    seterror("");
                   }}
-                  size="small"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setshow(!show)}
+                  className="absolute right-3 top-2 text-gray-500 focus:outline-none"
+                >
+                  {show ? "🙈" : "👁️"}
+                </button>
               </div>
             </div>
-
-            <div className="col-10 col-md-6 d-flex justify-content-start">
-              <label className="form-check-label">
+            <div className="mb-6">
+              <label className="inline-flex items-center">
                 <input
-                  className="form-check-input"
                   type="checkbox"
-                  name="remember"
-                  onChange={handleshow}
-                />{" "}
-                <span className="showpass">Show Password</span>
+                  className="form-checkbox text-teal-400 focus:ring-teal-400 border-gray-300 rounded"
+                  onChange={() => setshow(!show)}
+                />
+                <span className="ml-2 text-gray-600 text-sm">Show Password</span>
               </label>
-            </div>
-
-            <div className="col-10 col-md-6 " style={{ marginTop: "55px" }}>
+            </div> */}
+            <div className="flex justify-center">
               <button
                 type="submit"
-                style={{ backgroundColor: "#0D6EFD" }}
-                className="button btn  form-control text-white"
+                className="w-32 py-2 flex justify-center mt-12 text-white bg-[#15e6cd] border border-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
                 disabled={islodding}
               >
-                {islodding && (
+                {islodding ? (
                   <Spinner
-                    className="me-2"
+                    className="inline-block mr-2"
                     as="span"
                     animation="border"
                     size="sm"
                     role="status"
                     aria-hidden="true"
                   />
+                ) : (
+                  "Sign In"
                 )}
-                Sign In
               </button>
             </div>
-          </div>
-        </form>
 
-        <p className="text-center mb-5 noaccount" style={{ marginTop: "91px" }}>
-          Don't Have an Account?{" "}
-          <Link to={"/sign-up"} className="signup">
-            Sign Up!
-          </Link>
-        </p>
+
+
+
+          </form>
+
+        </div>
+        <div className="">
+          <div className="mt-8 flex justify-center items-center">
+
+
+            <ul className="flex flex-col gap-4">
+              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+                <span><span className="text-gray-400">Streamline File Comparisons with</span> <span className="font-bold text-white">Precision</span> and <span className="font-bold text-white">Speed</span></span></li>
+              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+                <span><span className="font-bold ">Uncover Discrepancies</span> Instantly</span></li>
+              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+                <span><span className="text-gray-400">Intuitive</span> interface <span className="font-bold text-white">pwerful</span> Results</span></li>
+              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+              </svg>
+                <span><span className="text-gray-400">Stay in Control with</span>  <span className="font-bold text-white">Detailed Audit Reports</span> </span></li>
+            </ul>
+            <li>
+
+            </li>
+          </div>
+
+          <div className="">
+          <div className="mt-4 flex justify-center">
+          <span className="text-white text-xs">Don't have an account?</span>
+            </div>
+          <div className="flex mt-2 justify-center">
+          <Link to="/sign-up">    
+          <span
+              className="w-32 py-2 flex justify-center text-white bg-[#0b1c1b] border border-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            >
+                    Sign Up
+            </span>
+              </Link>
+            </div>
+           
+          </div>
+        </div>
+
+
       </div>
-      <div className="text-end" style={{ width: "35%" }}>
-        <img src="/loginpic.png" alt="Image" className="loginpic" />
-      </div>
-      <ToastContainer autoClose={2000} hideProgressBar={true} theme="dark" />
+
+
+
+
+      {/* Left Content */}
+
+
+      {/* Right Content */}
+
+
+      <ToastContainer autoClose={2000} hideProgressBar={true} theme="colored" />
     </div>
   );
 }

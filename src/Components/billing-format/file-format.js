@@ -27,6 +27,7 @@ import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 import useLogout from "../../hooks/uselogout";
 import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
 import PrintIcon from "@material-ui/icons/Print";
+import GlobalBackTab from "../GlobalBackTab";
 
 function BillingFileformat() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -288,7 +289,8 @@ function BillingFileformat() {
 
   return (
     <div className="">
-      <div className=" me-3">
+      <GlobalBackTab title="Billing file format"/>
+      <div className=" me-3 mt-3">
       <div className="  d-flex justify-content-between">
           <div className="d-flex  w-full justify-content-between align-items-center mt-3">
             <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
