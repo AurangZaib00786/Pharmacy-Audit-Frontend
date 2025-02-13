@@ -17,21 +17,23 @@ import reportsImage from '../assets/icons/reports.png';
 import supportIcon from '../assets/icons/sup.png';
 import supportImage from '../assets/icons/support.png';
 import { Link } from 'react-router-dom';
+import Header from '../Components/header';
 
 
 const HomePage = () => {
     return (
         <div>
             <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
-                <div className='top-container p-2 flex justify-between w-full  h-22'>
+                {/* <div className='top-container p-2 flex justify-between w-full  h-22'>
                     <div className='top-container-inner w-64 h-full flex justify-start items-center '>
                         <img src={logo} />
                     </div>
                     <div className='top-container-inner w-32 flex justify-center items-center h-full '>
                         <img src={profile} />
                     </div>
-                </div>
-                <div className="search-container p-2  flex justify-start w-full h-24">
+                </div> */}
+                <Header/>
+                {/* <div className="search-container p-2  flex justify-start w-full h-24">
                     <div className="input-container-inner  w-1/2 h-full flex justify-start items-center">
                         <form className="w-full">
                             <div className="relative w-full">
@@ -62,8 +64,8 @@ const HomePage = () => {
                             </div>
                         </form>
                     </div>
-                </div>
-                <div className="search-container md:gap-8   md:flex p-2 justify-start w-full md:h-48">
+                </div> */}
+                <div className="search-container md:gap-8 mt-8  md:flex p-2 justify-start w-full md:h-48">
                     <div className="child-container-inner-1  bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg md:w-1/2 h-full ">
                         {/* Content for the first child */}
                         <div className='w-full  mt-3 mx-3 '>
@@ -139,7 +141,8 @@ const HomePage = () => {
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                Manage vendor file format <br/> add, view, edit, or delete records.
+
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">
@@ -159,7 +162,9 @@ const HomePage = () => {
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                Manage Billing file format <br/> add, view, edit, or delete records.
+
+                            
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">
@@ -179,7 +184,8 @@ const HomePage = () => {
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                Manage Bin Numbers <br/> add, view, edit, or delete records.
+
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">
@@ -199,7 +205,7 @@ const HomePage = () => {
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                Manage insurance company details <br/> add, view, edit, or delete records.
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">
@@ -219,7 +225,8 @@ const HomePage = () => {
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                Generate and manage reports <br/> audit, audit detailed & Insurance Reports.
+
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">

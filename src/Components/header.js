@@ -15,6 +15,7 @@ import Userupdate from "./users/userupdateform";
 import logo from '../assets/logo.png';
 import profile from '../assets/profile.png';
 import GlobalBackTab from "./GlobalBackTab";
+import { Link } from "react-router-dom";
 function Header(props) {
   const { user, route, dispatch_auth } = useAuthContext();
   const { selected_branch, current_user, dispatch } = UseaddheaderContext();
@@ -73,6 +74,7 @@ function Header(props) {
     getuser();
   }, []);
 
+  // console.log("user logged in", current_user)
   // useEffect(() => {
   //   const getproject = async () => {
   //     var url = `${route}/api/projects/${current_user.projects_list[0].id}/`;
@@ -159,22 +161,29 @@ function Header(props) {
     <div className=" w-full pt-16 h-auto ">
    <div className="top-container p-2 flex justify-between w-full h-22 relative">
       {/* Logo Section */}
+      <Link to="/">
       <div className="top-container-inner w-64 h-full flex justify-start items-center">
         <img src={logo} alt="Logo" className="h-12 w-auto" />
-      </div>
+      </div></Link>
 
       {/* Profile Section */}
       <div className="relative">
-        <div
-          className="top-container-inner w-32 flex justify-center items-center h-full cursor-pointer"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <img
-            src={profile}
-            alt="Profile"
-            className="h-12 w-12 rounded-full border border-gray-300 shadow-md hover:shadow-lg transition"
-          />
-        </div>
+      <div
+  className="top-container-inner w-32 flex justify-center items-center h-full cursor-pointer"
+  onClick={() => setIsOpen(!isOpen)}
+>
+ 
+    <div
+      className="h-12 w-12 flex justify-center items-center rounded-full text-white font-semibold text-lg"
+      style={{ backgroundColor: "#15E6CD" }}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+</svg>
+
+    </div>
+</div>
+
 
         {/* Dropdown */}
         {isOpen && (

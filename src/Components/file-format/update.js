@@ -66,6 +66,8 @@ function Update({ show, onHide, data }) {
       onHide={onHide}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
+      centered
+      className="custom-modal" 
     >
       <Modal.Header closeButton>
         <Modal.Title className="model-heading">
@@ -148,10 +150,9 @@ function Update({ show, onHide, data }) {
             </div>
           </div>
 
-          <hr />
           <div className="d-flex flex-row-reverse mt-2 me-2">
-            <Update_button isloading={isloading} />
-          </div>
+          <Update_button isloading={isloading} />
+        </div>
         </form>
       </Modal.Body>
     </Modal>

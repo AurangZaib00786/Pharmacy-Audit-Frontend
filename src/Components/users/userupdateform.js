@@ -78,6 +78,7 @@ function Userupdate({ show, onHide, data, fun }) {
       onHide={onHide}
       size="md"
       aria-labelledby="contained-modal-title-vcenter"
+      centered
     >
       <Modal.Header closeButton>
         <Modal.Title className="model-heading">Edit User</Modal.Title>
@@ -141,7 +142,6 @@ function Userupdate({ show, onHide, data, fun }) {
           />
           <div className="text-danger">{passworderror}</div>
 
-          <hr />
           <div className="d-flex flex-row-reverse mt-2 me-2">
             <Update_button isloading={isloading} />
           </div>

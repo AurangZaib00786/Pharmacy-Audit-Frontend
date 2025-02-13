@@ -8,6 +8,7 @@ import "./bin.css";
 import custom_toast from "../alerts/custom_toast";
 import Select_field from "../selectfield/select";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
+import Select from "react-select"
 
 function Binupdate({ show, onHide, data, allinsurance }) {
   const { user, route } = useAuthContext();
@@ -56,13 +57,15 @@ function Binupdate({ show, onHide, data, allinsurance }) {
       onHide={onHide}
       size="md"
       aria-labelledby="contained-modal-title-vcenter"
+
+      centered
     >
       <Modal.Header closeButton>
-        <Modal.Title className="model-heading">Edit Insurance</Modal.Title>
+        <Modal.Title className="model-heading">Edit Bin</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form onSubmit={handleSubmit}>
-          <Select_field
+          <Select
             options={allinsurance}
             value={insurance}
             funct={(e) => setinsurance(e)}
@@ -71,7 +74,7 @@ function Binupdate({ show, onHide, data, allinsurance }) {
           />
           <TextField
             type="number"
-            className="form-control"
+            className="form-control mt-3"
             label=" Number"
             value={name}
             onChange={(e) => {
@@ -82,7 +85,6 @@ function Binupdate({ show, onHide, data, allinsurance }) {
             required
           />
 
-          <hr />
           <div className="d-flex flex-row-reverse mt-2 me-2">
             <Update_button isloading={isloading} />
           </div>

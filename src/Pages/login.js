@@ -102,10 +102,10 @@ function Login() {
     //   </div>
     //   <ToastContainer autoClose={2000} hideProgressBar={true} theme="dark" />
     // </div>
-    <div className="min-h-screen login-main flex items-center justify-center ">
-      <div className="w-2/3 h-96 login-child-main flex">
+    <div className="md:min-h-screen  h-screen login-main md:flex md:p-0 p-4 items-center justify-center ">
+      <div className="md:w-2/3 h-96 login-child-main md:flex">
 
-        <div style={{ height: "100%" }} className="w-1/2  login-form-bg ml-28 max-w-md rounde shadow-md">
+        <div style={{ height: "100%" }} className="md:w-1/2  login-form-bg md:ml-28 max-w-md rounde shadow-md">
           <div className="w-full h-8 flex justify-center items-center   bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe]">
             <h1 className="text-sm">LOG IN</h1>
           </div>
@@ -221,35 +221,33 @@ function Login() {
 
         </div>
         <div className="">
-          <div className="mt-8 flex justify-center items-center">
+          <div className="mt-8 md:flex justify-center items-center">
 
 
             <ul className="flex flex-col gap-4">
               <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
-                <span><span className="text-gray-400">Streamline File Comparisons with</span> <span className="font-bold text-white">Precision</span> and <span className="font-bold text-white">Speed</span></span></li>
-              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <span><span className="text-gray-400">Streamline File Comparisons with</span> <span className="font-bold md:text-white">Precision</span> and <span className="font-bold md:text-white">Speed</span></span></li>
+              <li className="md:text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
                 <span><span className="font-bold ">Uncover Discrepancies</span> Instantly</span></li>
-              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+              <li className="md:text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
-                <span><span className="text-gray-400">Intuitive</span> interface <span className="font-bold text-white">pwerful</span> Results</span></li>
-              <li className="text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
+                <span><span className="text-gray-400">Intuitive</span> interface <span className="font-bold md:text-white">pwerful</span> Results</span></li>
+              <li className="md:text-white flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-green-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
-                <span><span className="text-gray-400">Stay in Control with</span>  <span className="font-bold text-white">Detailed Audit Reports</span> </span></li>
+                <span><span className="text-gray-400">Stay in Control with</span>  <span className="font-bold md:text-white">Detailed Audit Reports</span> </span></li>
             </ul>
-            <li>
-
-            </li>
+           
           </div>
 
-          <div className="">
-          <div className="mt-4 flex justify-center">
-          <span className="text-white text-xs">Don't have an account?</span>
+          <div className="mb-2">
+          <div className="mt-4  flex justify-center">
+          <span className="md:text-white text-xs">Don't have an account?</span>
             </div>
           <div className="flex mt-2 justify-center">
           <Link to="/sign-up">    

@@ -51,6 +51,8 @@ function Insuranceupdate({ show, onHide, data, fun }) {
       onHide={onHide}
       size="md"
       aria-labelledby="contained-modal-title-vcenter"
+
+      centered
     >
       <Modal.Header closeButton>
         <Modal.Title className="model-heading">Edit Insurance</Modal.Title>
@@ -68,8 +70,7 @@ function Insuranceupdate({ show, onHide, data, fun }) {
             required
           />
 
-          <hr />
-          <div className="d-flex flex-row-reverse mt-2 me-2">
+          <div className="d-flex flex-row-reverse mt-3 me-2">
             <Update_button isloading={isloading} />
           </div>
         </form>

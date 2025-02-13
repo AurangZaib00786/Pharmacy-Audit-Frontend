@@ -185,7 +185,7 @@ function BillingFileformat() {
   ];
 
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total ms-2">
+    <span className="react-bootstrap-table-pagination-total ms-2 text-white">
       Showing {from} to {to} of {size} Results
     </span>
   );
@@ -278,22 +278,36 @@ function BillingFileformat() {
   };
 
   const download = () => {
+    console.log("clickeddd")
     const documentDefinition = makepdf();
     pdfMake.createPdf(documentDefinition).download("Biilingformat.pdf");
   };
 
   const print = () => {
+    console.log("clicked")
     const documentDefinition = makepdf();
     pdfMake.createPdf(documentDefinition).print();
   };
 
   return (
     <div className="">
-      <GlobalBackTab title="Billing file format"/>
+      <div className="p-1">      <GlobalBackTab title="Billing file format" /></div>
       <div className=" me-3 mt-3">
-      <div className="  d-flex justify-content-between">
-          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-            <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
+
+
+        <div className="card-body mt-8">
+          <ToolkitProvider
+            keyField="id"
+            data={Data}
+            columns={columns}
+            search
+            exportCSV
+          >
+            {(props) => (
+              <div>
+                <div className=" mb-2 p-1  d-md-flex justify-content-between">
+                  <div className="d-md-flex  w-full justify-content-between align-items-center mt-3">
+                    {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
               <form className="w-full">
                 <div className="relative w-full">
                   <input
@@ -322,61 +336,64 @@ function BillingFileformat() {
                   </button>
                 </div>
               </form>
-            </div>
+            </div> */}
+                    <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
+                      <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                        <div className="w-full"> {/* Wrap input in a full-width container */}
+                          <SearchBar
+                            {...props?.searchProps}
+                            placeholder="Search"
+                            className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                            style={{ width: "100%", maxWidth: "none" }} // Force full width
+                          />
 
-            <div className="w-1/2  flex justify-end gap-2 ">
-              <button
-                type="button"
-                className=" flex   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
-                onClick={() => setshowmodel(!showmodel)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 font-semibold">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
+                        </div>
+                      </div>
+                    </div>
 
-                Add format
-              </button>
-              <button
-                className=" flex gap-1 hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                </svg>
+                    <div className="md:w-1/2  flex md:justify-end gap-2 ">
+                      <button
+                        type="button"
+                        className=" flex  justify-center items-center  bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 md:text-xl text-sm hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
+                        onClick={() => setshowmodel(!showmodel)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 font-semibold">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
 
-               Export
-              </button>
-              <button
-                type="button"
-                className=" flex gap-1   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                onClick={download}
-              >
-                <PictureAsPdfIcon /> PDF
-              </button>
-              <button
-                type="button"
-                className=" flex gap-1   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                onClick={print}
-              >
-                <PrintIcon /> Print
-              </button>
+                        Add format
+                      </button>
+                      <button
+                        onClick={download}
+                        className=" flex gap-1 hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
 
-            </div>
-            {/* <SearchBar {...props.searchProps} /> */}
-          </div>
+                        Export
+                      </button>
+                      <button
+                        type="button"
+                        className=" flex gap-1   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                        onClick={download}
+                      >
+                        <PictureAsPdfIcon /> PDF
+                      </button>
+                      <button
+                        type="button"
+                        className=" flex gap-1   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                        onClick={print}
+                      >
+                        <PrintIcon /> Print
+                      </button>
 
-        </div>
+                    </div>
+                    {/* <SearchBar {...props.searchProps} /> */}
+                  </div>
 
-        <div className="card-body mt-8">
-          <ToolkitProvider
-            keyField="id"
-            data={Data}
-            columns={columns}
-            search
-            exportCSV
-          >
-            {(props) => (
-              <div>
-               
+                </div>
+
 
                 {isloading && (
                   <div className="text-center">

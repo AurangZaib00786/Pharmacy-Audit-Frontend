@@ -6,7 +6,7 @@ import Spinner from "react-bootstrap/Spinner";
 
 function Update_button(props) {
   return (
-    <Button style={{ borderRadius: "33px" }} type="submit" variant="primary">
+    <button type="submit" className=" w-full rounded border-2 py-1.5 hover:bg-[#15e6cd] hover:text-white hover:border-2 hover:border-white border-black" >
       {props.isloading && (
         <Spinner
           as="span"
@@ -17,7 +17,7 @@ function Update_button(props) {
         />
       )}
       <FontAwesomeIcon icon={faRotate} /> Update
-    </Button>
+    </button>
   );
 }
 

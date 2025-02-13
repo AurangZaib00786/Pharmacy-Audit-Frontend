@@ -289,7 +289,7 @@ function Audit() {
         console.error("Failed to delete file", response);
       }
     } catch (error) {
-      
+
       console.error("Error deleting file:", error);
     }
   };
@@ -344,7 +344,7 @@ function Audit() {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  console.log(currentPageData)
+  // console.log(currentPageData)
 
   const openimage = (item) => {
     if (item.file instanceof File) {
@@ -710,11 +710,11 @@ function Audit() {
   const handlereportchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
-  
+
     if (selectedOption) {
       // Update the state with both value and label
       setreport_type(selectedOption);
-  
+
       // Apply the conditions based on the value
       let optimize;
       if (selectedOption.value === "zero") {
@@ -726,12 +726,12 @@ function Audit() {
       } else {
         optimize = auditdata;
       }
-  
+
       // Dispatch the filtered data
       dispatch({ type: "Set_data", payload: optimize });
     }
   };
- 
+
   const [filteredData, setFilteredData] = useState([]); // New state for filtered data
 
   useEffect(() => {
@@ -741,30 +741,30 @@ function Audit() {
   // const handleinsurancereportchange = (e) => {
   //   setinsurance_report_type(e);
 
-    // let filteredReports = insurancedata.map((report) => {
-    //   let filteredData = [];
-    //   if (e.value === "zero") {
-    //     filteredData = report.data.filter((item) => item.result_package === 0);
-    //   } else if (e.value === "negative") {
-    //     filteredData = report.data.filter((item) => item.result_package < 0);
-    //   } else if (e.value === "positive") {
-    //     filteredData = report.data.filter((item) => item.result_package > 0);
-    //   } else {
-    //     filteredData = report.data; // Default case: all data
-    //   }
-    //   return { ...report, data: filteredData }; // Update filtered data for the report
-    // });
+  // let filteredReports = insurancedata.map((report) => {
+  //   let filteredData = [];
+  //   if (e.value === "zero") {
+  //     filteredData = report.data.filter((item) => item.result_package === 0);
+  //   } else if (e.value === "negative") {
+  //     filteredData = report.data.filter((item) => item.result_package < 0);
+  //   } else if (e.value === "positive") {
+  //     filteredData = report.data.filter((item) => item.result_package > 0);
+  //   } else {
+  //     filteredData = report.data; // Default case: all data
+  //   }
+  //   return { ...report, data: filteredData }; // Update filtered data for the report
+  // });
 
-    // setFilteredData(filteredReports); // Update the state with filtered data
+  // setFilteredData(filteredReports); // Update the state with filtered data
   // };
   const handleInsurancereporttchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
-  
+
     if (selectedOption) {
       // Update the state with both value and label
       setreport_type(selectedOption);
-  
+
       // Apply the conditions based on the value
       let filteredReports = insurancedata.map((report) => {
         let filteredData = [];
@@ -779,8 +779,8 @@ function Audit() {
         }
         return { ...report, data: filteredData }; // Update filtered data for the report
       });
-  
-      setFilteredData(filteredReports); 
+
+      setFilteredData(filteredReports);
     }
   };
 
@@ -1163,79 +1163,79 @@ function Audit() {
               })}
 
             </div> */}
-        <div className="pt-md-10 pt-2 pl-3 row col-md-12">
-    {vendor_filesdata.map((item) => (
-      <div
-        key={item.name}
-        className="d-flex align-items-center justify-content-between bg-light pt-2 pb-2 rounded-lg mb-2"
-        style={{
-          boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        {/* File Icon */}
-        <div
-          className="d-flex align-items-center"
-          style={{ cursor: "pointer" }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-12 text-gray-700 font-normal"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-            />
-          </svg>
-          <div>
-            <div className="text-normal">{item.name}</div>
-            <div className="text-xs mt-2 text-gray-400">
-              {item.type || "XLSX"} | {item.size || "1.2 MB"}
+            <div className="pt-md-10 pt-2 pl-3 row col-md-12">
+              {vendor_filesdata.map((item) => (
+                <div
+                  key={item.name}
+                  className="d-flex align-items-center justify-content-between bg-light pt-2 pb-2 rounded-lg mb-2"
+                  style={{
+                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  {/* File Icon */}
+                  <div
+                    className="d-flex align-items-center"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-12 text-gray-700 font-normal"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                      />
+                    </svg>
+                    <div>
+                      <div className="text-normal">{item.name}</div>
+                      <div className="text-xs mt-2 text-gray-400">
+                        {item.type || "XLSX"} | {item.size || "1.2 MB"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="d-flex align-items-end gap-2 ">
+                    <svg
+                      onClick={() => openimage(item)}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="cursor-pointer size-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                      />
+                    </svg>
+
+                    <svg
+                      onClick={() => handleDelete(item.name)} // Trigger delete here
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-5 text-red-500 cursor-pointer"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18 18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="d-flex align-items-end gap-2 ">
-          <svg
-            onClick={() => openimage(item)}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="cursor-pointer size-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-            />
-          </svg>
-
-          <svg
-            onClick={() => handleDelete(item.name)} // Trigger delete here
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5 text-red-500 cursor-pointer"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18 18 6M6 6l12 12"
-            />
-          </svg>
-        </div>
-      </div>
-    ))}
-  </div>
           </div>
           {/* Billing Container */}
           <div className="col-md-6 mt-8 md:mt-0 ">
@@ -1325,8 +1325,8 @@ function Audit() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
 
-                    <svg             onClick={() => handleDelete(item.name)} // Trigger delete here
- xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
+                    <svg onClick={() => handleDelete(item.name)} // Trigger delete here
+                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
 
@@ -1376,33 +1376,33 @@ function Audit() {
 
 
       {audit_report_type.includes("audit") && (
-      <div className="relative w-full max-w-xs">
-      <select
-        className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+        <div className="relative w-full max-w-xs">
+          <select
+            className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
                    border border-green-300 rounded-lg shadow-md text-black 
                    cursor-pointer appearance-none"
-        value={report_type.value} // Bind value to the current state
-        onChange={handlereportchange} // Handle changes
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-    </div>
+            value={report_type.value} // Bind value to the current state
+            onChange={handlereportchange} // Handle changes
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
       )}
       {/* {audit_report_type.includes("audit_detail") && (
       <div className="relative w-full max-w-xs">
@@ -1437,33 +1437,33 @@ function Audit() {
 
 
       {audit_report_type.includes("insurance") && (
-      <div className="relative w-full max-w-xs">
-      <select
-        className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+        <div className="relative w-full max-w-xs">
+          <select
+            className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
                    border border-green-300 rounded-lg shadow-md text-black 
                    cursor-pointer appearance-none"
-        value={report_type.value} // Bind value to the current state
-        onChange={handleInsurancereporttchange} // Handle changes
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
-      </div>
-    </div>
+            value={report_type.value} // Bind value to the current state
+            onChange={handleInsurancereporttchange} // Handle changes
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
       )}
 
 
@@ -1477,43 +1477,44 @@ function Audit() {
 
           {auditdata.length > 0 ?
             <>
-              <div className="  d-flex justify-content-between">
+             
+              <div className="card-body mt-3">
+                <div style={{ zoom: ".8" }}>
+                  <ToolkitProvider
+                    keyField="ndc"
+                    data={Data}
+                    columns={columns}
+                    exportCSV={{
+                      onlyExportFiltered: true,
+                      exportAll: false,
+                      fileName: "Audit Report.csv",
+                    }}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                         <div className="  d-flex justify-content-between">
                 <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-                  <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
-                    <form className="w-full">
-                      <div className="relative w-full">
-                        <input
-                          type="text"
-                          id="voice-search"
-                          className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
-                          placeholder="Search"
-                          required
-                        />
-                        <button type="button" className="absolute inset-y-0 end-0 flex items-center pe-3">
-                          <svg
-                            className="w-4 h-4 text-gray-400"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                            />
-                          </svg>
-                        </button>
+                <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
+                      <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                        <div className="w-full"> {/* Wrap input in a full-width container */}
+                          <SearchBar
+                            {...props?.searchProps}
+                            placeholder="Search"
+                            className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                            style={{ width: "100%", maxWidth: "none" }} // Force full width
+                          />
+
+                        </div>
                       </div>
-                    </form>
-                  </div>
+                    </div>
 
                   <div className="w-1/2  flex justify-end gap-2 ">
 
                     <button
-                      className=" flex gap-1 bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                onClick={handleExportToExcel}
+
+                      className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
@@ -1521,14 +1522,18 @@ function Audit() {
 
                       Export excel
                     </button>
-                    <button
-                      type="button"
-                      className=" flex gap-1 items-center    hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                      </svg> Export csv
-                    </button>
+                    <ExportCSVButton {...props.csvProps}>
+  <button
+    type="button"
+    className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+    </svg>
+    Export CSV
+  </button>
+</ExportCSVButton>
+
                     {/* <button
                  type="button"
                  className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
@@ -1545,21 +1550,6 @@ function Audit() {
                 </div>
 
               </div>
-              <div className="card-body mt-3">
-                <div style={{ zoom: ".8" }}>
-                  <ToolkitProvider
-                    keyField="ndc"
-                    data={Data}
-                    columns={columns}
-                    exportCSV={{
-                      onlyExportFiltered: true,
-                      exportAll: false,
-                      fileName: "Audit Report.csv",
-                    }}
-                    search
-                  >
-                    {(props) => (
-                      <div>
 
                         {/* <div className="d-flex justify-content-between align-items-center mt-3">
                       <div>
@@ -1709,7 +1699,7 @@ function Audit() {
               </div>
             </div> */}
                 <div style={{ zoom: ".8" }} ref={componentRef}>
-               
+
                   <List
                     height={6500}
                     itemCount={isprint ? alldata?.length : currentPageData.length}
@@ -1967,7 +1957,7 @@ function Audit() {
           row_id={null}
         />
       )}
-        {delete_file && (
+      {delete_file && (
         <Alert_before_delete
           show={delete_file}
           onHide={() => setdelete_file(false)}

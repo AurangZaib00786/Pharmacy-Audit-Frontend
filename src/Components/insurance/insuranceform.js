@@ -45,7 +45,7 @@ function Insuranceform(props) {
     }
   };
   return (
-    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter">
+    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"
@@ -68,8 +68,7 @@ function Insuranceform(props) {
             required
           />
 
-          <hr />
-          <div className=" d-flex flex-row-reverse mt-2 me-2">
+          <div className=" d-flex  flex-row-reverse mt-3 me-2">
             <Save_button isloading={isloading} />
           </div>
         </form>

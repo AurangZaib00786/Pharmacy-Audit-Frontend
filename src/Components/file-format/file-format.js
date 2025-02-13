@@ -84,7 +84,7 @@ function Fileformat(props) {
       </div>
     );
   };
-  
+
 
   const handleconfirm = (row) => {
     dispatch({ type: "Delete_data", payload: { id: row } });
@@ -176,7 +176,7 @@ function Fileformat(props) {
   ];
 
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total ms-2">
+    <span className="react-bootstrap-table-pagination-total ms-2 text-white">
       Showing {from} to {to} of {size} Results
     </span>
   );
@@ -204,7 +204,8 @@ function Fileformat(props) {
     ], // A numeric array is also available. the purpose of above example is custom the text
   };
 
-  const rowstyle = { height: "10px" };
+  const rowstyle = { height: "10px" }
+  ;
   const makepdf = () => {
     const body = Data?.map((item, index) => {
       return [
@@ -277,90 +278,17 @@ function Fileformat(props) {
     const documentDefinition = makepdf();
     pdfMake.createPdf(documentDefinition).print();
   };
-  
+
 
   return (
     <div className="">
-                  <GlobalBackTab title="Vendor file format" />
-      
+      <div className="p-1">
+      <GlobalBackTab title="Vendor file format" />
+      </div>
+
 
       <div className=" me-3 mt-3 ">
-        <div className="  d-flex justify-content-between">
-          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-            <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
-              <form className="w-full">
-                <div className="relative w-full">
-                  <input
-                  {...props.searchProps}
-                    type="text"
-                    id="voice-search"
-                    className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
-                    placeholder="Search"
-                    required
-                  />
-                  <button type="button" className="absolute inset-y-0 end-0 flex items-center pe-3">
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </form>
-            </div>
 
-            <div className="w-1/2  flex justify-end gap-2 ">
-              <button
-                type="button"
-                className=" flex   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
-                onClick={() => setshowmodel(!showmodel)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 font-semibold">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-
-                Add format
-              </button>
-              <button
-                className=" flex gap-1 hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                </svg>
-
-               Export
-              </button>
-              <button
-                type="button"
-                className=" flex gap-1   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                onClick={print}
-              >
-                <PrintIcon /> Print
-              </button>
-              <button
-                type="button"
-                className=" flex gap-1   hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                onClick={download}
-              >
-                <PictureAsPdfIcon /> PDF
-              </button>
-              
-
-            </div>
-            {/* <SearchBar {...props.searchProps} /> */}
-          </div>
-
-        </div>
         <div className="card-body mt-8">
           <ToolkitProvider
             keyField="id"
@@ -371,6 +299,66 @@ function Fileformat(props) {
           >
             {(props) => (
               <div>
+                <div className="  d-md-flex justify-content-between">
+                  <div className="d-md-flex mb-2 p-1  w-full justify-content-between align-items-center mt-3">
+                    <div className="input-container-inner md:w-1/2  h-full flex items-center">
+                      <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                        <div className="w-full"> {/* Wrap input in a full-width container */}
+                          <SearchBar
+                            {...props?.searchProps}
+                            placeholder="Search"
+                            className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                            style={{ width: "100%", maxWidth: "none" }} // Force full width
+                          />
+
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div className="md:w-1/2  flex justify-end gap-2 ">
+                      <button
+                        type="button"
+                        className=" flex justify-center items-center g   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; md:text-xl text-sm hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
+                        onClick={() => setshowmodel(!showmodel)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="md:size-6 size-4 font-semibold">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+
+                        Add format
+                      </button>
+                      <button
+                        className=" flex gap-1 hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+
+                        Export
+                      </button>
+                      <button
+                        type="button"
+                        className=" flex gap-1   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                        onClick={print}
+                      >
+                        <PrintIcon /> Print
+                      </button>
+                      <button
+                        type="button"
+                        className=" flex gap-1   hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                        onClick={download}
+                      >
+                        <PictureAsPdfIcon /> PDF
+                      </button>
+
+
+                    </div>
+                    {/* <SearchBar {...props.searchProps} /> */}
+                  </div>
+
+                </div>
+
 
 
                 {isloading && (
@@ -385,7 +373,7 @@ function Fileformat(props) {
                   bootstrap4
                   condensed
                   classes="custom-table"
-                  />
+                />
               </div>
             )}
           </ToolkitProvider>
