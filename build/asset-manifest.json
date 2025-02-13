@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.744b6fee.css",
-    "main.js": "/static/js/main.6884a427.js",
+    "main.css": "/static/css/main.de939f3c.css",
+    "main.js": "/static/js/main.57926028.js",
     "static/js/27.db21f876.chunk.js": "/static/js/27.db21f876.chunk.js",
     "static/media/Loging page - AuditPro.png": "/static/media/Loging page - AuditPro.d654a41b560de3474895.png",
     "static/media/home-bg.png": "/static/media/home-bg.799c8e0357dad30d4f78.png",
@@ -16,7 +16,7 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.744b6fee.css",
-    "static/js/main.6884a427.js"
+    "static/css/main.de939f3c.css",
+    "static/js/main.57926028.js"
   ]
 }
