@@ -9,11 +9,14 @@ import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import { useAuthContext } from "../../hooks/useauthcontext";
+import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 import filterFactory from "react-bootstrap-table2-filter";
 import Button from "react-bootstrap/Button";
 import Alert_before_delete from "../alerts/alert_before_delete";
 import { ToastContainer } from "react-toastify";
 import custom_toast from "../alerts/custom_toast";
+import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -36,6 +39,8 @@ function Audit() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
+  const { current_user } = UseaddheaderContext();
+
   const { SearchBar } = Search;
   const { ExportCSVButton } = CSVExport;
   const [Fileurl_vendor, setFileurl_vendor] = useState("");
@@ -50,10 +55,13 @@ function Audit() {
   const [callagain_billing, setcallagain_billing] = useState(false);
   const [vendor, setvendor] = useState("");
   const [delete_file, setdelete_file] = useState(false);
+  const [callagain, setcallagain] = useState(false);
   const [report_type, setreport_type] = useState({
     value: "combine",
     label: "Combine Report",
   });
+
+  console.log(current_user, "userrrr")
 
   const [insurance_report_type, setinsurance_report_type] = useState({
     value: "combine",
@@ -89,7 +97,7 @@ function Audit() {
     setisloading(true);
     const fetchvendorfiles = async () => {
       const response = await fetch(
-        `${route}/api/manage-files/?directory=vendor_files`,
+        `${route}/api/manage-files/?directory=vendor_files&user_id=${current_user.id}`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -109,14 +117,14 @@ function Audit() {
     };
 
     fetchvendorfiles();
-  }, [callagain_vendor]);
+  }, [callagain_vendor, current_user, callagain]);
 
   useEffect(() => {
     setisloading(true);
 
     const fetchbillingfiles = async () => {
       const response = await fetch(
-        `${route}/api/manage-files/?directory=billing_files`,
+        `${route}/api/manage-files/?directory=billing_files&user_id=${current_user.id}`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
@@ -135,7 +143,7 @@ function Audit() {
       }
     };
     fetchbillingfiles();
-  }, [callagain_billing]);
+  }, [callagain_billing, current_user, callagain]);
 
   useEffect(() => {
     dispatch_auth({ type: "Set_menuitem", payload: "audit" });
@@ -253,8 +261,11 @@ function Audit() {
     return filename.split("/").shift();
   }
 
+  const [filename, setfilename] = useState("");
+
   const handleimageselection_vendor = (e) => {
     const file = e.target.files[0];
+
     if (file) {
       setFileurl_vendor({
         file: file,
@@ -276,14 +287,15 @@ function Audit() {
 
   };
 
-  const handleDelete = async (fileName) => {
-    const url = `${route}/api/manage-files/?directory=${fileName}`;
+  const handleDelete = async (directory, fileName) => {
+    const url = `${route}/api/manage-files/?filename=${fileName}&directory=${directory}&user_id=${current_user.id}`;
     try {
       const response = await fetch(url, {
         method: "DELETE",
       });
       if (response.ok) {
-        success_toast("Deleted Successfully")
+        toast.success("Deleted Successfully")
+        setcallagain(!callagain)
         // Optionally refresh the file list here or update the state
       } else {
         console.error("Failed to delete file", response);
@@ -313,7 +325,7 @@ function Audit() {
 
   const Searchndc = useMemo(() => {
     if (search) {
-      return alldata.filter((item) => item.ndc === Number(search));
+      return alldata.filter((item) => item.ndc == Number(search));
     } else {
       return alldata;
     }
@@ -362,6 +374,7 @@ function Audit() {
       const formData = new FormData();
       formData.append(`file`, Fileurl_vendor.file);
       formData.append(`vendor_file_format_id `, vendor.value);
+      formData.append(`user_id `, current_user.id);
       const response = await fetch(`${route}/api/upload-pharmacy-file/`, {
         method: "POST",
         headers: {
@@ -395,6 +408,7 @@ function Audit() {
       const formData = new FormData();
       formData.append(`file`, Fileurl_billing.file);
       formData.append(`billing_file_format_id `, billing.value);
+      formData.append(`user_id `, current_user.id);
       const response = await fetch(`${route}/api/upload-billing-file/`, {
         method: "POST",
         headers: {
@@ -431,7 +445,7 @@ function Audit() {
         value: "combine",
         label: "Combine Report",
       });
-      const response = await fetch(`${route}/api/audit-report/`, {
+      const response = await fetch(`${route}/api/audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
       const json = await response.json();
@@ -542,7 +556,7 @@ function Audit() {
     if (audit_report_type.includes("audit_detail")) {
       setisloading(true);
 
-      const response = await fetch(`${route}/api/audit-report-detail/`, {
+      const response = await fetch(`${route}/api/audit-report-detail/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
 
@@ -566,7 +580,7 @@ function Audit() {
         value: "combine",
         label: "Combine Report",
       });
-      const response = await fetch(`${route}/api/insurance-audit-report/`, {
+      const response = await fetch(`${route}/api/insurance-audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
 
@@ -916,6 +930,56 @@ function Audit() {
     XLSX.writeFile(wb, fileName);
   };
 
+  console.log(alldata)
+
+  const handleExportCSV = () => {
+    if (!alldata || alldata.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const csvRows = [];
+
+    csvRows.push("NDC No, Billing Date, Description, Quantity, Package Size, Source");
+
+    alldata.forEach((item) => {
+      if (item.billing_data.length > 0) {
+        item.billing_data.forEach((bill) => {
+          csvRows.push(
+            `"${item.ndc || ""}","${bill.date || ""}","${bill.description || ""}","${bill.quantity || ""}","${bill.packagesize || ""}","${bill.source || ""}"`
+          );
+        });
+      } else {
+        csvRows.push(`"${item.ndc || ""}","","","","",""`);
+      }
+    });
+
+    csvRows.push("\nNDC No, Purchase Date, Description, Quantity, Source");
+
+    alldata.forEach((item) => {
+      if (item.vendor_data.length > 0) {
+        item.vendor_data.forEach((vendor) => {
+          csvRows.push(
+            `"${item.ndc || ""}","${vendor.date || ""}","${vendor.description || ""}","${vendor.quantity || ""}","${vendor.source || ""}"`
+          );
+        });
+      } else {
+        csvRows.push(`"${item.ndc || ""}","","","",""`);
+      }
+    });
+
+    const csvString = csvRows.join("\n");
+
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "exported_data.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
 
 
   const makeitem = ({ index, style, data }) => {
@@ -1049,10 +1113,9 @@ function Audit() {
   return (
 
     <div className="user_main">
-      {isloading && (
+      {/* {!isloading && (
         <div className="absolute h-full inset-0 bg-black/20 backdrop-blur-xs flex items-center justify-center z-50">
           <div className="relative w-20 h-20">
-            {/* Circular Loader */}
             <div role="status">
               <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-[#29e5ce]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
@@ -1061,13 +1124,20 @@ function Audit() {
               <span class="sr-only">Loading...</span>
             </div>
           </div>
-        </div>)}
+        </div>)} */}
       <GlobalBackTab title="Reports" />
-      {/* {isloading && (
-        <div className="text-center">
-          <Spinner animation="border" variant="primary" />
+      {isloading && (
+        <div className=" mt-4 flex items-center justify-center z-50">
+
+          <div role="status ">
+            <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-[#29e5ce]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+              <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
         </div>
-      )} */}
+      )}
       <div className=" me-3">
         <div className="card-header d-flex align-items-center justify-content-end mt-3 ">
 
@@ -1131,6 +1201,7 @@ function Audit() {
                     className="hidden"
                     onChange={handleimageselection_vendor}
                     accept=".xlsx,.xls,.csv"
+                    multiple
                     required
                   />
                 </div>
@@ -1143,6 +1214,13 @@ function Audit() {
                     Upload
                   </button>
                 </div>
+              </div>
+              <div className=" pl-2 pt-2">
+                {Fileurl_vendor?.name && (
+                  <span className="text-white text-sm md:text-base truncate max-w-[150px]">
+                    {Fileurl_vendor.name}
+                  </span>
+                )}
               </div>
             </form>
             {/* <div className=" col-11 pt-3 ">
@@ -1218,7 +1296,7 @@ function Audit() {
                     </svg>
 
                     <svg
-                      onClick={() => handleDelete(item.name)} // Trigger delete here
+                      onClick={() => handleDelete("vendor_files", item.name)} // Passing both values
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -1273,6 +1351,7 @@ function Audit() {
                   >
                     Upload File
                   </label>
+
                   <input
                     id="billing-upload"
                     type="file"
@@ -1280,8 +1359,11 @@ function Audit() {
                     onChange={handleimageselection_billing}
                     accept=".xlsx,.xls,.csv"
                     required
+                    multiple
                   />
+
                 </div>
+
                 <div className="w-1/3 text-right">
                   <button
                     style={{ width: "80px" }}
@@ -1289,9 +1371,21 @@ function Audit() {
                     className="text-white py-2 rounded-lg bg-[#587291] hover:bg-[#4a5d7a] transition duration-300"
                   >
                     Upload
+
                   </button>
+
+
                 </div>
+
               </div>
+              <div className=" pl-2 pt-2">
+                {Fileurl_billing?.name && (
+                  <span className="text-white text-sm md:text-base truncate max-w-[150px]">
+                    {Fileurl_billing.name}
+                  </span>
+                )}
+              </div>
+
             </form>
             <div className="md:pt-10 pt-2 pl-3 row col-md-12 ">
               {billing_filesdata.map((item) => (
@@ -1325,7 +1419,8 @@ function Audit() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
 
-                    <svg onClick={() => handleDelete(item.name)} // Trigger delete here
+                    <svg
+                      onClick={() => handleDelete("billing_files", item.name)} // Passing both values
                       xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
@@ -1477,7 +1572,7 @@ function Audit() {
 
           {auditdata.length > 0 ?
             <>
-             
+
               <div className="card-body mt-3">
                 <div style={{ zoom: ".8" }}>
                   <ToolkitProvider
@@ -1493,48 +1588,48 @@ function Audit() {
                   >
                     {(props) => (
                       <div>
-                         <div className="  d-flex justify-content-between">
-                <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-                <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
-                      <div className="input-container-inner w-full  mb-2 h-full flex items-center">
-                        <div className="w-full"> {/* Wrap input in a full-width container */}
-                          <SearchBar
-                            {...props?.searchProps}
-                            placeholder="Search"
-                            className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
-                            style={{ width: "100%", maxWidth: "none" }} // Force full width
-                          />
+                        <div className="  d-flex justify-content-between">
+                          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
+                            <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
+                              <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                                <div className="w-full"> {/* Wrap input in a full-width container */}
+                                  <SearchBar
+                                    {...props?.searchProps}
+                                    placeholder="Search"
+                                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                                    style={{ width: "100%", maxWidth: "none" }} // Force full width
+                                  />
 
-                        </div>
-                      </div>
-                    </div>
+                                </div>
+                              </div>
+                            </div>
 
-                  <div className="w-1/2  flex justify-end gap-2 ">
+                            <div className="w-1/2  flex justify-end gap-2 ">
 
-                    <button
-                onClick={handleExportToExcel}
+                              <button
+                                onClick={handleExportToExcel}
 
-                      className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                      </svg>
+                                className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                </svg>
 
-                      Export excel
-                    </button>
-                    <ExportCSVButton {...props.csvProps}>
-  <button
-    type="button"
-    className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-    </svg>
-    Export CSV
-  </button>
-</ExportCSVButton>
+                                Export excel
+                              </button>
+                              <ExportCSVButton {...props.csvProps}>
+                                <button
+                                  type="button"
+                                  className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                  </svg>
+                                  Export CSV
+                                </button>
+                              </ExportCSVButton>
 
-                    {/* <button
+                              {/* <button
                  type="button"
                  className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
                >
@@ -1545,11 +1640,11 @@ function Audit() {
                </button> */}
 
 
-                  </div>
-                  {/* <SearchBar {...props.searchProps} /> */}
-                </div>
+                            </div>
+                            {/* <SearchBar {...props.searchProps} /> */}
+                          </div>
 
-              </div>
+                        </div>
 
                         {/* <div className="d-flex justify-content-between align-items-center mt-3">
                       <div>
@@ -1647,6 +1742,7 @@ function Audit() {
                   </button>
                   <button
                     type="button"
+                    onClick={handleExportCSV}
                     className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

@@ -279,7 +279,28 @@ function Fileformat(props) {
     pdfMake.createPdf(documentDefinition).print();
   };
 
-
+  const exportToCSV = (data, filename) => {
+    // Extract only required columns
+    const exportableColumns = columns.map(col => col.dataField);
+  
+    // Create CSV header row
+    const csvHeader = exportableColumns.join(",") + "\n";
+  
+    // Generate CSV body
+    const csvBody = data
+      .map(row => exportableColumns.map(field => `"${row[field] || ""}"`).join(","))
+      .join("\n");
+  
+    // Combine header and body
+    const csvContent = csvHeader + csvBody;
+  
+    // Create a Blob and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  };
   return (
     <div className="">
       <div className="p-1">
@@ -307,7 +328,7 @@ function Fileformat(props) {
                           <SearchBar
                             {...props?.searchProps}
                             placeholder="Search"
-                            className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                            className="w-full text-black text-sm rounded-lg focus:outline-none p-2 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
                             style={{ width: "100%", maxWidth: "none" }} // Force full width
                           />
 
@@ -329,6 +350,8 @@ function Fileformat(props) {
                         Add format
                       </button>
                       <button
+                                  onClick={() => exportToCSV(Data, "exported_data.csv")}
+
                         className=" flex gap-1 hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">

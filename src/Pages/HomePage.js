@@ -9,6 +9,7 @@ import vendorImage from '../assets/icons/fileimg.png';
 import billingIcon from '../assets/icons/recp.png';
 import billingImage from '../assets/icons/receipt.png';
 import binIcon from '../assets/icons/qr.png';
+import userIcon from '../assets/icons/user.png';
 import binImage from '../assets/icons/qr-code.png';
 import InsuranceIcon from '../assets/icons/insu.png';
 import InsuranceImage from '../assets/icons/insurance.png';
@@ -16,6 +17,7 @@ import reportsIcon from '../assets/icons/repo.png';
 import reportsImage from '../assets/icons/reports.png';
 import supportIcon from '../assets/icons/sup.png';
 import supportImage from '../assets/icons/support.png';
+import userImage from '../assets/icons/team.png';
 import { Link } from 'react-router-dom';
 import Header from '../Components/header';
 
@@ -217,6 +219,27 @@ const HomePage = () => {
                             </div>
                         </div>
                     </Link>
+                    <Link to="/user">
+                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                            <div className="w-full mt-3 flex justify-between items-center px-2">
+                                <span className="text-lg text-gray-600">Users</span>
+                                <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
+                            </div>
+                            <div className="w-full mx-3">
+                                <span className="text-xs text-gray-500">
+                                Manage Users <br/> add, view, edit, or delete records.
+
+                                </span>
+                            </div>
+                            <div className="w-full flex justify-center">
+                                <img
+                                    className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                    src={userImage}
+                                    alt="Reports"
+                                />
+                            </div>
+                        </div>
+                    </Link>
                     <Link to="/audit">
                         <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
                             <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -238,6 +261,7 @@ const HomePage = () => {
                             </div>
                         </div>
                     </Link>
+                   
                     <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
                         <div className="w-full mt-3 flex justify-between items-center px-2">
                             <span className="text-lg">Support</span>

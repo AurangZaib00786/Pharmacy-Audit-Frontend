@@ -71,7 +71,7 @@ function Userform(props) {
     }
   };
   return (
-    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter">
+    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"
@@ -143,8 +143,7 @@ function Userform(props) {
           />
           <div className="text-danger mb-1">{passworderror}</div>
 
-          <hr />
-          <div className=" d-flex flex-row-reverse mt-2 me-2">
+          <div className=" d-flex flex-row-reverse mt-3 me-2">
             <Save_button isloading={isloading} />
           </div>
         </form>

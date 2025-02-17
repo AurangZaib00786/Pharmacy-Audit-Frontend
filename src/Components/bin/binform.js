@@ -74,7 +74,7 @@ function Binform(props) {
             options={props.allinsurance}
             value={insurance}
             styles={selectStyles}
-            funct={(e) => setinsurance(e)}
+            onChange={(e) => setinsurance(e)}
             placeholder={"Insurance Company"}
             required={true}
           />

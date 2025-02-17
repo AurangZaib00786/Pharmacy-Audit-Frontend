@@ -262,11 +262,67 @@ function Bin() {
     const documentDefinition = makepdf();
     pdfMake.createPdf(documentDefinition).print();
   };
+  const exportToCSV = (data, filename) => {
+    // Extract only required columns
+    const exportableColumns = columns.map(col => col.dataField);
 
+    // Create CSV header row
+    const csvHeader = exportableColumns.join(",") + "\n";
+
+    // Generate CSV body
+    const csvBody = data
+      .map(row => exportableColumns.map(field => `"${row[field] || ""}"`).join(","))
+      .join("\n");
+
+    // Combine header and body
+    const csvContent = csvHeader + csvBody;
+
+    // Create a Blob and trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  };
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: "#CCECFA", // Light transparent background
+      borderRadius: "10px", // Rounded edges
+      border: state.isFocused ? "2px solid #0EA5E9" : "2px solid #D1FAE5", // Border color
+      boxShadow: "none", // Remove default shadow
+      padding: "5px", // Padding inside the select
+      "&:hover": {
+        border: "2px solid #0EA5E9", // Hover effect
+      },
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#374151", // Dark text color
+      fontSize: "16px",
+      fontWeight: "500",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: "rgba(255, 255, 255, 0.9)", // Transparent menu
+      borderRadius: "10px",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Light shadow
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected && "#CCECFA" , // Green highlight for selected option
+      color: state.isSelected ? "" : "#374151", // Text color
+      "&:hover": {
+        backgroundColor: "#CCECFA", // Lighter green on hover
+        color: "black",
+      },
+    }),
+  };
   return (
     <div className="">
       <div className="p-1">
-      <GlobalBackTab title="Bin Number" />
+        <GlobalBackTab title="Bin Number" />
       </div>
       <div className=" me-3 mt-3">
 
@@ -286,16 +342,30 @@ function Bin() {
                     <div className="d-md-flex  w-full justify-content-between align-items-center mt-3">
                       <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
                         <div className="input-container-inner w-full  mb-2 h-full md:flex items-center">
-                          <div className="w-full"> {/* Wrap input in a full-width container */}
+                          <div className="w-full flex items-center gap-2"> {/* Wrap input in a full-width container */}
                             <SearchBar
                               {...props?.searchProps}
                               placeholder="Search"
-                              className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                              className="w-full text-black text-sm rounded-lg focus:outline-none p-2 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
                               style={{ width: "100%", maxWidth: "none" }} // Force full width
                             />
+                            <div className="col-md-4 col-6">
+                              <Select
+                                options={[
+                                  { value: "all", label: "All" },
+                                  ...allinsurance]}
+                                value={insurance}
+                                onChange={(e) => setinsurance(e)}
+                                placeholder="Report type"
+                                styles={customStyles}
+                                className="w-full text-gray-900"
+                                components={{ IndicatorSeparator: () => null }} // Removes separator line
+                              /></div>
 
                           </div>
+
                         </div>
+
                       </div>
                       <div className="md:w-1/2  flex justify-end gap-2 ">
                         <button
@@ -310,7 +380,7 @@ function Bin() {
                           Add bin number
                         </button>
                         <button
-                                                  onClick={download}
+                          onClick={() => exportToCSV(Data, "exported_data.csv")}
 
                           className=" flex gap-1 hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                         >
@@ -322,14 +392,14 @@ function Bin() {
                         </button>
                         <button
                           type="button"
-                          className=" flex gap-1   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                          className=" flex gap-1 items-center   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                           onClick={download}
                         >
                           <PictureAsPdfIcon /> PDF
                         </button>
                         <button
                           type="button"
-                          className=" flex gap-1   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                          className=" flex gap-1 items-center   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                           onClick={print}
                         >
                           <PrintIcon /> Print
@@ -337,6 +407,7 @@ function Bin() {
 
                       </div>
                       {/* <SearchBar {...props.searchProps} /> */}
+
                     </div>
 
                   </div>
@@ -350,13 +421,8 @@ function Bin() {
                     onChange={(e) => setinsurance(e)}
                     placeholder={"Insurance Company"}
                   /> */}
-                  {/* 
-                  <Select
-                    options={[{ value: "all", label: "All" }, ...allinsurance]}
-                    value={insurance}
-                    funct={(e) => setinsurance(e)}
-                    placeholder={"Insurance Company"}
-                  /> */}
+
+
                 </div>
 
 
