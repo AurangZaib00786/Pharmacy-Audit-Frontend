@@ -1,0 +1,411 @@
+import React, { useState, useEffect } from "react";
+// import "./user.css";
+import { IconButton } from "@material-ui/core";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import DeleteRoundedIcon from "@material-ui/icons/DeleteRounded";
+import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import ToolkitProvider, {
+    Search,
+    CSVExport,
+} from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
+import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
+import { UseaddDataContext } from "../../hooks/useadddatacontext";
+import { useAuthContext } from "../../hooks/useauthcontext";
+
+import Button from "react-bootstrap/Button";
+import Alert_before_delete from "../alerts/alert_before_delete";
+import { ToastContainer } from "react-toastify";
+import PrintIcon from "@material-ui/icons/Print";
+import PictureAsPdfIcon from "@material-ui/icons/PictureAsPdf";
+import custom_toast from "../alerts/custom_toast";
+import Spinner from "react-bootstrap/Spinner";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+import GlobalBackTab from "../GlobalBackTab";
+import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
+import useLogout from "../../hooks/uselogout";
+import AddGroupForm from "./AddGroupForm";
+import EditGroupForm from "./EditGroupForm";
+import AssignPermissionForm from "./AssignPermissionForm";
+
+function GroupsandPermissions() {
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    const { Data, dispatch } = UseaddDataContext();
+    const { user, route, dispatch_auth } = useAuthContext();
+    const { SearchBar } = Search;
+    const { ExportCSVButton } = CSVExport;
+    const [showmodel, setshowmodel] = useState(false);
+    const [showPermissionModal, setshowPermissionModal] = useState(false);
+    const [data, setdata] = useState("");
+    const [showmodelupdate, setshowmodelupdate] = useState(false);
+
+    const [delete_user, setdelete_user] = useState(false);
+    const [url_to_delete, seturl_to_delete] = useState("");
+    const [row_id, setrow_id] = useState("");
+    const [isloading, setisloading] = useState(false);
+    const { selected_branch } = UseaddheaderContext();
+    const { logout } = useLogout();
+    useEffect(() => {
+        dispatch_auth({ type: "Set_menuitem", payload: "user" });
+        dispatch({ type: "Set_data", payload: [] });
+        setisloading(true);
+        const fetchWorkouts = async () => {
+            const response = await fetch(`${route}/api/groups/`, {
+                headers: { Authorization: `Bearer ${user.access}` },
+            });
+
+            const json = await response.json();
+            if (json.code === "token_not_valid") {
+                logout();
+            }
+            if (response.ok) {
+                dispatch({ type: "Set_data", payload: json });
+                setisloading(false);
+            }
+        };
+
+        if (user) {
+            fetchWorkouts();
+        }
+    }, []);
+
+    const headerstyle = (column, colIndex, { sortElement }) => {
+        return (
+            <div
+                className="d-flex justify-content-between align-items-center"
+                style={{ minHeight: "2.5rem" }}
+            >
+                {column.text}
+                {sortElement}
+            </div>
+        );
+    };
+
+    const handleconfirm = (row) => {
+        dispatch({ type: "Delete_data", payload: { id: row } });
+        custom_toast("Delete");
+    };
+
+    const linkFollow = (cell, row, rowIndex, formatExtraData) => {
+        return (
+            <span className="action d-flex">
+                {/* {row.id !== 1 && ( */}
+                    <IconButton
+                        className="me-2 border border-danger rounded"
+                        onClick={() => {
+                            setrow_id(row.id);
+                            seturl_to_delete(`${route}/api/groups/${row.id}/`);
+                            setdelete_user(true);
+                        }}
+                    >
+                        <DeleteRoundedIcon
+                            className="m-1"
+                            color="error"
+                            fontSize="medium"
+                        />
+                    </IconButton>
+                {/* )} */}
+
+                <IconButton
+                    style={{ border: "1px solid #003049", borderRadius: "5px" }}
+                    onClick={() => {
+                        setdata(row);
+                        setshowmodelupdate(true);
+                    }}
+                >
+                    <EditOutlinedIcon
+                        className="m-1"
+                        style={{ color: "#003049" }}
+                        fontSize="medium"
+                    />
+                </IconButton>
+            </span>
+        );
+    };
+
+    const columns = [
+        {
+            dataField: "id",
+            text: "#",
+            sort: true,
+            headerFormatter: headerstyle,
+        },
+        {
+            dataField: "name",
+            text: "Name",
+            sort: true,
+            headerFormatter: headerstyle,
+        },
+        {
+            dataField: "extended.type",
+            text: "Type",
+            sort: true,
+            headerFormatter: headerstyle,
+        },
+      
+        {
+            dataField: "action",
+            text: "Action",
+            formatter: linkFollow,
+            headerFormatter: headerstyle,
+        },
+    ];
+
+    const customTotal = (from, to, size) => (
+        <span className="react-bootstrap-table-pagination-total ms-2 text-white">
+            Showing {from} to {to} of {size} Results
+        </span>
+    );
+
+    const options = {
+        paginationSize: 4,
+        pageStartIndex: 1,
+        firstPageText: "First",
+        showTotal: true,
+        paginationTotalRenderer: customTotal,
+        disablePageTitle: true,
+        sizePerPageList: [
+            {
+                text: "10",
+                value: 10,
+            },
+            {
+                text: "20",
+                value: 20,
+            },
+            {
+                text: "All",
+                value: Data?.length,
+            },
+        ], // A numeric array is also available. the purpose of above example is custom the text
+    };
+
+    const rowstyle = { height: "10px" };
+    const makepdf = () => {
+        const body = Data?.map((item, index) => {
+            return [
+                index + 1,
+                item.first_name,
+                item.last_name,
+                item.username,
+                item.email,
+            ];
+        });
+        body.splice(0, 0, ["#", "First Name", "Last Name", "Name", "Email"]);
+
+        const documentDefinition = {
+            content: [
+                { text: "Users", style: "header" },
+                // { text: `Project Name: ${selected_branch?.name}`, style: "body" },
+                {
+                    canvas: [
+                        { type: "line", x1: 0, y1: 10, x2: 510, y2: 10, lineWidth: 1 },
+                    ],
+                },
+
+                {
+                    table: {
+                        // headers are automatically repeated if the table spans over multiple pages
+                        // you can declare how many rows should be treated as headers
+                        headerRows: 1,
+                        widths: [30, "*", "*", "*", "*"],
+                        body: body,
+                    },
+                    style: "tableStyle",
+                },
+            ],
+            styles: {
+                tableStyle: {
+                    width: "100%", // Set the width of the table to 100%
+                    marginTop: 20,
+                },
+
+                header: {
+                    fontSize: 22,
+                    bold: true,
+                    alignment: "center",
+                },
+                body: {
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    marginBottom: 10,
+                },
+            },
+        };
+        return documentDefinition;
+    };
+
+    const download = () => {
+        const documentDefinition = makepdf();
+        pdfMake.createPdf(documentDefinition).download("users.pdf");
+    };
+
+    const print = () => {
+        const documentDefinition = makepdf();
+        pdfMake.createPdf(documentDefinition).print();
+    };
+
+
+    const exportToCSV = (data, filename) => {
+        // Extract only required columns
+        const exportableColumns = columns.map(col => col.dataField);
+
+        // Create CSV header row
+        const csvHeader = exportableColumns.join(",") + "\n";
+
+        // Generate CSV body
+        const csvBody = data
+            .map(row => exportableColumns.map(field => `"${row[field] || ""}"`).join(","))
+            .join("\n");
+
+        // Combine header and body
+        const csvContent = csvHeader + csvBody;
+
+        // Create a Blob and trigger download
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+    };
+    return (
+        <div className="">
+            <GlobalBackTab title="Groups & Permissions" />
+            <div className=" me-3">
+
+                <div className="card-body pt-0">
+                    <ToolkitProvider
+                        keyField="id"
+                        data={Data}
+                        columns={columns}
+                        search
+                        exportCSV
+                    >
+                        {(props) => (
+                            <div>
+                                <div className="  d-md-flex p-1 justify-content-between">
+                                    <div className="d-md-flex  w-full justify-content-between align-items-center mt-3">
+                                        <div className="input-container-inner md:w-1/2  h-full flex items-center">
+                                            <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                                                <div className="w-full"> {/* Wrap input in a full-width container */}
+                                                    <SearchBar
+                                                        {...props?.searchProps}
+                                                        placeholder="Search"
+                                                        className="w-full text-black text-sm rounded-lg focus:outline-none p-2 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                                                        style={{ width: "100%", maxWidth: "none" }} // Force full width
+                                                    />
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="md:w-1/2  flex md:justify-end gap-2 ">
+                                            <button
+                                                type="button"
+                                                className=" flex   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-sm justify-center items-center md:text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
+                                                onClick={() => setshowmodel(!showmodel)}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="md:size-6 size-4 font-semibold">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                </svg>
+
+                                                Add Group
+                                            </button>
+                                            {/* <button
+                                                type="button"
+                                                className=" flex  gap-2  hover:bg-[#15e6cd] text-white text-sm justify-center items-center md:text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                                onClick={() => setshowmodel(!showmodel)}
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="md:size-6 size-4 font-semibold">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                                                </svg>
+
+
+                                                Assign Permission
+                                            </button> */}
+                                            <button
+                                                onClick={() => exportToCSV(Data, "exported_data.csv")}
+
+                                                className=" flex gap-1 hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                                </svg>
+
+                                                Export
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className=" flex gap-1   hover:bg-[#15e6cd] text- text-white hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                                onClick={download}
+                                            >
+                                                <PictureAsPdfIcon /> PDF
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className=" flex gap-1   hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                                onClick={print}
+                                            >
+                                                <PrintIcon /> Print
+                                            </button>
+
+                                        </div>
+                                        {/* <SearchBar {...props.searchProps} /> */}
+                                    </div>
+
+                                </div>
+
+                                {isloading && (
+                                    <div className="text-center">
+                                        <Spinner animation="border" variant="primary" />
+                                    </div>
+                                )}
+                                <BootstrapTable
+                                    {...props.baseProps}
+                                    pagination={paginationFactory(options)}
+                                    rowStyle={rowstyle}
+                                    striped
+                                    bootstrap4
+                                    condensed
+                                    classes="custom-table"
+                                />
+                            </div>
+                        )}
+                    </ToolkitProvider>
+                </div>
+            </div>
+
+            {showmodel && (
+                <AddGroupForm show={showmodel} onHide={() => setshowmodel(false)} />
+            )}
+
+            {showmodelupdate && (
+                <EditGroupForm
+                    show={showmodelupdate}
+                    onHide={() => setshowmodelupdate(false)}
+                    data={data}
+                    fun={custom_toast}
+                />
+            )}
+
+            {delete_user && (
+                <Alert_before_delete
+                    show={delete_user}
+                    onHide={() => setdelete_user(false)}
+                    url={url_to_delete}
+                    dis_fun={handleconfirm}
+                    row_id={row_id}
+                />
+            )}
+            <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
+        </div>
+    );
+    // return <></>;
+}
+
+export default GroupsandPermissions;
+

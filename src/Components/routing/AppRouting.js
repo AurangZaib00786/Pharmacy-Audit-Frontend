@@ -1,34 +1,29 @@
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ProSidebarProvider } from "react-pro-sidebar";
-import { useAuthContext } from "./hooks/useauthcontext";
-import Layout from "./Pages/home";
-import User from "./Components/users/User";
-import Login from "./Pages/login";
-import Dashboard from "./Components/dashboard/dashboard";
-import SignUp from "./Pages/signup";
-import Audit from "./Components/audit/audit";
-import Fileformat from "./Components/file-format/file-format";
-import Insurance from "./Components/insurance/insurance";
-import Bin from "./Components/bin/bin";
-import Insurancereport from "./Components/insurancereport/insurancereport";
-import BillingFileformat from "./Components/billing-format/file-format";
-import AuditDetails from "./Components/audit details/auditdetails";
-import HomePage from "./Pages/HomePage";
-import GroupsandPermissions from "./Components/groups/GroupsandPermissions";
-import Support from "./Components/support/Support";
+import React from 'react'
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuthContext } from '../../hooks/useauthcontext';
+import Layout from '../../Pages/home';
+import Login from '../../Pages/login';
+import SignUp from '../../Pages/signup';
+import User from '../users/User';
+import GroupsandPermissions from '../groups/GroupsandPermissions';
+import { UseaddheaderContext } from '../../hooks/useaddheadercontext';
+import Bin from '../bin/bin';
+import Insurance from '../insurance/insurance';
+import Audit from '../audit/audit';
+import Fileformat from '../file-format/file-format';
+import BillingFileformat from '../billing-format/file-format';
+import HomePage from '../../Pages/HomePage';
+import Support from '../support/Support';
+import Header from '../header';
 
+const AppRouting = () => {
+      const { user } = useAuthContext();
 
-function Routing() {
-  const { user } = useAuthContext();
-
+    
   return (
-    <BrowserRouter>
-      <ProSidebarProvider>
-        <Routes>
-          <Route path="/" element={<Layout />}>
+    <div className=''>    
+        {/* <Header/> */}
+          <Routes>
             <Route
               index
               element={!user ? <Login /> : <Navigate to={"/home"} />}
@@ -77,7 +72,6 @@ function Routing() {
               element={user ? <BillingFileformat /> : <Navigate to={"/"} />}
             ></Route>
             
-          </Route>
           <Route
               path="/home"
               element={user ? <HomePage /> : <Navigate to={"/"} />}
@@ -90,9 +84,9 @@ function Routing() {
 
           <Route path="*" element={<Navigate to={"/"} />}></Route>
         </Routes>
-      </ProSidebarProvider>
-    </BrowserRouter>
-  );
+      
+    </div>
+  )
 }
 
-export default Routing;
+export default AppRouting

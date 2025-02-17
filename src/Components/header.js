@@ -68,12 +68,30 @@ function Header(props) {
       }
 
       if (response.ok) {
+        getpermission(json);
         dispatch({ type: "Set_Current_user", payload: json });
       }
     };
     getuser();
   }, []);
 
+  const getpermission = async (input) => {
+    var url = `${route}/api/user-permissions/${input.id}/`;
+
+    const response = await fetch(`${url}`, {
+      headers: { Authorization: `Bearer ${user.access}` },
+    });
+    const json = await response.json();
+    if (!response.ok) {
+    }
+
+    if (response.ok) {
+      dispatch({
+        type: "Set_Current_user",
+        payload: { ...input, permissions: json.permissions },
+      });
+    }
+  };
   // console.log("user logged in", current_user)
   // useEffect(() => {
   //   const getproject = async () => {

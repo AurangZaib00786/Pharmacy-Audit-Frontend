@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuthContext } from "../../hooks/useauthcontext";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import Modal from "react-bootstrap/Modal";
-import Select from "react-select"
 import TextField from "@mui/material/TextField";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import success_toast from "../alerts/success_toast";
 import Save_button from "../buttons/save_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
-import "./user.css";
-function Userform(props) {
+// import "./user.css";
+function AssignPermissionForm(props) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
   const [username, setusername] = useState("");
@@ -21,32 +20,7 @@ function Userform(props) {
   const [usernameerror, setusernameerror] = useState("");
   const [emailerror, setemailerror] = useState("");
   const [passworderror, setpassworderror] = useState("");
-    const [groups, setgroups] = useState([]);
-    const [allgroups, setallgroups] = useState([]);
 
-
-    useEffect(() => {
-        const fetchbranches = async () => {
-          var url = `${route}/api/groups/`;
-          const response = await fetch(`${url}`, {
-            headers: { Authorization: `Bearer ${user.access}` },
-          });
-          const json = await response.json();
-    
-          if (response.ok) {
-            setallgroups(
-              json.map((item) => {
-                return { value: item.id, label: item.name };
-              })
-            );
-          }
-        };
-        if (user) {
-          fetchbranches();
-        }
-      }, [groups]);
-
-    
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -61,7 +35,6 @@ function Userform(props) {
         username,
         first_name,
         last_name,
-        groups : groups.map((item)=> item.value),
         email,
         password,
       }),
@@ -94,19 +67,9 @@ function Userform(props) {
       setfirst_name("");
       setlast_name("");
       setpassword("");
-      setgroups([])
       success_toast();
     }
   };
-
-  
-  const selectStyles = {
-    menu: (base) => ({
-      ...base,
-      zIndex: 100,
-    }),
-  };
-
   return (
     <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
@@ -179,15 +142,7 @@ function Userform(props) {
             required
           />
           <div className="text-danger mb-1">{passworderror}</div>
-          <Select
-        isMulti
-        className="mt-3"
-        options={allgroups}
-        value={groups}
-        onChange={(e)=>setgroups(e)}
-        styles={selectStyles}
-        placeholder="Select Groups"
-      />
+
           <div className=" d-flex flex-row-reverse mt-3 me-2">
             <Save_button isloading={isloading} />
           </div>
@@ -197,4 +152,5 @@ function Userform(props) {
   );
 }
 
-export default Userform;
+export default AssignPermissionForm;
+
