@@ -9,7 +9,10 @@ import success_toast from "../alerts/success_toast";
 import Save_button from "../buttons/save_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import "./user.css";
-function Userform(props) {
+function Userform(
+  callagain, setcallagain,
+  show, onHide
+) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
   const [username, setusername] = useState("");
@@ -94,6 +97,7 @@ function Userform(props) {
       setfirst_name("");
       setlast_name("");
       setpassword("");
+      setcallagain(!callagain)
       setgroups([])
       success_toast();
     }
@@ -108,7 +112,10 @@ function Userform(props) {
   };
 
   return (
-    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+    <Modal 
+    show={show}
+    onHide={onHide}
+     size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"

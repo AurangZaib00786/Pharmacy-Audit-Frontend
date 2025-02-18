@@ -94,7 +94,6 @@ function Audit() {
 
   // console.log(alldata)
   useEffect(() => {
-    setisloading(true);
     const fetchvendorfiles = async () => {
       const response = await fetch(
         `${route}/api/manage-files/?directory=vendor_files&user_id=${current_user.id}`,
@@ -120,7 +119,6 @@ function Audit() {
   }, [callagain_vendor, current_user, callagain]);
 
   useEffect(() => {
-    setisloading(true);
 
     const fetchbillingfiles = async () => {
       const response = await fetch(

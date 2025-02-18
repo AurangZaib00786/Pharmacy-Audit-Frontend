@@ -13,7 +13,7 @@ import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import custom_toast from "../alerts/custom_toast";
 import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 
-function EditGroupForm({ show, onHide, data, fun }) {
+function EditGroupForm({ show, onHide, data, fun,callagain, setcallagain }) {
   const { user, route } = useAuthContext();
   const [isloading, setisloading] = useState(false);
   const { dispatch } = UseaddheaderContext();
@@ -31,7 +31,6 @@ function EditGroupForm({ show, onHide, data, fun }) {
     
     const [allpermissions, setallpermissions] = useState([]);
 
-    const [callagain, setcallagain] = useState(false);
 
 
   const handleSubmit = async (e) => {
@@ -81,7 +80,7 @@ function EditGroupForm({ show, onHide, data, fun }) {
     if (data.permission_details) {
         setPermissions(data.permission_details.map((item) => ({ value: item.id, label: item.name })));
     }
-}, [data.permission_details, callagain]);
+}, [data.permission_details]);
 
 
     useEffect(() => {

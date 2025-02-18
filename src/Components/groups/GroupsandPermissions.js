@@ -41,6 +41,7 @@ function GroupsandPermissions() {
     const [showPermissionModal, setshowPermissionModal] = useState(false);
     const [data, setdata] = useState("");
     const [showmodelupdate, setshowmodelupdate] = useState(false);
+    const [callagain, setcallagain] = useState(false);
 
     const [delete_user, setdelete_user] = useState(false);
     const [url_to_delete, seturl_to_delete] = useState("");
@@ -70,7 +71,7 @@ function GroupsandPermissions() {
         if (user) {
             fetchWorkouts();
         }
-    }, []);
+    }, [callagain]);
 
     const headerstyle = (column, colIndex, { sortElement }) => {
         return (
@@ -380,7 +381,7 @@ function GroupsandPermissions() {
             </div>
 
             {showmodel && (
-                <AddGroupForm show={showmodel} onHide={() => setshowmodel(false)} />
+                <AddGroupForm show={showmodel} onHide={() => setshowmodel(false)} callagain={callagain} setcallagain={setcallagain} />
             )}
 
             {showmodelupdate && (
@@ -389,6 +390,7 @@ function GroupsandPermissions() {
                     onHide={() => setshowmodelupdate(false)}
                     data={data}
                     fun={custom_toast}
+                    callagain={callagain} setcallagain={setcallagain}
                 />
             )}
 

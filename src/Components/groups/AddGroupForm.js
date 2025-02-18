@@ -11,7 +11,9 @@ import success_toast from "../alerts/success_toast";
 import Save_button from "../buttons/save_button";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 // import "./user.css";
-function AddGroupForm(props) {
+function AddGroupForm(
+    show, onHide,callagain, setcallagain
+) {
   const { dispatch } = UseaddDataContext();
   const { user, route } = useAuthContext();
   const [username, setusername] = useState("");
@@ -95,6 +97,7 @@ function AddGroupForm(props) {
       settype("");
       setPermissions("");
       success_toast();
+      setcallagain(!callagain)
     }
   };
 
@@ -106,7 +109,8 @@ function AddGroupForm(props) {
   };
 
   return (
-    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+    <Modal  show={show}
+    onHide={onHide} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton>
         <Modal.Title
           id="contained-modal-title-vcenter"

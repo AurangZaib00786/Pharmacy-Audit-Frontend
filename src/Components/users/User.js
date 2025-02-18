@@ -41,6 +41,7 @@ function User() {
   const [delete_user, setdelete_user] = useState(false);
   const [url_to_delete, seturl_to_delete] = useState("");
   const [row_id, setrow_id] = useState("");
+  const [callagain, setcallagain] = useState(false);
   const [isloading, setisloading] = useState(false);
   const { selected_branch } = UseaddheaderContext();
   const { logout } = useLogout();
@@ -66,7 +67,7 @@ function User() {
     if (user) {
       fetchWorkouts();
     }
-  }, []);
+  }, [callagain]);
 
   const headerstyle = (column, colIndex, { sortElement }) => {
     return (
@@ -375,13 +376,14 @@ function User() {
       </div>
 
       {showmodel && (
-        <Userform show={showmodel} onHide={() => setshowmodel(false)} />
+        <Userform show={showmodel} onHide={() => setshowmodel(false)} callagain={callagain} setcallagain={setcallagain} />
       )}
       {showmodelupdate && (
         <Userupdate
           show={showmodelupdate}
           onHide={() => setshowmodelupdate(false)}
           data={data}
+          callagain={callagain} setcallagain={setcallagain}
           fun={custom_toast}
         />
       )}

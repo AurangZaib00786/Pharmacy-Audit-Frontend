@@ -1,4 +1,5 @@
 import "./App.css";
+import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import User from "./Components/users/User";
 import Login from "./Pages/login";
 import Dashboard from "./Components/dashboard/dashboard";
 import SignUp from "./Pages/signup";
+import { UseaddheaderContext } from "./hooks/useaddheadercontext";
 import Audit from "./Components/audit/audit";
 import Fileformat from "./Components/file-format/file-format";
 import Insurance from "./Components/insurance/insurance";
@@ -19,10 +21,15 @@ import AuditDetails from "./Components/audit details/auditdetails";
 import HomePage from "./Pages/HomePage";
 import GroupsandPermissions from "./Components/groups/GroupsandPermissions";
 import Support from "./Components/support/Support";
+import jwtDecode from "jwt-decode";
 
 
 function Routing() {
   const { user } = useAuthContext();
+
+
+    
+  
 
   return (
     <BrowserRouter>

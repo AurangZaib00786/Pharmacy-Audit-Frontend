@@ -10,7 +10,7 @@ import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import "./user.css";
 import custom_toast from "../alerts/custom_toast";
 import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
-function Userupdate({ show, onHide, data, fun }) {
+function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const { user, route } = useAuthContext();
   const [isloading, setisloading] = useState(false);
   const { dispatch } = UseaddheaderContext();
@@ -98,6 +98,7 @@ function Userupdate({ show, onHide, data, fun }) {
       setisloading(false);
       dispatch({ type: "Set_Current_user", payload: json });
       onHide();
+      setcallagain(!callagain)
       custom_toast("Update ");
     }
   };
