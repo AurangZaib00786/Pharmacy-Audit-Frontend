@@ -381,7 +381,11 @@ function GroupsandPermissions() {
             </div>
 
             {showmodel && (
-                <AddGroupForm show={showmodel} onHide={() => setshowmodel(false)} callagain={callagain} setcallagain={setcallagain} />
+                <AddGroupForm
+                 show={showmodel}
+                  onHide={() => setshowmodel(false)}
+                   callagain={callagain}
+                    setcallagain={setcallagain} />
             )}
 
             {showmodelupdate && (
