@@ -294,6 +294,7 @@ function Audit() {
       if (response.ok) {
         toast.success("Deleted Successfully")
         setcallagain(!callagain)
+ 
         // Optionally refresh the file list here or update the state
       } else {
         console.error("Failed to delete file", response);

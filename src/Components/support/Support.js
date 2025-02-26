@@ -54,8 +54,8 @@ function Support() {
 
 
     return (
-        <div className="home-container w-full lg:p-6 lg:px-16 h-auto">
-            <Header></Header>
+        <div className="   ">
+            {/* <Header></Header> */}
             <div className="p-1">
                 <GlobalBackTab title=" Support" />
             </div>

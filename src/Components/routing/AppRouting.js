@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { useAuthContext } from '../../hooks/useauthcontext';
 import Layout from '../../Pages/home';
 import Login from '../../Pages/login';
@@ -18,11 +18,13 @@ import Header from '../header';
 
 const AppRouting = () => {
       const { user } = useAuthContext();
+      const {current_user} = UseaddheaderContext();
 
     
   return (
     <div className=''>    
         {/* <Header/> */}
+        
           <Routes>
             <Route
               index
@@ -40,6 +42,17 @@ const AppRouting = () => {
 
               <Route
               path="/groups-permissions"
+              // element={
+              //   user ? (
+              //     current_user?.permissions.includes("can_view_groups_permissions") ? (
+              //       <GroupsandPermissions />
+              //     ) : (
+              //       <Navigate to={"/"} />
+              //     )
+              //   ) : (
+              //     <Navigate to={"/"} />
+              //   )
+              // }
               element={user ? <GroupsandPermissions /> : <Navigate to={"/"} />}
             ></Route>
             <Route

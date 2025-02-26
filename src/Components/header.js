@@ -69,7 +69,7 @@ function Header(props) {
 
       if (response.ok) {
         getpermission(json);
-        dispatch({ type: "Set_Current_user", payload: json });
+        // dispatch({ type: "Set_Current_user", payload: json });
       }
     };
     getuser();

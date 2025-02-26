@@ -19,6 +19,8 @@ const addheaderreducer=(state , action)=>{
             };
         case 'Set_Current_user' :
 
+        console.log("cobtext",action.payload);
+
             return {
                 selected_branch:state.selected_branch,
                 current_user:action.payload
