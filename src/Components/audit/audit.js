@@ -33,6 +33,7 @@ import PrintIcon from "@material-ui/icons/Print";
 import GlobalBackTab from "../GlobalBackTab";
 import { FaFileAlt, FaDownload, FaTimes } from "react-icons/fa";
 import success_toast from "../alerts/success_toast";
+import BinNumberModal from "./BinNumberModal";
 
 
 function Audit() {
@@ -48,7 +49,7 @@ function Audit() {
   const [vendor_filesdata, setvendor_filesdata] = useState([]);
   const [billing_filesdata, setbilling_filesdata] = useState([]);
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,billing_files_datewise,consolidated_reports,insurance_billing_files,vendor_files,vendor_files_datewise`;
+  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,billing_files_datewise,consolidated_reports,insurance_billing_files,vendor_files,vendor_files_datewise&user_id=${current_user?.id}`;
   const single_file_to_delete = `${route}/api/manage-files/`;
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
@@ -60,7 +61,12 @@ function Audit() {
     value: "combine",
     label: "Combine Report",
   });
+const [binnumbers, setbinnumbers] = useState(false);
 
+const handlebinnumberopen = () => {
+  setbinnumbers(true); 
+  console.log("binnumber")
+}
   console.log(current_user, "userrrr")
 
   const [insurance_report_type, setinsurance_report_type] = useState({
@@ -294,7 +300,7 @@ function Audit() {
       if (response.ok) {
         toast.success("Deleted Successfully")
         setcallagain(!callagain)
- 
+
         // Optionally refresh the file list here or update the state
       } else {
         console.error("Failed to delete file", response);
@@ -1108,6 +1114,17 @@ function Audit() {
 
 
 
+  const [selectedCompany, setSelectedCompany] = useState(
+    filteredData.length > 0 ? filteredData[0].insurance_company_name : ""
+  );
+
+  const handleCompanyChange = (event) => {
+    setSelectedCompany(event.target.value);
+  };
+
+  const selectedData = filteredData.find(
+    (item) => item.insurance_company_name === selectedCompany
+  );
 
   return (
 
@@ -1836,89 +1853,63 @@ function Audit() {
           : ""
       )}
 
-      {audit_report_type.includes("insurance") && (
-        insurancedata.length > 0 ?
-          <>
-            <div className="  d-flex justify-content-between">
-              <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-                {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
-                  <form className="w-full">
-                    <div className="relative w-full">
-                      <input
-                        value={search}
-                        onChange={(e) => {
-                          setsearch(e.target.value);
-                        }}
-                        type="number"
-                        id="voice-search"
-                        className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-200 bg-transparent placeholder-gray-600 placeholder-text-xl "
-                        placeholder="Search by NDC"
-                      />
-                      <button type="button" className="absolute inset-y-0 end-0 flex items-center pe-3">
-                        <svg
-                          className="w-4 h-4 text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </form>
-                </div> */}
-                {filteredData?.map((item) => {
-                  return (
-                    <div className="bg-gradient-to-t flex justify-center items-center rounded-lg p-2 from-[#c5e9f9] to-[#f2fafe]">
-                      <h4 className=" text-sm text-gray-500">
-                        {item.insurance_company_name} Report
-                      </h4>
-                    </div>
-                  )
-                })}
 
+      {audit_report_type.includes("insurance") && filteredData.length > 0 && (
+        <>
+          <div className="d-flex justify-content-end mr-12 align-items-center mt-3">
+            <div className="relative w-full max-w-xs">
 
-                {/* <SearchBar {...props.searchProps} /> */}
+              <select
+                value={selectedCompany}
+                onChange={handleCompanyChange}
+                className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+            border border-green-300 rounded-lg shadow-md text-black 
+            cursor-pointer appearance-none"          >
+                {filteredData.map((item) => (
+                  <option key={item.insurance_company_name} value={item.insurance_company_name}>
+                    {item.insurance_company_name}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
               </div>
-
             </div>
-            <div className="card me-3  border-0"
-              style={{
-                backgroundColor: "transparent", // Sets the background to transparent
-                boxShadow: "none", // Removes shadow if you don't want any border effect
-              }}>
-              <div className="card-body ">
+          </div>
+
+          {selectedData && (
+            <div className="card me-3 border-0" style={{ backgroundColor: "transparent", boxShadow: "none" }}>
+              <div className="card-body">
                 <div style={{ zoom: ".8" }}>
-                  {filteredData?.map((item) => {
-                    return (
-                      <ToolkitProvider
-                        keyField="ndc"
-                        data={item.data ? item.data : []} // Filtered data passed here
-                        columns={columns}
-                        exportCSV={{ onlyExportFiltered: true, exportAll: false }}
-                        search
-                      >
-                        {(props) => (
-                          <div className="mb-3">
+                  <ToolkitProvider
+                    keyField="ndc"
+                    data={selectedData.data || []}
+                    columns={columns}
+                    exportCSV={{ onlyExportFiltered: true, exportAll: false }}
+                    search
+                  >
+                    {(props) => (
+                      <div className="mb-3">
+                        <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
+                          <div className="input-container-inner w-1/3 h-full flex justify-start items-center">
+                            <SearchBar
+                              {...props?.searchProps}
+                              placeholder="Search" // Placeholder for the search input
+                              className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-500 bg-transparent placeholder-gray-600 placeholder-text-xl"
+                            />
 
-                            <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
-                              <div className="input-container-inner w-1/3 h-full flex justify-start items-center">
-                                <SearchBar
-                                  {...props?.searchProps}
-                                  placeholder="Search" // Placeholder for the search input
-                                  className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-500 bg-transparent placeholder-gray-600 placeholder-text-xl"
-                                />
+                          </div>
 
-                              </div>
-
-                              {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
+                          {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
                                 <form className="w-full">
                                   <div className="relative w-full">
                                     <input
@@ -1952,39 +1943,49 @@ function Audit() {
                                 </form>
                               </div> */}
 
-                              <div className="flex justify-end gap-2 ">
-                                <button
+                          <div className="flex justify-end gap-2 ">
+                            <button
+                            onClick={handlebinnumberopen}
 
-                                  onClick={() =>
-                                    handleExportToExcelInsurance(item.data, item.insurance_company_name)
-                                  }
-                                  className=" flex gap-1 mr-4 flex justify-center items-center bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                  </svg>
+                            
+                              className=" flex gap-1 mr-4 flex justify-center items-center bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-800 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                            >
+                             
 
-                                  Export Excel
-                                </button>
-                                <button
-                                  {...props.csvProps}
+                              Bin Numbers
+                            </button>
+                            <button
 
-                                  type="button"
-                                  className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                  </svg>    <ExportCSVButton
-                                    {...props.csvProps}
-                                    className="text-white "
-                                  >
-                                    <span className="text-xl">Export CSV</span>
-                                  </ExportCSVButton>
-                                </button>
+                              onClick={() =>
+                                handleExportToExcelInsurance(selectedData.data, selectedData.insurance_company_name)
+                              }
+                              className=" flex gap-1 mr-4 flex justify-center items-center bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                              </svg>
+
+                              Export Excel
+                            </button>
+                            <button
+                              {...props.csvProps}
+
+                              type="button"
+                              className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                              </svg>    <ExportCSVButton
+                                {...props.csvProps}
+                                className="text-white "
+                              >
+                                <span className="text-xl">Export CSV</span>
+                              </ExportCSVButton>
+                            </button>
 
 
 
-                                {/* <Button
+                            {/* <Button
                                   onClick={() =>
                                     handleExportToExcelInsurance(item.data, item.insurance_company_name)
                                   }
@@ -1994,16 +1995,9 @@ function Audit() {
                                 >
                                   Export Excel
                                 </Button> */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleHideClickInsurance(item.insurance_company_name)}
 
-                                  className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                                >
-                                  {item.hide ? "View" : "Hide"}
-                                </button>
 
-                                {/* <Button
+                            {/* <Button
                                   onClick={() => handleHideClickInsurance(item.insurance_company_name)}
                                   variant="secondary"
                                   shadow
@@ -2011,36 +2005,19 @@ function Audit() {
                                   {item.hide ? "View" : "Hide"}
                                 </Button> */}
 
-                              </div>
-                            </div>
-
-                            {!item.hide && (
-                              <div>
-                                <BootstrapTable
-                                  {...props.baseProps}
-                                  rowStyle={rowStyle}
-                                  bootstrap4
-                                  filter={filterFactory()}
-                                  classes="custom-table"
-                                />
-                                <hr />
-                              </div>
-                            )}
                           </div>
-                        )}
-                      </ToolkitProvider>
-                    );
-                  })}
+                        </div>
 
+                        <BootstrapTable {...props.baseProps} rowStyle={{ backgroundColor: "#f9f9f9" }} bootstrap4 filter={filterFactory()} classes="custom-table" />
+                        <hr />
+                      </div>
+                    )}
+                  </ToolkitProvider>
                 </div>
               </div>
             </div>
-          </>
-
-
-
-          : ''
-
+          )}
+        </>
       )}
 
       {delete_user && (
@@ -2050,6 +2027,14 @@ function Audit() {
           url={url_to_delete}
           dis_fun={handleconfirm}
           row_id={null}
+        />
+      )}
+      {binnumbers && (
+        <BinNumberModal
+          show={binnumbers}
+          onHide={() => setbinnumbers(false)}
+          data={selectedData?.bin_numbers}
+          company={selectedData.insurance_company_name}
         />
       )}
       {delete_file && (

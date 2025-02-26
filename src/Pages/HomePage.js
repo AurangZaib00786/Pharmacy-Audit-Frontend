@@ -33,7 +33,7 @@ const HomePage = (props) => {
       console.log("home page", current_user)
     return (
         <div>
-            <div className=" ">
+            <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
                 {/* <div className='top-container p-2 flex justify-between w-full  h-22'>
                     <div className='top-container-inner w-64 h-full flex justify-start items-center '>
                         <img src={logo} />
@@ -42,7 +42,7 @@ const HomePage = (props) => {
                         <img src={profile} />
                     </div>
                 </div> */}
-                {/* <Header/> */}
+                <Header/>
                 {/* <div className="search-container p-2  flex justify-start w-full h-24">
                     <div className="input-container-inner  w-1/2 h-full flex justify-start items-center">
                         <form className="w-full">

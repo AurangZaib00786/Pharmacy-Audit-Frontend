@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "./home.css";
-import { useLocation } from "react-router-dom";
-
 import {
   Sidebar,
   Menu,
@@ -31,12 +29,12 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import GlobalBackTab from "../Components/GlobalBackTab";
 function Layout() {
   const { user, route, menu_status } = useAuthContext();
-  const location = useLocation();
 
-
+  const { collapseSidebar, toggleSidebar, broken, collapsed } = useProSidebar();
 
   const { selected_branch, current_user } = UseaddheaderContext();
-
+  const [check_collapse, setcheck_collapse] = useState(true);
+  const [open, setopen] = useState("");
   // useEffect(() => {
   //   const getuser = async () => {
   //     const decodedToken = jwtDecode(user.access);
@@ -61,6 +59,25 @@ function Layout() {
   //   }
   // }, [user]);
 
+  const handlemouseleave = () => {
+    if (check_collapse && !collapsed) {
+      collapseSidebar();
+    }
+  };
+
+  const handlemouseenter = () => {
+    if (check_collapse && collapsed) {
+      collapseSidebar();
+    }
+  };
+
+  const handleopen = (e) => {
+    if (e === open) {
+      setopen("null");
+    } else {
+      setopen(e);
+    }
+  };
 
   return (
     <div
@@ -74,8 +91,14 @@ function Layout() {
 
           <div className=" home-container   lg:px-24 " style={{ width: "100%" }}>
             <div className="header ">
-            {user && <Header />}
-
+              {user && (
+                <Header
+                  togglefun={toggleSidebar}
+                  collapsefun={collapseSidebar}
+                  broken={broken}
+                  statefun={() => setcheck_collapse(!check_collapse)}
+                />
+              )}
             </div>
             {/* <GlobalBackTab /> */}
 
@@ -83,6 +106,7 @@ function Layout() {
             <div
               style={{
                 height: "105vh",
+                overflow: "auto",
                 backgroundColor: "transparent",
                 scrollbarWidth: "thin", // For Firefox
 
