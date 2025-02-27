@@ -61,12 +61,12 @@ function Audit() {
     value: "combine",
     label: "Combine Report",
   });
-const [binnumbers, setbinnumbers] = useState(false);
+  const [binnumbers, setbinnumbers] = useState(false);
 
-const handlebinnumberopen = () => {
-  setbinnumbers(true); 
-  console.log("binnumber")
-}
+  const handlebinnumberopen = () => {
+    setbinnumbers(true);
+    console.log("binnumber")
+  }
   console.log(current_user, "userrrr")
 
   const [insurance_report_type, setinsurance_report_type] = useState({
@@ -935,7 +935,6 @@ const handlebinnumberopen = () => {
     XLSX.writeFile(wb, fileName);
   };
 
-  console.log(alldata)
 
   const handleExportCSV = () => {
     if (!alldata || alldata.length === 0) {
@@ -1114,18 +1113,26 @@ const handlebinnumberopen = () => {
 
 
 
-  const [selectedCompany, setSelectedCompany] = useState(
-    filteredData.length > 0 ? filteredData[0].insurance_company_name : ""
-  );
+  const [selectedCompany, setSelectedCompany] = useState("");
 
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      setSelectedCompany(filteredData[0].insurance_company_name);
+    }
+  }, [filteredData]); // Runs whenever filteredData changes
+  
   const handleCompanyChange = (event) => {
     setSelectedCompany(event.target.value);
   };
-
+  
   const selectedData = filteredData.find(
     (item) => item.insurance_company_name === selectedCompany
   );
+  
 
+ 
+
+  // console.log("all data", selectedData);
   return (
 
     <div className="user_main">
@@ -1945,12 +1952,12 @@ const handlebinnumberopen = () => {
 
                           <div className="flex justify-end gap-2 ">
                             <button
-                            onClick={handlebinnumberopen}
+                              onClick={handlebinnumberopen}
 
-                            
+
                               className=" flex gap-1 mr-4 flex justify-center items-center bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-800 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
                             >
-                             
+
 
                               Bin Numbers
                             </button>
