@@ -2015,7 +2015,8 @@ function Audit() {
                           </div>
                         </div>
 
-                        <BootstrapTable {...props.baseProps} rowStyle={{ backgroundColor: "#f9f9f9" }} bootstrap4 filter={filterFactory()} classes="custom-table" />
+                        <BootstrapTable {...props.baseProps}                           rowStyle={rowStyle}
+ bootstrap4 filter={filterFactory()} classes="custom-table" />
                         <hr />
                       </div>
                     )}

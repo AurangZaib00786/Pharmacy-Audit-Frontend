@@ -22,6 +22,7 @@ import HomePage from "./Pages/HomePage";
 import GroupsandPermissions from "./Components/groups/GroupsandPermissions";
 import Support from "./Components/support/Support";
 import jwtDecode from "jwt-decode";
+import Contacts from "./Components/contact/Contacts";
 
 
 function Routing() {
@@ -83,6 +84,14 @@ function Routing() {
               path="/billing-file-format"
               element={user ? <BillingFileformat /> : <Navigate to={"/"} />}
             ></Route>
+            <Route
+              path="/contacts"
+              element={user ? <Contacts /> : <Navigate to={"/"} />}
+            ></Route>
+            <Route
+              path="/support"
+              element={user ? <Support /> : <Navigate to={"/"} />}
+            ></Route>
             
           </Route>
           <Route
@@ -90,10 +99,9 @@ function Routing() {
               element={user ? <HomePage /> : <Navigate to={"/"} />}
             ></Route>
 
-<Route
-              path="/support"
-              element={user ? <Support /> : <Navigate to={"/"} />}
-            ></Route>
+
+
+
 
           <Route path="*" element={<Navigate to={"/"} />}></Route>
         </Routes>

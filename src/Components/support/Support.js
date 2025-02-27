@@ -19,7 +19,7 @@ function Support() {
         e.preventDefault();
     
         setisloading(true);
-        const response = await fetch(`${route}/api/conatct/`, {
+        const response = await fetch(`${route}/api/contact/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -54,13 +54,12 @@ function Support() {
 
 
     return (
-        <div className="home-container w-full lg:p-6 lg:px-16 h-auto">
-            <Header></Header>
+        <div className=" w-full lg:p-6 lg:px-16 h-auto">
             <div className="p-1">
                 <GlobalBackTab title=" Support" />
             </div>
             <div className=" me-3 flex justify-center mt-3">
-                <div className="md:w-2/3 h-96 justify-center login-child-main md:flex">
+                <div className="md:w-2/3 h-auto  justify-center login-child-main md:flex">
 
                     <div style={{ height: "100%" }} className="md:w-1/2  login-form-bg md:ml-28 max-w-md rounde shadow-md">
                         <div className="w-full h-8 flex justify-center items-center   bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe]">
@@ -73,7 +72,7 @@ function Support() {
                                     onChange={(e) => {
                                       setname(e.target.value);
                                     }}
-                                    required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Username" aria-label="Full name" />
+                                    required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Name" aria-label="Full name" />
 
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-gray-200">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -101,7 +100,7 @@ function Support() {
                                     onChange={(e) => {
                                       setphone(e.target.value);
                                     }}
-                                    type="number"
+                                    type="text"
                                     required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" placeholder="Phone" aria-label="Phone " />
 
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-gray-200">
@@ -111,14 +110,15 @@ function Support() {
 
 
                             </div>
-                            <div class="flex items-center border-b border-white-500 py-2">
+                            {/* <div class="flex items-center border-b border-white-500 py-2">
+
                                 <input
                                     value={message}
                                     onChange={(e) => {
                                       setmessage(e.target.value);
                                     }}
                                     type="textarea"
-                                    required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" placeholder="Message" aria-label="Message " />
+                                    required class="appearance-none bg-transparent  w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" placeholder="Message" aria-label="Message " />
 
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-gray-200">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
@@ -127,6 +127,12 @@ function Support() {
 
 
                             </div>
+                             */}
+<textarea id="message"  value={message}
+                                    onChange={(e) => {
+                                      setmessage(e.target.value);
+                                    }} rows="4" class="block p-2.5 w-full mt-3 text-sm text-white appearance-none bg-transparent placeholder-gray-200 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Write your Message here..."></textarea>
+
 
                             <div className="flex justify-center">
                                 <button
@@ -156,20 +162,20 @@ function Support() {
                         </form>
 
                     </div>
-                    <div className=" md:w-1/2 md:flex justify-center items-center">
+                    <div className=" md:w-1/2  md:flex justify-start items-center">
 
 
-                        <ul className="flex flex-col items-center justify-center gap-4">
+                        <ul className="flex flex-col items-center justify-start gap-4">
                             <li className="text-white items-center gap-2 flex "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
                             </svg>
 
-                                <span><span className="text-gray-400">Phone :</span> <span className="font-bold md:text-white text-sm">0123456789</span> </span></li>
+                                <span className="text-sm"><span className="text-gray-400">Phone :</span> <span className="font-bold md:text-white text-xs">0123456789</span> </span></li>
                             <li className="md:text-white gap-2 items-center flex"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-400 ">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                             </svg>
 
-                                <span><span className="text-gray-400 text-sm ">Email : </span> info@pharmacyauditpro.com</span></li>
+                                <span className="text-xs"><span className="text-gray-400 text-sm ">Email : </span> info@pharmacyauditpro.com</span></li>
 
 
                         </ul>

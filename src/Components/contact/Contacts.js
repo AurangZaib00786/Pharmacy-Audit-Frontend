@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./user.css";
 import { IconButton } from "@material-ui/core";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import DeleteRoundedIcon from "@material-ui/icons/DeleteRounded";
@@ -14,8 +13,7 @@ import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
 import { useAuthContext } from "../../hooks/useauthcontext";
-import Userform from "./userform";
-import Userupdate from "./userupdateform";
+
 import Button from "react-bootstrap/Button";
 import Alert_before_delete from "../alerts/alert_before_delete";
 import { ToastContainer } from "react-toastify";
@@ -29,7 +27,7 @@ import GlobalBackTab from "../GlobalBackTab";
 
 import { UseaddheaderContext } from "../../hooks/useaddheadercontext";
 import useLogout from "../../hooks/uselogout";
-function User() {
+function Contacts() {
   pdfMake.vfs = pdfFonts.pdfMake.vfs;
   const { Data, dispatch } = UseaddDataContext();
   const { user, route, dispatch_auth } = useAuthContext();
@@ -50,7 +48,7 @@ function User() {
     dispatch({ type: "Set_data", payload: [] });
     setisloading(true);
     const fetchWorkouts = async () => {
-      const response = await fetch(`${route}/api/users/`, {
+      const response = await fetch(`${route}/api/contact/`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
 
@@ -89,12 +87,11 @@ function User() {
   const linkFollow = (cell, row, rowIndex, formatExtraData) => {
     return (
       <span className="action d-flex">
-        {row.id !== 1 && (
           <IconButton
             className="me-2 border border-danger rounded"
             onClick={() => {
               setrow_id(row.id);
-              seturl_to_delete(`${route}/api/users/${row.id}/`);
+              seturl_to_delete(`${route}/api/contact/${row.id}/`);
               setdelete_user(true);
             }}
           >
@@ -104,9 +101,8 @@ function User() {
               fontSize="medium"
             />
           </IconButton>
-        )}
 
-        <IconButton
+        {/* <IconButton
           style={{ border: "1px solid #003049", borderRadius: "5px" }}
           onClick={() => {
             setdata(row);
@@ -118,24 +114,12 @@ function User() {
             style={{ color: "#003049" }}
             fontSize="medium"
           />
-        </IconButton>
+        </IconButton> */}
       </span>
     );
   };
 
-  const groupFormatter = (cell) => {
-    if (!cell || cell.length === 0) return <span>No Group</span>;
-  
-    return (
-      <div>
-        {cell.map((group, index) => (
-          <span key={group.id} style={{ padding: "4px 8px", backgroundColor: "#DEF3FC", borderRadius: "4px", marginRight: "5px" }}>
-            {group.name}
-          </span>
-        ))}
-      </div>
-    );
-  };
+
   
   const columns = [
     {
@@ -145,8 +129,8 @@ function User() {
       headerFormatter: headerstyle,
     },
     {
-      dataField: "username",
-      text: "Username",
+      dataField: "name",
+      text: "Name",
       sort: true,
       headerFormatter: headerstyle,
     },
@@ -157,24 +141,18 @@ function User() {
       headerFormatter: headerstyle,
     },
     {
-      dataField: "first_name",
-      text: "Company Name",
+      dataField: "phone",
+      text: "phone Number",
       sort: true,
       headerFormatter: headerstyle,
     },
     {
-      dataField: "last_name",
-      text: "Contact",
-      sort: true,
-      headerFormatter: headerstyle,
-    },
-    {
-      dataField: "group_details",
-      text: "Groups",
-      sort: false,
-      formatter: groupFormatter,
-      headerFormatter: headerstyle,
-    },
+        dataField: "message",
+        text: "Message",
+        sort: true,
+        headerFormatter: headerstyle,
+      },
+  
     {
       dataField: "action",
       text: "Action",
@@ -217,35 +195,32 @@ function User() {
   const rowstyle = { height: "10px" };
   const makepdf = () => {
     const body = Data?.map((item, index) => {
-      const groups = item.group_details?.length
-        ? item.group_details.map((group) => group.name).join(", ")
-        : "No Group";
-  
       return [
         index + 1,
-        item.username,
+        item.name,
         item.email,
-        item.first_name,
-        item.last_name,
-       
-        groups,
+        item.phone,
+        item.message,
       ];
     });
-  
-    body.splice(0, 0, ["#", "Name", "Email", "Company Name", "phone", "Groups"]);
-  
+    body.splice(0, 0, ["#", "name", "email", "phone", "Message"]);
+
     const documentDefinition = {
       content: [
-        { text: "Users", style: "header" },
+        { text: "Contacts", style: "header" },
+        // { text: `Project Name: ${selected_branch?.name}`, style: "body" },
         {
           canvas: [
             { type: "line", x1: 0, y1: 10, x2: 510, y2: 10, lineWidth: 1 },
           ],
         },
+
         {
           table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
             headerRows: 1,
-            widths: [30, 80, 80, 80, 80, 100],
+            widths: [30, "*", "*", "*", "*"],
             body: body,
           },
           style: "tableStyle",
@@ -253,9 +228,10 @@ function User() {
       ],
       styles: {
         tableStyle: {
-          width: "100%",
+          width: "100%", // Set the width of the table to 100%
           marginTop: 20,
         },
+
         header: {
           fontSize: 22,
           bold: true,
@@ -271,11 +247,10 @@ function User() {
     };
     return documentDefinition;
   };
-  
 
   const download = () => {
     const documentDefinition = makepdf();
-    pdfMake.createPdf(documentDefinition).download("users.pdf");
+    pdfMake.createPdf(documentDefinition).download("Contacts.pdf");
   };
 
   const print = () => {
@@ -308,7 +283,7 @@ function User() {
   };
   return (
     <div className="">
-       <GlobalBackTab title="Users" />
+       <GlobalBackTab title="Contacts" />
       <div className=" me-3">
    
         <div className="card-body pt-0">
@@ -338,17 +313,7 @@ function User() {
                     </div>
 
                     <div className="md:w-1/2  flex md:justify-end gap-2 ">
-                      <button
-                        type="button"
-                        className=" flex   bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-sm justify-center items-center md:text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
-                        onClick={() => setshowmodel(!showmodel)}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="md:size-6 size-4 font-semibold">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-
-                        Add user
-                      </button>
+                   
                       <button
             onClick={() => exportToCSV(Data, "exported_data.csv")}
 
@@ -401,18 +366,6 @@ function User() {
         </div>
       </div>
 
-      {showmodel && (
-        <Userform show={showmodel} onHide={() => setshowmodel(false)} callagain={callagain} setcallagain={setcallagain} />
-      )}
-      {showmodelupdate && (
-        <Userupdate
-          show={showmodelupdate}
-          onHide={() => setshowmodelupdate(false)}
-          data={data}
-          callagain={callagain} setcallagain={setcallagain}
-          fun={custom_toast}
-        />
-      )}
 
       {delete_user && (
         <Alert_before_delete
@@ -429,4 +382,5 @@ function User() {
   // return <></>;
 }
 
-export default User;
+export default Contacts;
+

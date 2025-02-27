@@ -19,18 +19,20 @@ import InsuranceImage from '../assets/icons/insurance.png';
 import reportsIcon from '../assets/icons/repo.png';
 import reportsImage from '../assets/icons/reports.png';
 import supportIcon from '../assets/icons/sup.png';
+import contactIcon from '../assets/icons/contact-icon.png';
 import supportImage from '../assets/icons/support.png';
 import userImage from '../assets/icons/team.png';
 import securityImage from '../assets/icons/security.png';
+import contactImage from '../assets/icons/contact-book.png';
 import { Link } from 'react-router-dom';
 import Header from '../Components/header';
 
 
 const HomePage = (props) => {
     const { user, route, dispatch_auth } = useAuthContext();
-      const { selected_branch, current_user, dispatch } = UseaddheaderContext();
+    const { selected_branch, current_user, dispatch } = UseaddheaderContext();
 
-      console.log("home page", current_user)
+    console.log("home page", current_user)
     return (
         <div>
             <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
@@ -42,7 +44,7 @@ const HomePage = (props) => {
                         <img src={profile} />
                     </div>
                 </div> */}
-                <Header/>
+                <Header />
                 {/* <div className="search-container p-2  flex justify-start w-full h-24">
                     <div className="input-container-inner  w-1/2 h-full flex justify-start items-center">
                         <form className="w-full">
@@ -142,191 +144,214 @@ const HomePage = (props) => {
                 </div>
 
                 <div className="search-container grid md:grid-cols-4  gap-8 p-2 mt-4 w-full h-full">
-                {current_user?.permissions?.includes("can_view_vendor_file_formate") && (
+                    {current_user?.permissions?.includes("can_view_vendor_file_formate") && (
 
-                    <Link to="/vendor-file-format">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
-                            {/* Content for the first child */}
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Vendor file format</span>
-                                <img className="w-8 h-8" src={vendorIcon} alt="Vendor Icon" />
-                            </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                Manage vendor file format <br/> add, view, edit, or delete records.
+                        <Link to="/vendor-file-format">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
+                                {/* Content for the first child */}
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Vendor file format</span>
+                                    <img className="w-8 h-8" src={vendorIcon} alt="Vendor Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage vendor file format <br /> add, view, edit, or delete records.
 
-                                </span>
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-32 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={vendorImage}
+                                        alt="Vendor"
+                                    />
+                                </div>
                             </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-32 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={vendorImage}
-                                    alt="Vendor"
-                                />
-                            </div>
-                        </div>
-                    </Link>)}
+                        </Link>)}
 
                     {current_user?.permissions?.includes("can_view_billing_file_formate") && (
-                          <Link to="/billing-file-format">
-                          <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                              <div className="w-full mt-3 flex justify-between items-center px-2">
-                                  <span className="text-lg text-gray-600">Billing file format</span>
-                                  <img className="w-8 h-8" src={billingIcon} alt="Billing Icon" />
-                              </div>
-                              <div className="w-full mx-3">
-                                  <span className="text-xs text-gray-500">
-                                  Manage Billing file format <br/> add, view, edit, or delete records.
-  
-                              
-                                  </span>
-                              </div>
-                              <div className="w-full flex justify-center">
-                                  <img
-                                      className="w-20 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                      src={billingImage}
-                                      alt="Billing"
-                                  />
-                              </div>
-                          </div>
-                      </Link>
+                        <Link to="/billing-file-format">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Billing file format</span>
+                                    <img className="w-8 h-8" src={billingIcon} alt="Billing Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage Billing file format <br /> add, view, edit, or delete records.
 
-)}
-              {current_user?.permissions?.includes("can_view_bin_number") && (
 
-                    <Link to="/bin">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Bin Number</span>
-                                <img className="w-8 h-8" src={binIcon} alt="Bin Icon" />
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-20 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={billingImage}
+                                        alt="Billing"
+                                    />
+                                </div>
                             </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                Manage Bin Numbers <br/> add, view, edit, or delete records.
+                        </Link>
 
-                                </span>
+                    )}
+                    {current_user?.permissions?.includes("can_view_bin_number") && (
+
+                        <Link to="/bin">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Bin Number</span>
+                                    <img className="w-8 h-8" src={binIcon} alt="Bin Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage Bin Numbers <br /> add, view, edit, or delete records.
+
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-20 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={binImage}
+                                        alt="Bin"
+                                    />
+                                </div>
                             </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-20 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={binImage}
-                                    alt="Bin"
-                                />
-                            </div>
-                        </div>
-                    </Link>)}
+                        </Link>)}
                     {current_user?.permissions?.includes("can_view_insurance_company") && (
 
-                    <Link to="/insurance">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
+                        <Link to="/insurance">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Insurance company</span>
+                                    <img className="w-8 h-8" src={InsuranceIcon} alt="Insurance Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage insurance company details <br /> add, view, edit, or delete records.
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={InsuranceImage}
+                                        alt="Insurance"
+                                    />
+                                </div>
+                            </div>
+                        </Link>)}
+                    {current_user?.permissions?.includes("can_view_users") && (
+
+                        <Link to="/user">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Users</span>
+                                    <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage Users <br /> add, view, edit, or delete records.
+
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={userImage}
+                                        alt="Reports"
+                                    />
+                                </div>
+                            </div>
+                        </Link>)}
+                    {current_user?.permissions?.includes("can_view_groups_permissions") && (
+
+                        <Link to="/groups-permissions">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Groups and Permissions</span>
+                                    <img className="w-8 h-8" src={securityIcon} alt="Report Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Manage Groups and Permission <br /> Allow user to access the features.
+
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={securityImage}
+                                        alt="Reports"
+                                    />
+                                </div>
+                            </div>
+                        </Link>)}
+                    {current_user?.permissions?.includes("can_view_reports") && (
+
+                        <Link to="/audit">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Reports</span>
+                                    <img className="w-8 h-8" src={reportsIcon} alt="Report Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Generate and manage reports <br /> audit, audit detailed & Insurance Reports.
+
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={reportsImage}
+                                        alt="Reports"
+                                    />
+                                </div>
+                            </div>
+                        </Link>)}
+                    <Link to="/support">
+
+                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
                             <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Insurance company</span>
-                                <img className="w-8 h-8" src={InsuranceIcon} alt="Insurance Icon" />
+                                <span className="text-lg text-gray-600">Support</span>
+                                <img className="w-8 h-8" src={supportIcon} alt="Support Icon" />
                             </div>
                             <div className="w-full mx-3">
                                 <span className="text-xs text-gray-500">
-                                Manage insurance company details <br/> add, view, edit, or delete records.
+                                    Lorem ipsum dolor sit <br /> amet consectetur.
                                 </span>
                             </div>
                             <div className="w-full flex justify-center">
                                 <img
                                     className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={InsuranceImage}
-                                    alt="Insurance"
+                                    src={supportImage}
+                                    alt="Support"
                                 />
                             </div>
                         </div>
-                    </Link>)}
-                    {current_user?.permissions?.includes("can_view_users") && (
-
-                    <Link to="/user">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Users</span>
-                                <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
-                            </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                Manage Users <br/> add, view, edit, or delete records.
-
-                                </span>
-                            </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={userImage}
-                                    alt="Reports"
-                                />
-                            </div>
-                        </div>
-                    </Link>)}
-                    {current_user?.permissions?.includes("can_view_groups_permissions") && (
-
-                    <Link to="/groups-permissions">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Groups and Permissions</span>
-                                <img className="w-8 h-8" src={securityIcon} alt="Report Icon" />
-                            </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                Manage Groups and Permission <br/> Allow user to access the features.
-
-                                </span>
-                            </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={securityImage}
-                                    alt="Reports"
-                                />
-                            </div>
-                        </div>
-                    </Link>)}
-                    {current_user?.permissions?.includes("can_view_reports") && (
-
-                    <Link to="/audit">
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Reports</span>
-                                <img className="w-8 h-8" src={reportsIcon} alt="Report Icon" />
-                            </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                Generate and manage reports <br/> audit, audit detailed & Insurance Reports.
-
-                                </span>
-                            </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={reportsImage}
-                                    alt="Reports"
-                                />
-                            </div>
-                        </div>
-                    </Link>)}
-                    <Link to="/support">
-
-                    <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                        <div className="w-full mt-3 flex justify-between items-center px-2">
-                            <span className="text-lg text-gray-600">Support</span>
-                            <img className="w-8 h-8" src={supportIcon} alt="Support Icon" />
-                        </div>
-                        <div className="w-full mx-3">
-                            <span className="text-xs text-gray-500">
-                                Lorem ipsum dolor sit <br /> amet consectetur.
-                            </span>
-                        </div>
-                        <div className="w-full flex justify-center">
-                            <img
-                                className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                src={supportImage}
-                                alt="Support"
-                            />
-                        </div>
-                    </div>
                     </Link>
+                    {current_user?.permissions?.includes("can_view_contacts") && (
+
+                    <Link to="/contacts">
+
+                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                            <div className="w-full mt-3 flex justify-between items-center px-2">
+                                <span className="text-lg text-gray-600">Contacts</span>
+                                <img className="w-8 h-8" src={contactIcon} alt="Support Icon" />
+                            </div>
+                            <div className="w-full mx-3">
+                                <span className="text-xs text-gray-500">
+                                    Lorem ipsum dolor sit <br /> amet consectetur.
+                                </span>
+                            </div>
+                            <div className="w-full flex justify-center">
+                                <img
+                                    className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                    src={contactImage}
+                                    alt="Support"
+                                />
+                            </div>
+                        </div>
+                    </Link> )}
                 </div>
 
 
