@@ -20,7 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "react-bootstrap/Spinner";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import XLSX from "xlsx-js-style";
+// import XLSX from "xlsx-js-style";
 import useLogout from "../../hooks/uselogout";
 import went_wrong_toast from "../alerts/went_wrong_toast";
 import Select from "../selectfield/select";
@@ -34,6 +34,7 @@ import GlobalBackTab from "../GlobalBackTab";
 import { FaFileAlt, FaDownload, FaTimes } from "react-icons/fa";
 import success_toast from "../alerts/success_toast";
 import BinNumberModal from "./BinNumberModal";
+import * as XLSX from "xlsx";
 
 
 function Audit() {
@@ -61,6 +62,8 @@ function Audit() {
     value: "combine",
     label: "Combine Report",
   });
+
+  const [InsuranceDetailsData, SetInsuranceDetailsData] = useState([])
   const [binnumbers, setbinnumbers] = useState(false);
 
   const handlebinnumberopen = () => {
@@ -79,13 +82,17 @@ function Audit() {
 
   const reportOptions = [
     { value: "audit", label: "Audit Report" },
-    { value: "audit_detail", label: "Detailed Audit Report" },
+    // { value: "audit_detail", label: "Detailed Audit Report" },
     { value: "insurance", label: "Insurance Report" },
+    { value: "insurance_details", label: "Insurance Detailed Report" },
   ];
 
   const handleCheckboxChange = (value) => {
     setaudit_report_type((prev) => (prev.includes(value) ? [] : [value]));
   };
+
+
+  const [searchNDC, setSearchNDC] = useState("");
 
 
 
@@ -579,6 +586,135 @@ function Audit() {
       }
     }
 
+    if (audit_report_type.includes("insurance_details")) {
+      setisloading(true);
+
+      const response = await fetch(`${route}/api/insurance-audit-report-detail/?user_id=${current_user.id}`, {
+        headers: { Authorization: `Bearer ${user.access}` },
+      });
+
+      const json = await response.json();
+      if (json.code === "token_not_valid") {
+        logout();
+      }
+      if (!response.ok) {
+        went_wrong_toast(json.error);
+      }
+      if (response.ok) {
+        if (response.ok) {
+          let new_columns = [
+            {
+              dataField: "id",
+              text: "#",
+              csvExport: false,
+              formatter: (cell, row, rowIndex) => rowIndex + 1,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "insurance_company",
+              text: "Name",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "description",
+              text: "Description",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "packagesize",
+              text: "Package Size",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "total_quantity",
+              text: "Billing Qty",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+          ];
+  
+          json.vendor_files.map((item) => {
+            new_columns.push({
+              dataField: item,
+              text: item,
+              sort: true,
+              headerFormatter: headerstyle,
+            });
+          });
+  
+          new_columns.push({
+            dataField: "vendor_sum",
+            text: "Vendor Total",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          });
+          new_columns.push({
+            dataField: "result_unit",
+            text: "Result (Unit)",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          });
+          new_columns.push({
+            dataField: "result_package",
+            text: "Result (Pkg)",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          });
+  
+          setcolumns(new_columns);
+  
+          let optimized = json.consolidated_data.map((ndcGroup) => {
+            const optimizedData = ndcGroup.data.map((item) => {
+              let sum = 0;
+          
+              json.vendor_files.forEach((vendor) => {
+                const raw = item[vendor];
+                const value = Number(raw); // force numeric
+                const pkg = Number(item.packagesize);
+          
+                const calc = pkg > 0 ? value * pkg : value;
+          
+                item[vendor] = isNaN(calc) ? 0 : calc;
+              });
+          
+              sum = json.vendor_files.reduce((acc, vendor) => {
+                const val = Number(item[vendor]);
+                return acc + (isNaN(val) ? 0 : val);
+              }, 0);
+          
+              const totalQty = Number(item.total_quantity);
+              const pkgSize = Number(item.packagesize);
+          
+              item["vendor_sum"] = isNaN(sum) ? 0 : sum;
+              item["result_unit"] = isNaN(sum - totalQty) ? 0 : sum - totalQty;
+              item["result_package"] =
+                pkgSize > 0 ? (sum - totalQty) / pkgSize : "Not Exist";
+          
+              return item;
+            });
+          
+            return {
+              ...ndcGroup,
+              data: optimizedData,
+            };
+          });
+          
+          
+
+          SetInsuranceDetailsData(optimized);
+        setisloading(false);
+        custom_toast(json.message);
+        }
+       
+      }
+    }
+
     if (audit_report_type.includes("insurance")) {
       setisloading(true);
       setinsurance_report_type({
@@ -726,6 +862,8 @@ function Audit() {
     { value: "zero", label: "Zero Report" },
   ];
 
+
+  console.log("insurance details report", InsuranceDetailsData)
   const handlereportchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
@@ -756,6 +894,128 @@ function Audit() {
   useEffect(() => {
     setFilteredData(insurancedata); // Set initial filtered data when insurancedata is updated
   }, [insurancedata]);
+
+
+  const ITEMS_PER_PAGE = 20;
+
+  const [currentDetailPage, SetcurrentDetailPage] = useState(1);
+
+  const filteredDetalesData = InsuranceDetailsData.filter((ndcItem) =>
+    ndcItem.ndc.includes(searchNDC)
+  );
+
+  const totalItems = filteredDetalesData.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const paginatedData = filteredDetalesData.slice(
+    (currentDetailPage - 1) * ITEMS_PER_PAGE,
+    currentDetailPage * ITEMS_PER_PAGE
+  );
+
+  const startIndexDetail = (currentDetailPage - 1) * ITEMS_PER_PAGE + 1;
+  const endIndexDetail = Math.min(currentDetailPage * ITEMS_PER_PAGE, totalItems);
+
+  const goToDetailPreviousPage = () => SetcurrentDetailPage((prev) => Math.max(prev - 1, 1));
+  const goToDetailNextPage = () => SetcurrentDetailPage((prev) => Math.min(prev + 1, totalPages));
+
+  const flattenInsuranceData = (dataToExport = InsuranceDetailsData) => {
+    const flattened = [];
+  
+    dataToExport.forEach((ndcBlock) => {
+      const ndc = ndcBlock.ndc;
+      const description = ndcBlock.data?.[0]?.description || "";
+  
+      ndcBlock.data.forEach((entry) => {
+        const flatEntry = {
+          ndc,
+          description,
+          insurance_company: entry.insurance_company,
+          packagesize: entry.packagesize,
+          total_quantity: entry.total_quantity,
+        };
+  
+        // Add dynamic fields like "TRICARE" if they exist
+        Object.keys(entry).forEach((key) => {
+          if (!["insurance_company", "packagesize", "total_quantity", "description"].includes(key)) {
+            flatEntry[key] = entry[key];
+          }
+        });
+  
+        flattened.push(flatEntry);
+      });
+    });
+  
+    return flattened;
+  };
+  
+
+  const handleExportDetailsToExcel = () => {
+    const wb = XLSX.utils.book_new();
+    const wsData = [];
+  
+    // Build data row by row
+    filteredDetalesData.forEach((item) => {
+      // Add NDC heading
+      wsData.push([`NDC: ${item.ndc}`]);
+  
+      // Add headers
+      wsData.push(["Insurance Company", "Description", "Package Size", "Billing Quantity","Vendor Total", "Result (Unit)", "Result (Pkg)"]);
+  
+      // Add rows for each company
+      item.data.forEach((entry) => {
+        wsData.push([
+          entry.insurance_company,
+          entry.description,
+          entry.packagesize,
+          entry.total_quantity,
+          entry.vendor_sum,
+          entry.result_unit,
+          entry.result_package,
+        ]);
+      });
+  
+      // Empty row between NDC sections
+      wsData.push([]);
+    });
+  
+    // Convert array to sheet
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, "Insurance Details");
+  
+    // Write file
+    XLSX.writeFile(wb, "insurance_details_grouped.xlsx");
+  };
+
+  const handleDetailsExportCSV = () => {
+    let csvContent = "";
+  
+    filteredDetalesData.forEach((item) => {
+      // NDC title
+      csvContent += `NDC: ${item.ndc}\n`;
+      // Table headers
+      csvContent += "Insurance Company,Description,Package Size,Billing Quantity,Vendor Total,Result(Unit), Result(Pkg)\n";
+  
+      // Data rows
+      item.data.forEach((entry) => {
+        csvContent += `"${entry.insurance_company}","${entry.description}",${entry.packagesize},${entry.total_quantity},${entry.vendor_sum},${entry.result_unit}, ${entry.result_package}\n`;
+      });
+  
+      // Spacer
+      csvContent += "\n";
+    });
+  
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "insurance_details_grouped.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  
+
 
   // const handleinsurancereportchange = (e) => {
   //   setinsurance_report_type(e);
@@ -2027,6 +2287,104 @@ function Audit() {
           )}
         </>
       )}
+
+
+{audit_report_type.includes("insurance_details") && (
+      <div className="me-3 mt-3">
+        {InsuranceDetailsData.length > 0 ? (
+          <>
+            {/* === SEARCH + EXPORT === */}
+            <div className="card-body mt-3">
+              <div className="d-flex justify-between items-center mb-4">
+                <div className="w-1/3">
+                  <input
+                    type="number"
+                    placeholder="Search NDC"
+                    value={searchNDC}
+                    onChange={(e) => {
+                      setSearchNDC(e.target.value);
+                      SetcurrentDetailPage(1); // reset to page 1 on search
+                    }}
+                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                  />
+                </div>
+                <div className="w-1/2 flex justify-end gap-2">
+                  <button
+                    onClick={handleExportDetailsToExcel}
+                    className="flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                  >
+                    {/* Excel Icon */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Export Excel
+                  </button>
+                  <button
+                    onClick={handleDetailsExportCSV}
+                    className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                  >
+                    {/* CSV Icon */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Export CSV
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* === TABLES === */}
+            {paginatedData.length > 0 ? (
+              <>
+                {paginatedData.map((ndcData, index) => (
+                  <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
+                    <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
+                    <BootstrapTable
+                      keyField="insurance_company"
+                      data={ndcData.data}
+                      columns={columns}
+                      bootstrap4
+                      condensed
+                      filter={filterFactory()}
+                      classes="custom-table"
+                    />
+                  </div>
+                ))}
+
+                {/* === PAGINATION CONTROLS === */}
+                <div className="flex justify-between items-center mt-6 px-4 text-white">
+                  <span>
+                    Showing {startIndexDetail}–{endIndexDetail} of {totalItems}
+                  </span>
+                  <div className="space-x-3">
+                    <button
+                      onClick={goToDetailPreviousPage}
+                      disabled={currentDetailPage === 1}
+                      className="px-4 py-2 border rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={goToDetailNextPage}
+                      disabled={currentDetailPage === totalPages}
+                      className="px-4 py-2 border rounded bg-[#15e6cd] hover:bg-[#15e6cd] disabled:opacity-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-white text-2xl text-center">No matching NDC found.</p>
+            )}
+          </>
+        ) : (
+          <p className="text-white font-semibold text-center bg-gray-100">No insurance details data available! Click Generate to see the report</p>
+        )}
+      </div>
+    )}
+
+
 
       {delete_user && (
         <Alert_before_delete
