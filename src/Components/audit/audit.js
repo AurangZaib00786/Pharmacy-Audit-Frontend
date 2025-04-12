@@ -268,6 +268,42 @@ function Audit() {
     },
   ]);
 
+  const [detailsColumns, setDetailsColumns] = useState([
+    {
+      dataField: "id",
+      text: "#",
+      csvExport: false,
+      formatter: (cell, row, rowIndex) => rowIndex + 1,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "insurance_company",
+      text: "Name",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "description",
+      text: "Description",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "packagesize",
+      text: "Package Size",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "total_quantity",
+      text: "Billing Qty",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+  ]);
+
+
+
   function getExtension(filename) {
     return filename.split("/").shift();
   }
@@ -585,135 +621,149 @@ function Audit() {
         custom_toast(json.message);
       }
     }
-
     if (audit_report_type.includes("insurance_details")) {
       setisloading(true);
-
-      const response = await fetch(`${route}/api/insurance-audit-report-detail/?user_id=${current_user.id}`, {
-        headers: { Authorization: `Bearer ${user.access}` },
-      });
-
+    
+      const response = await fetch(
+        `${route}/api/insurance-audit-report-detail/?user_id=${current_user.id}`,
+        {
+          headers: { Authorization: `Bearer ${user.access}` },
+        }
+      );
+    
       const json = await response.json();
+    
       if (json.code === "token_not_valid") {
         logout();
+        return;
       }
+    
       if (!response.ok) {
         went_wrong_toast(json.error);
+        return;
       }
+    
       if (response.ok) {
-        if (response.ok) {
-          let new_columns = [
-            {
-              dataField: "id",
-              text: "#",
-              csvExport: false,
-              formatter: (cell, row, rowIndex) => rowIndex + 1,
-              headerFormatter: headerstyle,
-            },
-            {
-              dataField: "insurance_company",
-              text: "Name",
-              sort: true,
-              headerFormatter: headerstyle,
-            },
-            {
-              dataField: "description",
-              text: "Description",
-              sort: true,
-              headerFormatter: headerstyle,
-            },
-            {
-              dataField: "packagesize",
-              text: "Package Size",
-              sort: true,
-              headerFormatter: headerstyle,
-            },
-            {
-              dataField: "total_quantity",
-              text: "Billing Qty",
-              sort: true,
-              headerFormatter: headerstyle,
-            },
-          ];
-  
-          json.vendor_files.map((item) => {
-            new_columns.push({
-              dataField: item,
-              text: item,
-              sort: true,
-              headerFormatter: headerstyle,
+        const cleanedVendorFiles = json.vendor_files.map((file) =>
+          file.replace(".xlsx", "")
+        );
+    
+        let vendor_keys_present = new Set();
+    
+        json.consolidated_data.forEach((entry) => {
+          entry.data.forEach((item) => {
+            cleanedVendorFiles.forEach((vendor) => {
+              if (item.hasOwnProperty(vendor)) {
+                vendor_keys_present.add(vendor);
+              }
             });
           });
-  
-          new_columns.push({
+        });
+    
+        let new_details_columns = [
+          {
+            dataField: "id",
+            text: "#",
+            csvExport: false,
+            formatter: (cell, row, rowIndex) => rowIndex + 1,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "insurance_company",
+            text: "Name",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "description",
+            text: "Description",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "packagesize",
+            text: "Package Size",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "total_quantity",
+            text: "Billing Qty",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+        ];
+    
+        [...vendor_keys_present].forEach((vendor) => {
+          new_details_columns.push({
+            dataField: vendor,
+            text: vendor,
+            sort: true,
+            headerFormatter: headerstyle,
+          });
+        });
+    
+        new_details_columns.push(
+          {
             dataField: "vendor_sum",
             text: "Vendor Total",
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
-          });
-          new_columns.push({
+          },
+          {
             dataField: "result_unit",
             text: "Result (Unit)",
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
-          });
-          new_columns.push({
+          },
+          {
             dataField: "result_package",
             text: "Result (Pkg)",
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
-          });
-  
-          setcolumns(new_columns);
-  
-          let optimized = json.consolidated_data.map((ndcGroup) => {
-            const optimizedData = ndcGroup.data.map((item) => {
-              let sum = 0;
-          
-              json.vendor_files.forEach((vendor) => {
-                const raw = item[vendor];
-                const value = Number(raw); // force numeric
-                const pkg = Number(item.packagesize);
-          
-                const calc = pkg > 0 ? value * pkg : value;
-          
-                item[vendor] = isNaN(calc) ? 0 : calc;
-              });
-          
-              sum = json.vendor_files.reduce((acc, vendor) => {
-                const val = Number(item[vendor]);
-                return acc + (isNaN(val) ? 0 : val);
-              }, 0);
-          
-              const totalQty = Number(item.total_quantity);
-              const pkgSize = Number(item.packagesize);
-          
-              item["vendor_sum"] = isNaN(sum) ? 0 : sum;
-              item["result_unit"] = isNaN(sum - totalQty) ? 0 : sum - totalQty;
-              item["result_package"] =
-                pkgSize > 0 ? (sum - totalQty) / pkgSize : "Not Exist";
-          
-              return item;
+          }
+        );
+    
+        setDetailsColumns(new_details_columns);
+    
+        const optimize = json.consolidated_data.map((report) => {
+          const new_data = report.data.map((item) => {
+            [...vendor_keys_present].forEach((vendor) => {
+              if (!item[vendor]) item[vendor] = 0;
             });
-          
-            return {
-              ...ndcGroup,
-              data: optimizedData,
-            };
+    
+            let sum = 0;
+            const pkgSize = Number(item.packagesize);
+    
+            [...vendor_keys_present].forEach((vendor) => {
+              const vendorVal = Number(item[vendor]);
+              sum += pkgSize > 0 ? vendorVal * pkgSize : vendorVal;
+            });
+    
+            item["vendor_sum"] = sum;
+            item["result_unit"] = sum - Number(item.total_quantity);
+            item["result_package"] =
+              pkgSize > 0
+                ? (sum - Number(item.total_quantity)) / pkgSize
+                : "Not Exist";
+    
+            return item;
           });
-          
-          
-
-          SetInsuranceDetailsData(optimized);
+    
+          report.data = new_data;
+          return report;
+        });
+    
+        SetInsuranceDetailsData(optimize);
         setisloading(false);
         custom_toast(json.message);
-        }
-       
       }
     }
+    
+    
 
     if (audit_report_type.includes("insurance")) {
       setisloading(true);
@@ -864,6 +914,7 @@ function Audit() {
 
 
   console.log("insurance details report", InsuranceDetailsData)
+  console.log("insurance report data", insurancedata)
   const handlereportchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
@@ -2342,7 +2393,7 @@ function Audit() {
                     <BootstrapTable
                       keyField="insurance_company"
                       data={ndcData.data}
-                      columns={columns}
+                      columns={detailsColumns}
                       bootstrap4
                       condensed
                       filter={filterFactory()}

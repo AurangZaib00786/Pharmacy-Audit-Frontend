@@ -16,6 +16,9 @@ function SignUp() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [first_name, setfirst_name] = useState("");
+  const [company_name, setcompany_name] = useState("");
+  const [contact_number, setcontact_number] = useState("");
+  const [address, setaddress] = useState("");
   const [last_name, setlast_name] = useState("");
   const navigate = useNavigate();
   const [error, seterror] = useState("");
@@ -37,6 +40,14 @@ function SignUp() {
           first_name,
           last_name,
           password,
+          group_details : [],
+          profile : {
+            contact_number : last_name,
+            company : company_name,
+            address : address,
+            package : "Free",
+            is_active : false
+          }
         }),
       });
       const json = await response.json();
@@ -68,29 +79,59 @@ function SignUp() {
 
   return (
     <div className="min-h-screen login-main md:flex items-center p-4 md:p-0 justify-center ">
-    <div className="md:w-2/3 h-96 login-child-main md:flex">
+    <div className="md:w-2/3 h-auto login-child-main md:flex">
 
       <div style={{ height: "100%" }} className="md:w-1/2  login-form-bg md:ml-28 max-w-md rounde shadow-md">
         <div className="w-full h-8 flex justify-center items-center   bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe]">
           <h1 className="text-sm">SIGN UP</h1>
         </div>
-        <form onSubmit={handleSubmit} className="p-8 ">
-          <div class="flex items-center border-b border-white-500 py-2">
+        <form onSubmit={handleSubmit} className="p-6 ">
+          <div className="row p-2 ">
+        <div class="flex items-center   col-md-6 border-b border-white-500 py-2">
             <input
               value={first_name}
               onChange={(e) => {
                 setfirst_name(e.target.value);
+              }}
+              required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="First name" aria-label="Full name" />
+
+          </div>
+          <div class="flex items-center col-md-6 border-b border-white-500 py-2">
+            <input
+              value={last_name}
+              onChange={(e) => {
+                setlast_name(e.target.value);
+              }}
+              required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Last name" aria-label="Full name" />
+
+          </div>
+          </div>
+          <div class="flex items-center border-b border-white-500 py-2">
+            <input
+              value={company_name}
+              onChange={(e) => {
+                setcompany_name(e.target.value);
               }}
               required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Company name" aria-label="Full name" />
 
           </div>
           <div class="flex items-center border-b border-white-500 py-2">
             <input
-              value={last_name}
+              value={contact_number}
               onChange={(e) => {
-                setlast_name(e.target.value);
+                setcontact_number(e.target.value);
               }}
               required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="number" placeholder="Contact number" aria-label="Full name" />
+
+           
+          </div>
+          <div class="flex items-center border-b border-white-500 py-2">
+            <input
+              value={address}
+              onChange={(e) => {
+                setaddress(e.target.value);
+              }}
+              required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Address" aria-label="Full name" />
 
            
           </div>
@@ -214,7 +255,7 @@ function SignUp() {
 
       </div>
       <div className="">
-        <div className="mt-8 md:flex justify-center items-center">
+        <div className="mt-16 md:flex justify-center items-center">
 
 
           <ul className="flex flex-col gap-4">
