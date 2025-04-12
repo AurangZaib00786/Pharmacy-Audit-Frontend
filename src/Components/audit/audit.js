@@ -644,10 +644,12 @@ function Audit() {
       }
     
       if (response.ok) {
+        // 1. Clean vendor file names (remove .xlsx)
         const cleanedVendorFiles = json.vendor_files.map((file) =>
           file.replace(".xlsx", "")
         );
     
+        // 2. Identify which vendor fields actually appear in the data
         let vendor_keys_present = new Set();
     
         json.consolidated_data.forEach((entry) => {
@@ -660,6 +662,7 @@ function Audit() {
           });
         });
     
+        // 3. Build columns
         let new_details_columns = [
           {
             dataField: "id",
@@ -729,25 +732,37 @@ function Audit() {
     
         setDetailsColumns(new_details_columns);
     
+        // 4. Process and calculate values
         const optimize = json.consolidated_data.map((report) => {
           const new_data = report.data.map((item) => {
+            // Make sure all vendor keys exist
             [...vendor_keys_present].forEach((vendor) => {
               if (!item[vendor]) item[vendor] = 0;
             });
     
             let sum = 0;
-            const pkgSize = Number(item.packagesize);
     
-            [...vendor_keys_present].forEach((vendor) => {
-              const vendorVal = Number(item[vendor]);
-              sum += pkgSize > 0 ? vendorVal * pkgSize : vendorVal;
-            });
+            if (item.packagesize > 0) {
+              sum = [...vendor_keys_present].reduce(
+                (acc, key) => acc + Number(item[key]) * Number(item.packagesize),
+                0
+              );
+    
+              [...vendor_keys_present].forEach((key) => {
+                item[key] = Number(item[key]) * Number(item.packagesize);
+              });
+            } else {
+              sum = [...vendor_keys_present].reduce(
+                (acc, key) => acc + Number(item[key]),
+                0
+              );
+            }
     
             item["vendor_sum"] = sum;
             item["result_unit"] = sum - Number(item.total_quantity);
             item["result_package"] =
-              pkgSize > 0
-                ? (sum - Number(item.total_quantity)) / pkgSize
+              item.packagesize > 0
+                ? (sum - Number(item.total_quantity)) / Number(item.packagesize)
                 : "Not Exist";
     
             return item;
@@ -762,6 +777,7 @@ function Audit() {
         custom_toast(json.message);
       }
     }
+    
     
     
 
