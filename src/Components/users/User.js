@@ -123,6 +123,8 @@ function User() {
     );
   };
 
+  console.log("data", data);
+
   const groupFormatter = (cell) => {
     if (!cell || cell.length === 0) return <span>No Group</span>;
   

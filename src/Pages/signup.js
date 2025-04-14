@@ -86,7 +86,7 @@ function SignUp() {
           <h1 className="text-sm">SIGN UP</h1>
         </div>
         <form onSubmit={handleSubmit} className="p-6 ">
-          <div className="row p-2 ">
+          {/* <div className="row p-2 ">
         <div class="flex items-center   col-md-6 border-b border-white-500 py-2">
             <input
               value={first_name}
@@ -105,7 +105,7 @@ function SignUp() {
               required class="appearance-none bg-transparent border-none w-full text-white mr-3 py-1 placeholder-gray-200 px-2 leading-tight focus:outline-none" type="text" placeholder="Last name" aria-label="Full name" />
 
           </div>
-          </div>
+          </div> */}
           <div class="flex items-center border-b border-white-500 py-2">
             <input
               value={company_name}
