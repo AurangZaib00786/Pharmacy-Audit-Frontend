@@ -603,6 +603,13 @@ function Audit() {
             headerFormatter: headerstyle,
           },
           {
+            dataField: "opening_balance",
+            text: "Opening Balance (Unit)",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+         
+          {
             dataField: "packagesize_billing",
             text: "Package Size",
             sort: true,
@@ -614,18 +621,7 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-          {
-            dataField: "opening_balance",
-            text: "Opening Bal.",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "closing_balance",
-            text: "Closing Bal.",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
+         
         ];
 
         json.vendor_files.map((item) => {
@@ -660,6 +656,13 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+        new_columns.push({
+          dataField: "closing_balance",
+          text: "Closing Balance (Unit)",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
 
         setcolumns(new_columns);
 
@@ -687,7 +690,7 @@ function Audit() {
               : "Not Exist";
 
           item["closing_balance"] =
-            Number(item.packagesize_billing) + Number(item.opening_balance);
+            Number(item.result_unit) + Number(item.opening_balance);
 
           return item;
         });
@@ -1934,16 +1937,17 @@ function Audit() {
         <div className="col-md-6 mt-8 md:mt-4 ">
           <form onSubmit={handlesubmitbalance_files}>
 
-            <div className="w-2/3 flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
+            <div className=" flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
 
-              <div className=" flex items-center gap-2">
+              <div className=" flex items-center  gap-2">
+              <div className=" flex items-center ml-2 justify-center  ">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="w-6 h-6 text-gray-900"
+                  className="w-6 h-6  text-gray-900"
                 >
                   <path
                     strokeLinecap="round"
@@ -1951,9 +1955,10 @@ function Audit() {
                     d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
                   />
                 </svg>
+                </div>
                 <label
                   htmlFor="balance-upload"
-                  className="cursor-pointer md:text-xl text-gray-700"
+                  className="cursor-pointer md:text-xl ml-2 text-gray-700"
                 >
                   Upload Balance File
                 </label>
@@ -1992,7 +1997,7 @@ function Audit() {
             </div>
 
           </form>
-          <div className="md:pt-10 pt-2  w-2/3  ">
+          <div className="md:pt-10 pt-2 pl-3 row col-md-12 ">
             {balance_filesdata.map((item) => (
               <div
                 key={item.name}
@@ -2002,10 +2007,10 @@ function Audit() {
                 }}
               >
                 <div
-                  className="d-flex align-items-center"
+                  className="flex justify-center items-center"
                   style={{ cursor: "pointer" }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12 text-gray-700 font-normal">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12  text-gray-700 font-normal">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                   </svg>
                   <div>
