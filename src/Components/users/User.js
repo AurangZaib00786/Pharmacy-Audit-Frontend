@@ -123,7 +123,7 @@ function User() {
     );
   };
 
-  console.log("data", data);
+  // console.log("data", data);
 
   const groupFormatter = (cell) => {
     if (!cell || cell.length === 0) return <span>No Group</span>;
@@ -138,6 +138,7 @@ function User() {
       </div>
     );
   };
+ 
   
   const columns = [
     {
@@ -159,17 +160,48 @@ function User() {
       headerFormatter: headerstyle,
     },
     {
-      dataField: "first_name",
+      dataField: "profile.company",
       text: "Company Name",
       sort: true,
       headerFormatter: headerstyle,
     },
     {
-      dataField: "last_name",
+      dataField: "profile.contact_number",
       text: "Contact",
       sort: true,
       headerFormatter: headerstyle,
     },
+    {
+      dataField: "profile.package",
+      text: "Package",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
+      dataField: "profile.is_active",
+      text: "Status",
+      sort: true,
+      headerFormatter: headerstyle,
+      formatter: (cell) => {
+        const isActive = cell === true || cell === 1; // Adjust if needed based on your data
+        return (
+          <span
+            style={{
+              backgroundColor: isActive ? "green" : "red",
+              color: "white",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontWeight: "bold",
+            }}
+          >
+            {isActive ? "Active" : "Inactive"}
+          </span>
+        );
+      },
+    }
+,    
+    
+
     {
       dataField: "group_details",
       text: "Groups",

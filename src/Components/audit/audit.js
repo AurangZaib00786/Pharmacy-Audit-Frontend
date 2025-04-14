@@ -47,14 +47,17 @@ function Audit() {
   const { ExportCSVButton } = CSVExport;
   const [Fileurl_vendor, setFileurl_vendor] = useState("");
   const [Fileurl_billing, setFileurl_billing] = useState("");
+  const [File_balance, setFile_balance] = useState("");
   const [vendor_filesdata, setvendor_filesdata] = useState([]);
   const [billing_filesdata, setbilling_filesdata] = useState([]);
+  const [balance_filesdata, setbalance_filesdata] = useState([]);
   const [delete_user, setdelete_user] = useState(false);
-  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,billing_files_datewise,consolidated_reports,insurance_billing_files,vendor_files,vendor_files_datewise&user_id=${current_user?.id}`;
+  const url_to_delete = `${route}/api/manage-files/?directory=billing_files,billing_files_datewise,consolidated_reports,opening_balance_files,insurance_billing_files,vendor_files,vendor_files_datewise&user_id=${current_user?.id}`;
   const single_file_to_delete = `${route}/api/manage-files/`;
   const [isloading, setisloading] = useState("");
   const [callagain_vendor, setcallagain_vendor] = useState(false);
   const [callagain_billing, setcallagain_billing] = useState(false);
+  const [callagain_opening, setcallagain_opening] = useState(false);
   const [vendor, setvendor] = useState("");
   const [delete_file, setdelete_file] = useState(false);
   const [callagain, setcallagain] = useState(false);
@@ -68,9 +71,7 @@ function Audit() {
 
   const handlebinnumberopen = () => {
     setbinnumbers(true);
-    console.log("binnumber")
   }
-  console.log(current_user, "userrrr")
 
   const [insurance_report_type, setinsurance_report_type] = useState({
     value: "combine",
@@ -93,9 +94,6 @@ function Audit() {
 
 
   const [searchNDC, setSearchNDC] = useState("");
-
-
-
 
   const [allvendors, setallvendors] = useState([]);
   const [billing, setbilling] = useState("");
@@ -130,6 +128,30 @@ function Audit() {
 
     fetchvendorfiles();
   }, [callagain_vendor, current_user, callagain]);
+  useEffect(() => {
+    const fetchvendorfiles = async () => {
+      const response = await fetch(
+        `${route}/api/manage-files/?directory=opening_balance_files&user_id=${current_user.id}`,
+        {
+          headers: { Authorization: `Bearer ${user.access}` },
+        }
+      );
+
+      const json = await response.json();
+      if (json.code === "token_not_valid") {
+        logout();
+      }
+      if (!response.ok) {
+        went_wrong_toast(json.error);
+      }
+      if (response.ok) {
+        setbalance_filesdata(json);
+        setisloading(false);
+      }
+    };
+
+    fetchvendorfiles();
+  }, [callagain_opening, current_user, callagain]);
 
   useEffect(() => {
 
@@ -334,6 +356,21 @@ function Audit() {
 
   };
 
+  const handleselection_balance = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFile_balance({
+        file: file,
+        type: getExtension(file["type"]).toLowerCase(),
+        name: file["name"],
+      });
+    }
+
+  };
+
+  console.log("file balance", File_balance)
+  console.log("file blling balance", Fileurl_billing)
+
   const handleDelete = async (directory, fileName) => {
     const url = `${route}/api/manage-files/?filename=${fileName}&directory=${directory}&user_id=${current_user.id}`;
     try {
@@ -407,13 +444,18 @@ function Audit() {
   // console.log(currentPageData)
 
   const openimage = (item) => {
-    if (item.file instanceof File) {
-      const fileUrl = URL.createObjectURL(item.file);
-      window.open(fileUrl, "_blank");
-    } else {
-      window.open(`${route}/${item.link}`, "blank");
-    }
+    const cleanedPath = item.link.replace(/\\/g, "/");
+    const fileUrl = `${route}${cleanedPath}?user_id=${current_user?.id}`;
+
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", item.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+
+
 
   const handlesubmitvendor_files = async (e) => {
     e.preventDefault();
@@ -480,6 +522,37 @@ function Audit() {
       setisloading(false);
     }
   };
+  const handlesubmitbalance_files = async (e) => {
+    e.preventDefault();
+    try {
+      setisloading(true);
+      const formData = new FormData();
+      formData.append(`file`, File_balance.file);
+      // formData.append(`billing_file_format_id `, billing.value);
+      formData.append(`user_id `, current_user.id);
+      const response = await fetch(`${route}/api/upload-opening-balance-file/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: formData,
+      });
+      const json = await response.json();
+
+      if (!response.ok) {
+        setisloading(false);
+        went_wrong_toast(json.error);
+      }
+
+      if (response.ok) {
+        setFile_balance(null);
+        custom_toast(json.message);
+        setcallagain_opening(!callagain_opening);
+      }
+    } catch (e) {
+      setisloading(false);
+    }
+  };
 
   const vendor_sum_formatter = (cell, row, rowIndex) => {
     return cell !== "Not Exist" ? cell?.toFixed(2) : cell;
@@ -493,16 +566,21 @@ function Audit() {
         value: "combine",
         label: "Combine Report",
       });
+
       const response = await fetch(`${route}/api/audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
+
       const json = await response.json();
+
       if (json.code === "token_not_valid") {
         logout();
       }
+
       if (!response.ok) {
         went_wrong_toast(json.error);
       }
+
       if (response.ok) {
         let new_columns = [
           {
@@ -536,6 +614,18 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
+          {
+            dataField: "opening_balance",
+            text: "Opening Bal.",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "closing_balance",
+            text: "Closing Bal.",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
         ];
 
         json.vendor_files.map((item) => {
@@ -554,6 +644,7 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+
         new_columns.push({
           dataField: "result_unit",
           text: "Result (Unit)",
@@ -561,6 +652,7 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+
         new_columns.push({
           dataField: "result_package",
           text: "Result (Pkg)",
@@ -572,8 +664,10 @@ function Audit() {
         setcolumns(new_columns);
 
         let optimize = json.data.map((item) => {
+          let sum;
+
           if (item.packagesize_billing > 0) {
-            var sum = json.vendor_files.reduce(
+            sum = json.vendor_files.reduce(
               (acc, row) => acc + item[row] * item.packagesize_billing,
               0
             );
@@ -582,7 +676,7 @@ function Audit() {
                 (item[row] = Number(item[row]) * Number(item.packagesize_billing))
             );
           } else {
-            var sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+            sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
           }
 
           item["vendor_sum"] = sum;
@@ -591,15 +685,20 @@ function Audit() {
             item.packagesize_billing > 0
               ? (sum - item.quantity_billing) / item.packagesize_billing
               : "Not Exist";
+
+          item["closing_balance"] =
+            Number(item.packagesize_billing) + Number(item.opening_balance);
+
           return item;
         });
+
         dispatch({ type: "Set_data", payload: optimize });
         setauditdata(optimize);
         setisloading(false);
         custom_toast(json.message);
       }
-
     }
+
 
     if (audit_report_type.includes("audit_detail")) {
       setisloading(true);
@@ -623,35 +722,35 @@ function Audit() {
     }
     if (audit_report_type.includes("insurance_details")) {
       setisloading(true);
-    
+
       const response = await fetch(
         `${route}/api/insurance-audit-report-detail/?user_id=${current_user.id}`,
         {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
-    
+
       const json = await response.json();
-    
+
       if (json.code === "token_not_valid") {
         logout();
         return;
       }
-    
+
       if (!response.ok) {
         went_wrong_toast(json.error);
         return;
       }
-    
+
       if (response.ok) {
         // 1. Clean vendor file names (remove .xlsx)
         const cleanedVendorFiles = json.vendor_files.map((file) =>
           file.replace(".xlsx", "")
         );
-    
+
         // 2. Identify which vendor fields actually appear in the data
         let vendor_keys_present = new Set();
-    
+
         json.consolidated_data.forEach((entry) => {
           entry.data.forEach((item) => {
             cleanedVendorFiles.forEach((vendor) => {
@@ -661,7 +760,7 @@ function Audit() {
             });
           });
         });
-    
+
         // 3. Build columns
         let new_details_columns = [
           {
@@ -696,7 +795,7 @@ function Audit() {
             headerFormatter: headerstyle,
           },
         ];
-    
+
         [...vendor_keys_present].forEach((vendor) => {
           new_details_columns.push({
             dataField: vendor,
@@ -705,7 +804,7 @@ function Audit() {
             headerFormatter: headerstyle,
           });
         });
-    
+
         new_details_columns.push(
           {
             dataField: "vendor_sum",
@@ -729,9 +828,9 @@ function Audit() {
             formatter: vendor_sum_formatter,
           }
         );
-    
+
         setDetailsColumns(new_details_columns);
-    
+
         // 4. Process and calculate values
         const optimize = json.consolidated_data.map((report) => {
           const new_data = report.data.map((item) => {
@@ -739,15 +838,15 @@ function Audit() {
             [...vendor_keys_present].forEach((vendor) => {
               if (!item[vendor]) item[vendor] = 0;
             });
-    
+
             let sum = 0;
-    
+
             if (item.packagesize > 0) {
               sum = [...vendor_keys_present].reduce(
                 (acc, key) => acc + Number(item[key]) * Number(item.packagesize),
                 0
               );
-    
+
               [...vendor_keys_present].forEach((key) => {
                 item[key] = Number(item[key]) * Number(item.packagesize);
               });
@@ -757,29 +856,29 @@ function Audit() {
                 0
               );
             }
-    
+
             item["vendor_sum"] = sum;
             item["result_unit"] = sum - Number(item.total_quantity);
             item["result_package"] =
               item.packagesize > 0
                 ? (sum - Number(item.total_quantity)) / Number(item.packagesize)
                 : "Not Exist";
-    
+
             return item;
           });
-    
+
           report.data = new_data;
           return report;
         });
-    
+
         SetInsuranceDetailsData(optimize);
         setisloading(false);
         custom_toast(json.message);
       }
     }
-    
-    
-    
+
+
+
 
     if (audit_report_type.includes("insurance")) {
       setisloading(true);
@@ -929,8 +1028,6 @@ function Audit() {
   ];
 
 
-  console.log("insurance details report", InsuranceDetailsData)
-  console.log("insurance report data", insurancedata)
   const handlereportchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
@@ -964,17 +1061,33 @@ function Audit() {
 
 
   const ITEMS_PER_PAGE = 20;
-
   const [currentDetailPage, SetcurrentDetailPage] = useState(1);
 
-  const filteredDetalesData = InsuranceDetailsData.filter((ndcItem) =>
-    ndcItem.ndc.includes(searchNDC)
+  // === 1. Filter by NDC (search input) ===
+  const filteredByNDC = InsuranceDetailsData.filter((ndcItem) =>
+    ndcItem.ndc.toString().includes(searchNDC)
   );
 
-  const totalItems = filteredDetalesData.length;
+  // === 2. Filter rows within each NDC based on report_type ===
+  const fullyFilteredData = filteredByNDC
+    .map((ndcItem) => {
+      const filteredRows = ndcItem.data.filter((item) => {
+        const pkg = Number(item.result_package);
+        if (report_type.value === "positive") return pkg > 0;
+        if (report_type.value === "negative") return pkg < 0;
+        if (report_type.value === "zero") return pkg === 0;
+        return true; // "combine"
+      });
+
+      return { ...ndcItem, data: filteredRows };
+    })
+    .filter((ndcItem) => ndcItem.data.length > 0); // remove empty NDCs
+
+  // === 3. Pagination on final filtered data ===
+  const totalItems = fullyFilteredData.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
-  const paginatedData = filteredDetalesData.slice(
+  const paginatedData = fullyFilteredData.slice(
     (currentDetailPage - 1) * ITEMS_PER_PAGE,
     currentDetailPage * ITEMS_PER_PAGE
   );
@@ -985,13 +1098,14 @@ function Audit() {
   const goToDetailPreviousPage = () => SetcurrentDetailPage((prev) => Math.max(prev - 1, 1));
   const goToDetailNextPage = () => SetcurrentDetailPage((prev) => Math.min(prev + 1, totalPages));
 
+
   const flattenInsuranceData = (dataToExport = InsuranceDetailsData) => {
     const flattened = [];
-  
+
     dataToExport.forEach((ndcBlock) => {
       const ndc = ndcBlock.ndc;
       const description = ndcBlock.data?.[0]?.description || "";
-  
+
       ndcBlock.data.forEach((entry) => {
         const flatEntry = {
           ndc,
@@ -1000,34 +1114,34 @@ function Audit() {
           packagesize: entry.packagesize,
           total_quantity: entry.total_quantity,
         };
-  
+
         // Add dynamic fields like "TRICARE" if they exist
         Object.keys(entry).forEach((key) => {
           if (!["insurance_company", "packagesize", "total_quantity", "description"].includes(key)) {
             flatEntry[key] = entry[key];
           }
         });
-  
+
         flattened.push(flatEntry);
       });
     });
-  
+
     return flattened;
   };
-  
+
 
   const handleExportDetailsToExcel = () => {
     const wb = XLSX.utils.book_new();
     const wsData = [];
-  
+
     // Build data row by row
-    filteredDetalesData.forEach((item) => {
+    fullyFilteredData.forEach((item) => {
       // Add NDC heading
       wsData.push([`NDC: ${item.ndc}`]);
-  
+
       // Add headers
-      wsData.push(["Insurance Company", "Description", "Package Size", "Billing Quantity","Vendor Total", "Result (Unit)", "Result (Pkg)"]);
-  
+      wsData.push(["Insurance Company", "Description", "Package Size", "Billing Quantity", "Vendor Total", "Result (Unit)", "Result (Pkg)"]);
+
       // Add rows for each company
       item.data.forEach((entry) => {
         wsData.push([
@@ -1040,37 +1154,37 @@ function Audit() {
           entry.result_package,
         ]);
       });
-  
+
       // Empty row between NDC sections
       wsData.push([]);
     });
-  
+
     // Convert array to sheet
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(wb, ws, "Insurance Details");
-  
+
     // Write file
     XLSX.writeFile(wb, "insurance_details_grouped.xlsx");
   };
 
   const handleDetailsExportCSV = () => {
     let csvContent = "";
-  
-    filteredDetalesData.forEach((item) => {
+
+    fullyFilteredData.forEach((item) => {
       // NDC title
       csvContent += `NDC: ${item.ndc}\n`;
       // Table headers
       csvContent += "Insurance Company,Description,Package Size,Billing Quantity,Vendor Total,Result(Unit), Result(Pkg)\n";
-  
+
       // Data rows
       item.data.forEach((entry) => {
         csvContent += `"${entry.insurance_company}","${entry.description}",${entry.packagesize},${entry.total_quantity},${entry.vendor_sum},${entry.result_unit}, ${entry.result_package}\n`;
       });
-  
+
       // Spacer
       csvContent += "\n";
     });
-  
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -1080,8 +1194,8 @@ function Audit() {
     link.click();
     document.body.removeChild(link);
   };
-  
-  
+
+
 
 
   // const handleinsurancereportchange = (e) => {
@@ -1104,6 +1218,33 @@ function Audit() {
   // setFilteredData(filteredReports); // Update the state with filtered data
   // };
   const handleInsurancereporttchange = (e) => {
+    // Find the selected option based on its value
+    const selectedOption = options.find((option) => option.value === e.target.value);
+
+    if (selectedOption) {
+      // Update the state with both value and label
+      setreport_type(selectedOption);
+
+      // Apply the conditions based on the value
+      let filteredReports = insurancedata.map((report) => {
+        let filteredData = [];
+        if (selectedOption.value === "zero") {
+          filteredData = report.data.filter((item) => item.result_package == 0);
+        } else if (selectedOption.value === "negative") {
+          filteredData = report.data.filter((item) => item.result_package < 0);
+        } else if (selectedOption.value === "positive") {
+          filteredData = report.data.filter((item) => item.result_package > 0);
+        } else {
+          filteredData = report.data; // Default case: all data
+        }
+        return { ...report, data: filteredData }; // Update filtered data for the report
+      });
+
+      setFilteredData(filteredReports);
+    }
+  };
+
+  const handleInsurancedetailereporttchange = (e) => {
     // Find the selected option based on its value
     const selectedOption = options.find((option) => option.value === e.target.value);
 
@@ -1402,6 +1543,13 @@ function Audit() {
     );
   };
 
+  const handleDetailesreportchange = (event) => {
+    setreport_type({
+      value: event.target.value,
+      label: options.find((option) => option.value === event.target.value).label,
+    });
+  };
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Report type");
@@ -1414,6 +1562,8 @@ function Audit() {
     setSelectedItem(item);
     setIsOpen(false);
   };
+
+
 
 
 
@@ -1447,17 +1597,17 @@ function Audit() {
       setSelectedCompany(filteredData[0].insurance_company_name);
     }
   }, [filteredData]); // Runs whenever filteredData changes
-  
+
   const handleCompanyChange = (event) => {
     setSelectedCompany(event.target.value);
   };
-  
+
   const selectedData = filteredData.find(
     (item) => item.insurance_company_name === selectedCompany
   );
-  
 
- 
+
+
 
   // console.log("all data", selectedData);
   return (
@@ -1503,18 +1653,16 @@ function Audit() {
 
               Clear Record
             </button>
-            {/* <Button onClick={handlegeneratereport} variant="success" shadow>
-            Generate Report
-          </Button> */}
+          
           </div>
         </div>
-        <div className="d-md-flex gap-2  card-body p-0">
-          {/* Vendor Container */}
-          <div className="col-md-6">
+        <div className=" gap-2 flex   card-body p-0">
+          {/* Vendor upload Container */}
+          <div className="col-md-6 ">
             <form onSubmit={handlesubmitvendor_files}>
 
-              <div className="flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
-                <div className="md:w-1/2 border-r border-gray-400">
+              <div className="flex  items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
+                <div className="md:w-1/2 border-r  border-gray-400">
                   <Select
                     options={allvendors}
                     value={vendor}
@@ -1665,7 +1813,7 @@ function Audit() {
               ))}
             </div>
           </div>
-          {/* Billing Container */}
+          {/* Billing upload Container */}
           <div className="col-md-6 mt-8 md:mt-0 ">
             <form onSubmit={handlesubmitbilling_files}>
 
@@ -1780,6 +1928,112 @@ function Audit() {
               ))}
             </div>
           </div>
+           {/* Balance upload Container */}
+
+        </div>
+        <div className="col-md-6 mt-8 md:mt-4 ">
+          <form onSubmit={handlesubmitbalance_files}>
+
+            <div className="w-2/3 flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
+
+              <div className=" flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-6 h-6 text-gray-900"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
+                  />
+                </svg>
+                <label
+                  htmlFor="balance-upload"
+                  className="cursor-pointer md:text-xl text-gray-700"
+                >
+                  Upload Balance File
+                </label>
+
+                <input
+                  id="balance-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleselection_balance}
+                  accept=".xlsx,.xls,.csv"
+                  required
+                />
+
+              </div>
+
+              <div className="w-1/3 text-right">
+                <button
+                  style={{ width: "80px" }}
+                  type="submit"
+                  className="text-white py-2 rounded-lg bg-[#587291] hover:bg-[#4a5d7a] transition duration-300"
+                >
+                  Upload
+
+                </button>
+
+
+              </div>
+
+            </div>
+            <div className=" pl-2 pt-2">
+              {File_balance?.name && (
+                <span className="text-white text-sm md:text-base truncate max-w-[150px]">
+                  {File_balance.name}
+                </span>
+              )}
+            </div>
+
+          </form>
+          <div className="md:pt-10 pt-2  w-2/3  ">
+            {balance_filesdata.map((item) => (
+              <div
+                key={item.name}
+                className="d-flex align-items-center justify-content-between bg-light pt-2 pb-2 rounded-lg mb-2"
+                style={{
+                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <div
+                  className="d-flex align-items-center"
+                  style={{ cursor: "pointer" }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12 text-gray-700 font-normal">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                  </svg>
+                  <div>
+                    <div className="text-normal">{item.name}</div>
+                    <div className=" text-xs mt-2 text-gray-400">
+                      {item.type || "XLSX"} |  {item.size || "1.2 MB"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-end gap-2 ">
+                  <svg onClick={() => openimage(item)}
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="cursor-pointer size-5">
+                    <title>Download file</title> {/* This shows a tooltip on hover */}
+
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+
+                  <svg
+                    onClick={() => handleDelete("opening_balance_files", item.name)} // Passing both values
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -1817,9 +2071,6 @@ function Audit() {
         ))}
       </ul>
 
-
-
-
       {audit_report_type.includes("audit") && (
         <div className="relative w-full max-w-xs">
           <select
@@ -1849,6 +2100,39 @@ function Audit() {
           </div>
         </div>
       )}
+
+
+
+
+      {/* {audit_report_type.includes("insurance_details") && (
+        <div className="relative w-full max-w-xs">
+          <select
+            className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                   border border-green-300 rounded-lg shadow-md text-black 
+                   cursor-pointer appearance-none"
+            value={report_type.value} // Bind value to the current state
+            onChange={handleDetailesreportchange} // Handle changes
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
+      )} */}
       {/* {audit_report_type.includes("audit_detail") && (
       <div className="relative w-full max-w-xs">
       <select
@@ -1910,12 +2194,6 @@ function Audit() {
           </div>
         </div>
       )}
-
-
-
-
-
-
 
       {audit_report_type.includes("audit") && (
         <div className=" me-3 mt-3">
@@ -2342,8 +2620,8 @@ function Audit() {
                           </div>
                         </div>
 
-                        <BootstrapTable {...props.baseProps}                           rowStyle={rowStyle}
- bootstrap4 filter={filterFactory()} classes="custom-table" />
+                        <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
+                          bootstrap4 filter={filterFactory()} classes="custom-table" />
                         <hr />
                       </div>
                     )}
@@ -2356,12 +2634,40 @@ function Audit() {
       )}
 
 
-{audit_report_type.includes("insurance_details") && (
-      <div className="me-3 mt-3">
-        {InsuranceDetailsData.length > 0 ? (
-          <>
-            {/* === SEARCH + EXPORT === */}
-            <div className="card-body mt-3">
+      {audit_report_type.includes("insurance_details") && (
+        <div className="me-3 mt-3">
+          {InsuranceDetailsData.length > 0 && (
+            <>
+
+
+              {/* === FILTER === */}
+              <div className="relative w-full max-w-xs mb-4">
+                <select
+                  className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                   border border-green-300 rounded-lg shadow-md text-black 
+                   cursor-pointer appearance-none"
+                  value={report_type.value} // Bind value to the current state
+                  onChange={handlereportchange} // Handle changes
+                >
+                  {options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </div>
+              </div>
               <div className="d-flex justify-between items-center mb-4">
                 <div className="w-1/3">
                   <input
@@ -2398,58 +2704,59 @@ function Audit() {
                   </button>
                 </div>
               </div>
-            </div>
 
-            {/* === TABLES === */}
-            {paginatedData.length > 0 ? (
-              <>
-                {paginatedData.map((ndcData, index) => (
-                  <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
-                    <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
-                    <BootstrapTable
-                      keyField="insurance_company"
-                      data={ndcData.data}
-                      columns={detailsColumns}
-                      bootstrap4
-                      condensed
-                      filter={filterFactory()}
-                      classes="custom-table"
-                    />
-                  </div>
-                ))}
+              {/* === TABLE === */}
+              {paginatedData.length > 0 ? (
+                <>
+                  {paginatedData.map((ndcData, index) => (
+                    <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
+                      <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
+                      <BootstrapTable
+                        keyField="insurance_company"
+                        data={ndcData.data}
+                        columns={detailsColumns}
+                        rowStyle={rowStyle}
+                        bootstrap4
+                        condensed
+                        filter={filterFactory()}
+                        classes="custom-table"
+                      />
+                    </div>
+                  ))}
 
-                {/* === PAGINATION CONTROLS === */}
-                <div className="flex justify-between items-center mt-6 px-4 text-white">
-                  <span>
-                    Showing {startIndexDetail}–{endIndexDetail} of {totalItems}
-                  </span>
-                  <div className="space-x-3">
-                    <button
-                      onClick={goToDetailPreviousPage}
-                      disabled={currentDetailPage === 1}
-                      className="px-4 py-2 border rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      onClick={goToDetailNextPage}
-                      disabled={currentDetailPage === totalPages}
-                      className="px-4 py-2 border rounded bg-[#15e6cd] hover:bg-[#15e6cd] disabled:opacity-50"
-                    >
-                      Next
-                    </button>
+                  {/* === Pagination === */}
+                  <div className="flex justify-between items-center mt-6 px-4 text-white">
+                    <span>
+                      Showing {startIndexDetail}–{endIndexDetail} of {totalItems}
+                    </span>
+                    <div className="space-x-3">
+                      <button
+                        onClick={goToDetailPreviousPage}
+                        disabled={currentDetailPage === 1}
+                        className="px-4 py-2 border rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={goToDetailNextPage}
+                        disabled={currentDetailPage === totalPages}
+                        className="px-4 py-2 border rounded bg-[#15e6cd] hover:bg-[#15e6cd] disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <p className="text-white text-2xl text-center">No matching NDC found.</p>
-            )}
-          </>
-        ) : (
-          <p className="text-white font-semibold text-center bg-gray-100">No insurance details data available! Click Generate to see the report</p>
-        )}
-      </div>
-    )}
+                </>
+              ) : (
+                <p className="text-white text-2xl text-center">No matching NDC found.</p>
+              )}
+
+            </>
+          )}
+        </div>
+      )}
+
+
 
 
 

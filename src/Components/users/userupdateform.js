@@ -14,6 +14,9 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const { user, route } = useAuthContext();
   const [isloading, setisloading] = useState(false);
   const { dispatch } = UseaddheaderContext();
+    const [company_name, setcompany_name] = useState(data.profile.company);
+    const [contact_number, setcontact_number] = useState(data.profile.contact_number);
+    const [address, setaddress] = useState(data.profile.address)
   const [username, setusername] = useState(data.username);
   const [first_name, setfirst_name] = useState(data.first_name);
   const [last_name, setlast_name] = useState(data.last_name);
@@ -24,6 +27,8 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const [passworderror, setpassworderror] = useState("");
      const [groups, setgroups] = useState([]);
       const [allgroups, setallgroups] = useState([]);
+       const [Package, setPackage] = useState({label : data.profile.package, value : data.profile.package});
+        const [userActive, setUserActive] = useState({label : data.profile.is_active == true ? "Active" : "InActive", value : data.profile.is_Active});
 
 
       useEffect(() => {
@@ -50,19 +55,37 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setisloading(true);
-    if (password.length > 0) {
+    if (!password.length > 0) {
       var updated_data = {
         username: username,
         first_name,
         last_name,
         email,
-        password,
-        groups : groups.map((items)=>items.value)
+        groups : groups.map((items)=>items.value),
+        profile: {
+          contact_number: contact_number,
+          company: company_name,
+          address: address,
+          package: Package.value,
+          is_active: userActive.value,
+        }
 
       };
     } else {
-      updated_data = { username: username, first_name, last_name, email,
-        groups : groups.map((items)=>items.value)
+      updated_data = {  username: username,
+        first_name,
+        last_name,
+        email,
+        password,
+        groups : groups.map((items)=>items.value),
+        profile: {
+          contact_number: contact_number,
+          company: company_name,
+          address: address,
+          package: Package.value,
+          is_active: userActive.value,
+        }
+
 
        };
     }
@@ -115,7 +138,37 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
       ...base,
       zIndex: 100,
     }),
+    control: (base) => ({
+      ...base,
+      minHeight: '30px',
+      height: '30px',
+      fontSize: '0.75rem', // optional: make font smaller to match
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      height: '30px',
+      padding: '0 8px',
+    }),
+    input: (base) => ({
+      ...base,
+      margin: 0,
+      padding: 0,
+    }),
+    indicatorsContainer: (base) => ({
+      ...base,
+      height: '30px',
+    }),
   };
+
+  const PackageOptions = [
+    {label : "Free", value : "Free"},
+    {label : "Paid", value : "Paid"},
+  ]
+
+  const ActiveOptions = [
+    {label : "Active", value : true},
+    {label : "In Active", value : false},
+  ]
 
 
   return (
@@ -130,76 +183,205 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
         <Modal.Title className="model-heading">Edit User</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            className="form-control"
-            label="Company Name"
-            value={first_name}
-            onChange={(e) => {
-              setfirst_name(e.target.value);
-            }}
-            size="small"
-            required
-          />
-
-          <TextField
-            className="form-control mt-3"
-            label="Contact Number"
-            value={last_name}
-            onChange={(e) => {
-              setlast_name(e.target.value);
-            }}
-            size="small"
-          />
-          <TextField
-            className="form-control mt-3"
-            label="Username"
-            value={username}
-            onChange={(e) => {
-              setusername(e.target.value);
-              setusernameerror("");
-            }}
-            size="small"
-            required
-          />
-          <div className="text-danger">{usernameerror}</div>
-          <TextField
-            type="email"
-            className="form-control  mt-3"
-            label="Email"
-            value={email}
-            onChange={(e) => {
-              setemail(e.target.value);
-              setemailerror("");
-            }}
-            size="small"
-          />
-          <div className="text-danger">{emailerror}</div>
-          <TextField
-            type="password"
-            className="form-control  mt-3"
-            label="Password"
-            value={password}
-            onChange={(e) => {
-              setpassword(e.target.value);
-              setpassworderror("");
-            }}
-            size="small"
-          />
-          <div className="text-danger">{passworderror}</div>
-          <Select
-        isMulti
-        className="mt-3"
-        options={allgroups}
-        value={groups}
-        onChange={(e)=>setgroups(e)}
-        styles={selectStyles}
-        placeholder="Select Groups"
-      />
-          <div className="d-flex flex-row-reverse mt-2 me-2">
-            <Update_button isloading={isloading} />
-          </div>
-        </form>
+         <form onSubmit={handleSubmit}>
+                 <div className="row">
+                   <div className="">
+                   <TextField
+                   fullWidth
+         label="Company Name"
+         value={company_name}
+         onChange={(e) => setcompany_name(e.target.value)}
+         required
+         size="small"
+         style={{
+           height: '30px',
+         }}
+         InputProps={{
+           style: {
+             height: '30px',
+             fontSize: '0.75rem', // optional: to match smaller height
+           },
+         }}
+         InputLabelProps={{
+           style: {
+             fontSize: '0.75rem', // optional: smaller label
+           },
+         }}
+       />
+       
+                 </div>
+                  <div className="">
+                 <TextField
+                 fullWidth
+                   className="form-control mt-3 "
+                   label="Contact Number"
+                   value={contact_number}
+                   onChange={(e) => {
+                     setcontact_number(e.target.value);
+                   }}
+                   size="small"
+                   style={{
+                     height: '30px',
+                   }}
+                   InputProps={{
+                     style: {
+                       height: '30px',
+                       fontSize: '0.75rem', // optional: to match smaller height
+                     },
+                   }}
+                   InputLabelProps={{
+                     style: {
+                       fontSize: '0.75rem', // optional: smaller label
+                     },
+                   }}
+                 />
+                 </div>
+               
+                 <div className="">
+       
+                 <TextField
+                   className="form-control mt-3"
+                   label="Username"
+                   value={username}
+                   onChange={(e) => {
+                     setusername(e.target.value);
+                     setusernameerror("");
+                   }}
+                   size="small"
+                   style={{
+                     height: '30px',
+                   }}
+                   InputProps={{
+                     style: {
+                       height: '30px',
+                       fontSize: '0.75rem', // optional: to match smaller height
+                     },
+                   }}
+                   InputLabelProps={{
+                     style: {
+                       fontSize: '0.75rem', // optional: smaller label
+                     },
+                   }}
+                   required
+                 />
+                 </div>
+                 <div className="text-danger">{usernameerror}</div>
+                 <div className=" ">
+       
+                 <TextField
+                   type="email"
+                   className="form-control mt-3  "
+                   label="Email"
+                   value={email}
+                   onChange={(e) => {
+                     setemail(e.target.value);
+                     setemailerror("");
+                   }}
+                   size="small"
+                   style={{
+                     height: '30px',
+                   }}
+                   InputProps={{
+                     style: {
+                       height: '30px',
+                       fontSize: '0.75rem', // optional: to match smaller height
+                     },
+                   }}
+                   InputLabelProps={{
+                     style: {
+                       fontSize: '0.75rem', // optional: smaller label
+                     },
+                   }}
+                   required
+                 />
+                 </div>
+                 <div className="text-danger mb-1">{emailerror}</div>
+                 <div className="">
+       
+                 <TextField
+                   type="password"
+                   className="form-control  mt-3"
+                   label="Password"
+                   value={password}
+                   onChange={(e) => {
+                     setpassword(e.target.value);
+                     setpassworderror("");
+                   }}
+                   size="small"
+                   style={{
+                     height: '30px',
+                   }}
+                   InputProps={{
+                     style: {
+                       height: '30px',
+                       fontSize: '0.75rem', // optional: to match smaller height
+                     },
+                   }}
+                   InputLabelProps={{
+                     style: {
+                       fontSize: '0.75rem', // optional: smaller label
+                     },
+                   }}
+                 />
+                 </div>
+                 <div className="">
+       
+       <TextField
+         className="form-control mt-3"
+         label="Address"
+         value={address}
+         onChange={(e) => {
+           setaddress(e.target.value);
+         }}
+         size="small"
+         style={{
+           height: '30px',
+         }}
+         InputProps={{
+           style: {
+             height: '30px',
+             fontSize: '0.75rem', // optional: to match smaller height
+           },
+         }}
+         InputLabelProps={{
+           style: {
+             fontSize: '0.75rem', // optional: smaller label
+           },
+         }}
+       />
+       </div>
+                  <Select
+                   className="mt-3"
+                   options={PackageOptions}
+                   value={Package}
+                   onChange={(e) => setPackage(e)}
+                   styles={selectStyles}
+                   placeholder="Select Package"
+                   
+                 />
+                  <Select
+                   className="mt-3"
+                   options={ActiveOptions}
+                   value={userActive}
+                   onChange={(e) => setUserActive(e)}
+                   styles={selectStyles}
+                   placeholder="Status"
+                 />
+                 <div className="text-danger mb-1">{passworderror}</div>
+                 <Select
+                   isMulti
+                   className="mt-3"
+                   options={allgroups}
+                   value={groups}
+                   onChange={(e) => setgroups(e)}
+                   styles={selectStyles}
+                   placeholder="Select Groups"
+                 />
+                 </div>
+                 <div className=" d-flex flex-row-reverse mt-3 me-2">
+                   <Update_button isloading={isloading} />
+                 </div>
+               </form>
       </Modal.Body>
     </Modal>
   );
