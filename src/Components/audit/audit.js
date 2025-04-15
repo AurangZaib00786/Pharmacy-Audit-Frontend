@@ -35,6 +35,8 @@ import { FaFileAlt, FaDownload, FaTimes } from "react-icons/fa";
 import success_toast from "../alerts/success_toast";
 import BinNumberModal from "./BinNumberModal";
 import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 
 function Audit() {
@@ -67,6 +69,8 @@ function Audit() {
   });
 
   const [InsuranceDetailsData, SetInsuranceDetailsData] = useState([])
+  const [vendorKeysPresent, setVendorKeysPresent] = useState([]);
+
   const [binnumbers, setbinnumbers] = useState(false);
 
   const handlebinnumberopen = () => {
@@ -869,6 +873,7 @@ function Audit() {
 
             return item;
           });
+          setVendorKeysPresent([...vendor_keys_present]);
 
           report.data = new_data;
           return report;
@@ -1133,61 +1138,94 @@ function Audit() {
   };
 
 
-  const handleExportDetailsToExcel = () => {
-    const wb = XLSX.utils.book_new();
-    const wsData = [];
-
-    // Build data row by row
+  const handleExportDetailsToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Insurance Details");
+  
     fullyFilteredData.forEach((item) => {
-      // Add NDC heading
-      wsData.push([`NDC: ${item.ndc}`]);
-
-      // Add headers
-      wsData.push(["Insurance Company", "Description", "Package Size", "Billing Quantity", "Vendor Total", "Result (Unit)", "Result (Pkg)"]);
-
-      // Add rows for each company
+      worksheet.addRow([`NDC: ${item.ndc}`]);
+  
+      const headers = [
+        "Insurance Company",
+        "Description",
+        "Package Size",
+        "Billing Quantity",
+        ...vendorKeysPresent,
+        "Vendor Total",
+        "Result (Unit)",
+        "Result (Pkg)"
+      ];
+      worksheet.addRow(headers);
+  
       item.data.forEach((entry) => {
-        wsData.push([
+        const row = worksheet.addRow([
           entry.insurance_company,
           entry.description,
           entry.packagesize,
           entry.total_quantity,
+          ...vendorKeysPresent.map((key) => entry[key]),
           entry.vendor_sum,
           entry.result_unit,
           entry.result_package,
         ]);
+  
+        // Row color logic
+        let fillColor = null;
+        if (entry.result_package < 0) fillColor = "FFCCCC";       // Light red
+        else if (entry.result_package == 0) fillColor = "CCFFCC"; // Light green
+        else if (entry.result_package === "Not Exist") fillColor = "CCE5FF"; // Light blue
+  
+        if (fillColor) {
+          row.eachCell((cell) => {
+            cell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: fillColor },
+            };
+          });
+        }
       });
-
-      // Empty row between NDC sections
-      wsData.push([]);
+  
+      worksheet.addRow([]);
     });
-
-    // Convert array to sheet
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, "Insurance Details");
-
-    // Write file
-    XLSX.writeFile(wb, "insurance_details_grouped.xlsx");
+  
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(blob, "insurance_details_grouped_colored.xlsx");
   };
+  
 
   const handleDetailsExportCSV = () => {
     let csvContent = "";
-
+  
     fullyFilteredData.forEach((item) => {
-      // NDC title
       csvContent += `NDC: ${item.ndc}\n`;
-      // Table headers
-      csvContent += "Insurance Company,Description,Package Size,Billing Quantity,Vendor Total,Result(Unit), Result(Pkg)\n";
-
-      // Data rows
+      csvContent += `Insurance Company,Description,Package Size,Billing Quantity,${vendorKeysPresent.join(",")},Vendor Total,Result(Unit),Result(Pkg),Row Color Hint\n`;
+  
       item.data.forEach((entry) => {
-        csvContent += `"${entry.insurance_company}","${entry.description}",${entry.packagesize},${entry.total_quantity},${entry.vendor_sum},${entry.result_unit}, ${entry.result_package}\n`;
+        let colorHint = "";
+        if (entry.result_package < 0) colorHint = "Negative";
+        else if (entry.result_package == 0) colorHint = "Zero";
+        else if (entry.result_package === "Not Exist") colorHint = "Not Exist";
+  
+        const row = [
+          `"${entry.insurance_company}"`,
+          `"${entry.description}"`,
+          entry.packagesize,
+          entry.total_quantity,
+          ...vendorKeysPresent.map((key) => entry[key]),
+          entry.vendor_sum,
+          entry.result_unit,
+          entry.result_package,
+          colorHint,
+        ];
+  
+        csvContent += row.join(",") + "\n";
       });
-
-      // Spacer
+  
       csvContent += "\n";
     });
-
+  
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -1197,7 +1235,7 @@ function Audit() {
     link.click();
     document.body.removeChild(link);
   };
-
+  
 
 
 
