@@ -607,6 +607,12 @@ function Audit() {
             headerFormatter: headerstyle,
           },
           {
+            dataField: "amount_billing",
+            text: "Amount Billing",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
             dataField: "opening_balance",
             text: "Opening Balance (Unit)",
             sort: true,
@@ -2337,14 +2343,17 @@ function Audit() {
                     </div> */}
 
 
-                        <BootstrapTable
-                          {...props.baseProps}
-                          rowStyle={rowStyle}
-                          bootstrap4
-                          condensed
-                          filter={filterFactory()}
-                          classes="custom-table"
-                        />
+<div style={{ overflowX: 'auto' }}>
+  <BootstrapTable
+    {...props.baseProps}
+    rowStyle={rowStyle}
+    bootstrap4
+    condensed
+    filter={filterFactory()}
+    classes="custom-table table"
+  />
+</div>
+
 
                       </div>
                     )}

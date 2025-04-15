@@ -17,6 +17,8 @@ function Update({ show, onHide, data }) {
   const [date_column, setdate_column] = useState(data.date_column);
   const [row_number, setrow_number] = useState(data.row_number);
   const [ndc_column, setndc_column] = useState(data.ndc_column);
+    const [amount_column, setamount_column] = useState(data.amount_column);
+  
   const [description_column, setdescription_column] = useState(
     data.description_column
   );
@@ -41,6 +43,7 @@ function Update({ show, onHide, data }) {
           date_column,
           description_column,
           quantity_column,
+          amount_column
         }),
       }
     );
@@ -135,7 +138,17 @@ function Update({ show, onHide, data }) {
                 size="small"
                 required
               />
+
             </div>{" "}
+              <div className="col-md-6 mb-3">
+                        <TextField
+                          className="form-control"
+                          label="Amount"
+                          value={amount_column}
+                          onChange={(e) => setamount_column(e.target.value)}
+                          size="small"
+                        />
+                      </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control  "

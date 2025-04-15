@@ -23,6 +23,7 @@ import GroupsandPermissions from "./Components/groups/GroupsandPermissions";
 import Support from "./Components/support/Support";
 import jwtDecode from "jwt-decode";
 import Contacts from "./Components/contact/Contacts";
+import NewPassword from "./Pages/NewPassword";
 
 
 function Routing() {
@@ -36,11 +37,16 @@ function Routing() {
     <BrowserRouter>
       <ProSidebarProvider>
         <Routes>
+        <Route
+              path="/reset-password/:uid/:token"
+              element={ <NewPassword /> }
+            ></Route>
           <Route path="/" element={<Layout />}>
             <Route
               index
               element={!user ? <Login /> : <Navigate to={"/home"} />}
             ></Route>
+         
             <Route
               path="/sign-up"
               element={!user ? <SignUp /> : <Navigate to={"/home"} />}

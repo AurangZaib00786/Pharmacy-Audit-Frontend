@@ -17,6 +17,7 @@ function Form(props) {
   const [ndc_column, setndc_column] = useState("");
   const [packagesize, setpackagesize] = useState("");
   const [bin_number, setbin_number] = useState("");
+    const [amount_column, setamount_column] = useState("");
   const [description_column, setdescription_column] = useState("");
   const [quantity_column, setquantity_column] = useState("");
   const [isloading, setisloading] = useState(false);
@@ -41,6 +42,7 @@ function Form(props) {
         reference: "billing",
         description_column,
         quantity_column,
+        amount_column
       }),
     });
     const json = await response.json();
@@ -60,6 +62,7 @@ function Form(props) {
       setndc_column("");
       setbin_number("");
       setpackagesize("");
+      setamount_column("")
       setquantity_column("");
       success_toast();
     }
@@ -160,6 +163,15 @@ function Form(props) {
                 required
               />
             </div>{" "}
+              <div className="col-md-6 mb-3">
+                        <TextField
+                          className="form-control"
+                          label="Amount"
+                          value={amount_column}
+                          onChange={(e) => setamount_column(e.target.value)}
+                          size="small"
+                        />
+                      </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control  "

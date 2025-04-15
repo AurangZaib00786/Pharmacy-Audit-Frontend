@@ -19,7 +19,10 @@ function Update({ show, onHide, data }) {
   const [packagesize, setpackagesize] = useState(data.packagesize);
   const [bin_number, setbin_number] = useState(data.bin_number);
   const [ndc_column, setndc_column] = useState(data.ndc_column);
+      const [amount_column, setamount_column] = useState(data.amount_column);
+  
   const [description_column, setdescription_column] = useState(
+
     data.description_column
   );
   const [quantity_column, setquantity_column] = useState(data.quantity_column);
@@ -45,6 +48,7 @@ function Update({ show, onHide, data }) {
           bin_number,
           description_column,
           quantity_column,
+          amount_column
         }),
       }
     );
@@ -160,6 +164,15 @@ function Update({ show, onHide, data }) {
                 required
               />
             </div>{" "}
+             <div className="col-md-6 mb-3">
+                                    <TextField
+                                      className="form-control"
+                                      label="Amount"
+                                      value={amount_column}
+                                      onChange={(e) => setamount_column(e.target.value)}
+                                      size="small"
+                                    />
+                                  </div>
             <div className="col-md-6 mb-3">
               <TextField
                 className="form-control  "

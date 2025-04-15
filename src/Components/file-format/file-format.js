@@ -168,6 +168,12 @@ function Fileformat(props) {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "amount_column",
+      text: "Amount ",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "action",
       text: "Action",
       formatter: linkFollow,

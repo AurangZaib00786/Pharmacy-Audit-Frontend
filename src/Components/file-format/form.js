@@ -17,6 +17,7 @@ function Form(props) {
   const [date_column, setdate_column] = useState("");
   const [description_column, setdescription_column] = useState("");
   const [quantity_column, setquantity_column] = useState("");
+  const [amount_column, setamount_column] = useState("");
   const [isloading, setisloading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -37,6 +38,7 @@ function Form(props) {
         date_column,
         description_column,
         quantity_column,
+        amount_column
       }),
     });
     const json = await response.json();
@@ -55,6 +57,7 @@ function Form(props) {
       setrow_number("");
       setndc_column("");
       setquantity_column("");
+      setamount_column("");
       success_toast();
     }
   };
@@ -125,6 +128,15 @@ function Form(props) {
               onChange={(e) => setdescription_column(e.target.value)}
               size="small"
               required
+            />
+          </div>
+          <div className="col-md-6 mb-3">
+            <TextField
+              className="form-control"
+              label="Amount"
+              value={amount_column}
+              onChange={(e) => setamount_column(e.target.value)}
+              size="small"
             />
           </div>
           <div className="col-md-6 mb-3">
