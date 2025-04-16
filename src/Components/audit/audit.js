@@ -618,7 +618,7 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-         
+
           {
             dataField: "packagesize_billing",
             text: "Package Size",
@@ -631,7 +631,7 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-         
+
         ];
 
         json.vendor_files.map((item) => {
@@ -796,6 +796,12 @@ function Audit() {
             headerFormatter: headerstyle,
           },
           {
+            dataField: "opening_balance",
+            text: "Opening Balance (Unit)",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
             dataField: "packagesize",
             text: "Package Size",
             sort: true,
@@ -839,6 +845,13 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
+          },
+          {
+            dataField: "closing_balance",
+            text: "Closing Balance (Unit)",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
           }
         );
 
@@ -876,7 +889,8 @@ function Audit() {
               item.packagesize > 0
                 ? (sum - Number(item.total_quantity)) / Number(item.packagesize)
                 : "Not Exist";
-
+            item["closing_balance"] =
+              Number(item.result_unit) + Number(item.opening_balance);
             return item;
           });
           setVendorKeysPresent([...vendor_keys_present]);
@@ -933,6 +947,12 @@ function Audit() {
             headerFormatter: headerstyle,
           },
           {
+            dataField: "opening_balance",
+            text: "Opening Balance (Unit)",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
             dataField: "packagesize_billing",
             text: "Package Size",
             sort: true,
@@ -976,6 +996,13 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+        new_columns.push({
+          dataField: "closing_balance",
+          text: "Closing Balance (Unit)",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
 
         setcolumns(new_columns);
 
@@ -1004,6 +1031,8 @@ function Audit() {
               item.packagesize_billing > 0
                 ? (sum - item.quantity_billing) / item.packagesize_billing
                 : "Not Exist";
+            item["closing_balance"] =
+              Number(item.result_unit) + Number(item.opening_balance);
             return item;
           });
           report["data"] = new_data;
@@ -1147,10 +1176,10 @@ function Audit() {
   const handleExportDetailsToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Insurance Details");
-  
+
     fullyFilteredData.forEach((item) => {
       worksheet.addRow([`NDC: ${item.ndc}`]);
-  
+
       const headers = [
         "Insurance Company",
         "Description",
@@ -1162,7 +1191,7 @@ function Audit() {
         "Result (Pkg)"
       ];
       worksheet.addRow(headers);
-  
+
       item.data.forEach((entry) => {
         const row = worksheet.addRow([
           entry.insurance_company,
@@ -1174,13 +1203,13 @@ function Audit() {
           entry.result_unit,
           entry.result_package,
         ]);
-  
+
         // Row color logic
         let fillColor = null;
         if (entry.result_package < 0) fillColor = "FFCCCC";       // Light red
         else if (entry.result_package == 0) fillColor = "CCFFCC"; // Light green
         else if (entry.result_package === "Not Exist") fillColor = "CCE5FF"; // Light blue
-  
+
         if (fillColor) {
           row.eachCell((cell) => {
             cell.fill = {
@@ -1191,29 +1220,29 @@ function Audit() {
           });
         }
       });
-  
+
       worksheet.addRow([]);
     });
-  
+
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     saveAs(blob, "insurance_details_grouped_colored.xlsx");
   };
-  
+
 
   const handleDetailsExportCSV = () => {
     let csvContent = "";
-  
+
     fullyFilteredData.forEach((item) => {
       csvContent += `NDC: ${item.ndc}\n`;
       csvContent += `Insurance Company,Description,Package Size,Billing Quantity,${vendorKeysPresent.join(",")},Vendor Total,Result(Unit),Result(Pkg),Row Color Hint\n`;
-  
+
       item.data.forEach((entry) => {
         let colorHint = "";
         if (entry.result_package < 0) colorHint = "Negative";
         else if (entry.result_package == 0) colorHint = "Zero";
         else if (entry.result_package === "Not Exist") colorHint = "Not Exist";
-  
+
         const row = [
           `"${entry.insurance_company}"`,
           `"${entry.description}"`,
@@ -1225,13 +1254,13 @@ function Audit() {
           entry.result_package,
           colorHint,
         ];
-  
+
         csvContent += row.join(",") + "\n";
       });
-  
+
       csvContent += "\n";
     });
-  
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -1241,7 +1270,7 @@ function Audit() {
     link.click();
     document.body.removeChild(link);
   };
-  
+
 
 
 
@@ -1700,7 +1729,7 @@ function Audit() {
 
               Clear Record
             </button>
-          
+
           </div>
         </div>
         <div className=" gap-2 flex   card-body p-0">
@@ -1975,7 +2004,7 @@ function Audit() {
               ))}
             </div>
           </div>
-           {/* Balance upload Container */}
+          {/* Balance upload Container */}
 
         </div>
         <div className="col-md-6 mt-8 md:mt-4 ">
@@ -1984,21 +2013,21 @@ function Audit() {
             <div className=" flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
 
               <div className=" flex items-center  gap-2">
-              <div className=" flex items-center ml-2 justify-center  ">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6  text-gray-900"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
-                  />
-                </svg>
+                <div className=" flex items-center ml-2 justify-center  ">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6  text-gray-900"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
+                    />
+                  </svg>
                 </div>
                 <label
                   htmlFor="balance-upload"
@@ -2343,16 +2372,16 @@ function Audit() {
                     </div> */}
 
 
-<div style={{ overflowX: 'auto' }}>
-  <BootstrapTable
-    {...props.baseProps}
-    rowStyle={rowStyle}
-    bootstrap4
-    condensed
-    filter={filterFactory()}
-    classes="custom-table table"
-  />
-</div>
+                        <div style={{ overflowX: 'auto' }}>
+                          <BootstrapTable
+                            {...props.baseProps}
+                            rowStyle={rowStyle}
+                            bootstrap4
+                            condensed
+                            filter={filterFactory()}
+                            classes="custom-table table"
+                          />
+                        </div>
 
 
                       </div>
@@ -2671,9 +2700,11 @@ function Audit() {
 
                           </div>
                         </div>
+                        <div style={{ overflowX: 'auto' }}>
 
                         <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
                           bootstrap4 filter={filterFactory()} classes="custom-table" />
+                          </div>
                         <hr />
                       </div>
                     )}
@@ -2763,6 +2794,8 @@ function Audit() {
                   {paginatedData.map((ndcData, index) => (
                     <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
                       <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
+                      <div style={{ overflowX: 'auto' }}>
+
                       <BootstrapTable
                         keyField="insurance_company"
                         data={ndcData.data}
@@ -2773,6 +2806,7 @@ function Audit() {
                         filter={filterFactory()}
                         classes="custom-table"
                       />
+                      </div>
                     </div>
                   ))}
 

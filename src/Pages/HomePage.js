@@ -36,45 +36,46 @@ const HomePage = (props) => {
 
 
     useEffect(() => {
-      if (current_user?.profile?.package === "Free") {
-        const startTime = new Date(current_user?.profile?.free_trial_start || Date.now());
-        const endTime = new Date(startTime.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days
-        const interval = setInterval(() => {
-          const now = new Date();
-          const diff = endTime - now;
-  
-          if (diff <= 0) {
-            clearInterval(interval);
-            setCountdown("00d 00h 00m 00s");
-          } else {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((diff / 1000 / 60) % 60);
-            const seconds = Math.floor((diff / 1000) % 60);
-            setCountdown(
-              `${days.toString().padStart(2, "0")}d ${hours
-                .toString()
-                .padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m ${seconds
-                .toString()
-                .padStart(2, "0")}s`
-            );
-          }
-        }, 1000);
-  
-        return () => clearInterval(interval);
-      }
+        if (current_user?.profile?.package === "Free") {
+            const startTime = new Date(current_user?.profile?.free_trial_start || Date.now());
+            const endTime = new Date(startTime.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days
+            const interval = setInterval(() => {
+                const now = new Date();
+                const diff = endTime - now;
+
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    setCountdown("00d 00h 00m 00s");
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((diff / 1000 / 60) % 60);
+                    const seconds = Math.floor((diff / 1000) % 60);
+                    setCountdown(
+                        `${days.toString().padStart(2, "0")}d ${hours
+                            .toString()
+                            .padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m ${seconds
+                                .toString()
+                                .padStart(2, "0")}s`
+                    );
+                }
+            }, 1000);
+
+            return () => clearInterval(interval);
+        }
     }, [current_user]);
-  
+
     // if (current_user?.profile?.package !== "Free") return null;
-  
+
 
     return (
         <div>
+
             <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
-            <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
-      Your free trial for 14 days has started now. Time left:{" "}
-      <span className="font-bold">{countdown}</span>
-    </div>
+                <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
+                    Your free trial for 14 days has started now. Time left:{" "}
+                    <span className="font-bold">{countdown}</span>
+                </div>
                 {/* <div className='top-container p-2 flex justify-between w-full  h-22'>
                     <div className='top-container-inner w-64 h-full flex justify-start items-center '>
                         <img src={logo} />
@@ -183,7 +184,7 @@ const HomePage = (props) => {
                 </div>
 
                 <div className="search-container grid md:grid-cols-4  gap-8 p-2 mt-4 w-full h-full">
-                    {current_user?.permissions?.includes("can_view_vendor_file_formate") && (
+                    {current_user?.permissions?.includes("can_view_vendor_file_formate") ? (
 
                         <Link to="/vendor-file-format">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
@@ -206,9 +207,20 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
+                        </Link>) :
+                        (<div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>)
 
-                    {current_user?.permissions?.includes("can_view_billing_file_formate") && (
+                    }
+
+                    {current_user?.permissions?.includes("can_view_billing_file_formate") ? (
                         <Link to="/billing-file-format">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -232,8 +244,19 @@ const HomePage = (props) => {
                             </div>
                         </Link>
 
+                    ) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
                     )}
-                    {current_user?.permissions?.includes("can_view_bin_number") && (
+                    {current_user?.permissions?.includes("can_view_bin_number") ? (
 
                         <Link to="/bin">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -255,8 +278,19 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
-                    {current_user?.permissions?.includes("can_view_insurance_company") && (
+                        </Link>) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                    )}
+                    {current_user?.permissions?.includes("can_view_insurance_company") ? (
 
                         <Link to="/insurance">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
@@ -277,8 +311,19 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
-                    {current_user?.permissions?.includes("can_view_users") && (
+                        </Link>) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                    )}
+                    {current_user?.permissions?.includes("can_view_users") ? (
 
                         <Link to="/user">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -300,8 +345,21 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
-                    {current_user?.permissions?.includes("can_view_groups_permissions") && (
+                        </Link>) : (
+
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+
+                    )}
+                    {current_user?.permissions?.includes("can_view_groups_permissions") ? (
 
                         <Link to="/groups-permissions">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -323,8 +381,19 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
-                    {current_user?.permissions?.includes("can_view_reports") && (
+                        </Link>) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                    )}
+                    {current_user?.permissions?.includes("can_view_reports") ? (
 
                         <Link to="/audit">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -346,7 +415,18 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>)}
+                        </Link>) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                    )}
                     <Link to="/support">
 
                         <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -368,29 +448,40 @@ const HomePage = (props) => {
                             </div>
                         </div>
                     </Link>
-                    {current_user?.permissions?.includes("can_view_contacts") && (
+                    {current_user?.permissions?.includes("can_view_contacts") ? (
 
-                    <Link to="/contacts">
+                        <Link to="/contacts">
 
-                        <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                            <div className="w-full mt-3 flex justify-between items-center px-2">
-                                <span className="text-lg text-gray-600">Contacts</span>
-                                <img className="w-8 h-8" src={contactIcon} alt="Support Icon" />
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="w-full mt-3 flex justify-between items-center px-2">
+                                    <span className="text-lg text-gray-600">Contacts</span>
+                                    <img className="w-8 h-8" src={contactIcon} alt="Support Icon" />
+                                </div>
+                                <div className="w-full mx-3">
+                                    <span className="text-xs text-gray-500">
+                                        Lorem ipsum dolor sit <br /> amet consectetur.
+                                    </span>
+                                </div>
+                                <div className="w-full flex justify-center">
+                                    <img
+                                        className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                        src={contactImage}
+                                        alt="Support"
+                                    />
+                                </div>
                             </div>
-                            <div className="w-full mx-3">
-                                <span className="text-xs text-gray-500">
-                                    Lorem ipsum dolor sit <br /> amet consectetur.
-                                </span>
-                            </div>
-                            <div className="w-full flex justify-center">
-                                <img
-                                    className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                    src={contactImage}
-                                    alt="Support"
-                                />
-                            </div>
+                        </Link>) : (
+                        <div role="status" class="max-w-sm animate-pulse">
+                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span class="sr-only">Loading...</span>
                         </div>
-                    </Link> )}
+
+                    )}
                 </div>
 
 
