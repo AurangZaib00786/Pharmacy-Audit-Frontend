@@ -177,7 +177,6 @@ function Audit() {
   }, [callagain_opening, current_user, callagain]);
 
   useEffect(() => {
-
     const fetchbillingfiles = async () => {
       const response = await fetch(
         `${route}/api/manage-files/?directory=billing_files&user_id=${current_user.id}`,
@@ -374,8 +373,6 @@ function Audit() {
     },
   ]);
 
-
-
   function getExtension(filename) {
     return filename.split("/").shift();
   }
@@ -418,8 +415,8 @@ function Audit() {
 
   };
 
-  console.log("file balance", File_balance)
-  console.log("file blling balance", Fileurl_billing)
+  // console.log("file balance", File_balance)
+  // console.log("file blling balance", Fileurl_billing)
 
   const handleDelete = async (directory, fileName) => {
     const url = `${route}/api/manage-files/?filename=${fileName}&directory=${directory}&user_id=${current_user.id}`;
@@ -442,7 +439,6 @@ function Audit() {
   };
 
   const [isprint, setisprint] = useState(false);
-
 
   const componentRef = useRef();
   const handleprint = useReactToPrint({
@@ -504,8 +500,6 @@ function Audit() {
     link.click();
     document.body.removeChild(link);
   };
-
-
 
   const handlesubmitvendor_files = async (e) => {
     e.preventDefault();
@@ -610,13 +604,11 @@ function Audit() {
 
   const handlegeneratereport = async () => {
     setisloading(true);
-
     if (audit_report_type.includes("audit")) {
       setreport_type({
         value: "combine",
         label: "Combine Report",
       });
-
       const response = await fetch(`${route}/api/audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
@@ -629,24 +621,12 @@ function Audit() {
         return; // stop execution
       }
       const json = await response.json();
-
       if (json.code === "token_not_valid") {
         logout();
       }
-
-      // if (!response.ok) {
-      //   if (response.status === 500) {
-      //     went_wrong_toast("Internal Server Error. Please try again later.");
-      //   } else {
-      //     went_wrong_toast(json.error);
-      //   }
-      // }
       if (!response.ok) {
         went_wrong_toast(json.error);
       } 
-    
-      
-
       if (response.ok) {
         let new_columns = [
           {
@@ -773,8 +753,6 @@ function Audit() {
         custom_toast(json.message);
       }
     }
-
-
     if (audit_report_type.includes("audit_detail")) {
       setisloading(true);
 
@@ -863,6 +841,12 @@ function Audit() {
           {
             dataField: "description",
             text: "Description",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "amount_billing",
+            text: "Amount Billing",
             sort: true,
             headerFormatter: headerstyle,
           },
@@ -975,10 +959,6 @@ function Audit() {
         custom_toast(json.message);
       }
     }
-
-
-
-
     if (audit_report_type.includes("insurance")) {
       setisloading(true);
       setinsurance_report_type({
@@ -1026,6 +1006,12 @@ function Audit() {
           {
             dataField: "description",
             text: "Description",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "amount_billing",
+            text: "Amount Billing",
             sort: true,
             headerFormatter: headerstyle,
           },
@@ -1354,9 +1340,6 @@ function Audit() {
     document.body.removeChild(link);
   };
 
-
-
-
   // const handleinsurancereportchange = (e) => {
   //   setinsurance_report_type(e);
 
@@ -1429,9 +1412,6 @@ function Audit() {
       setFilteredData(filteredReports);
     }
   };
-
-
-
 
   const handleExportToExcel = () => {
     let header = [];
@@ -1612,7 +1592,6 @@ function Audit() {
   };
 
 
-
   const makeitem = ({ index, style, data }) => {
     const item = data[index];
 
@@ -1723,9 +1702,6 @@ function Audit() {
   };
 
 
-
-
-
   function handlehideclick(company) {
     let optimize = Data.map((item) => {
       if (item.insurance_company_name === company) {
@@ -1748,7 +1724,6 @@ function Audit() {
   };
 
 
-
   const [selectedCompany, setSelectedCompany] = useState("");
 
   useEffect(() => {
@@ -1764,9 +1739,6 @@ function Audit() {
   const selectedData = filteredData.find(
     (item) => item.insurance_company_name === selectedCompany
   );
-
-
-
 
   // console.log("all data", selectedData);
   return (
