@@ -28,42 +28,48 @@ import { Link } from 'react-router-dom';
 import Header from '../Components/header';
 
 
+
 const HomePage = (props) => {
     const { user, route, dispatch_auth } = useAuthContext();
     const { selected_branch, current_user, dispatch } = UseaddheaderContext();
     const [countdown, setCountdown] = useState(null);
-    const [showBanner, setShowBanner] = useState(true); // state to control visibility
-
+    const [showBanner, setShowBanner] = useState(true);
 
     useEffect(() => {
-        if (current_user?.profile?.package === "Free") {
-            const startTime = new Date(current_user?.profile?.free_trial_start || Date.now());
+        if (current_user?.profile?.package === "Free" && current_user?.profile?.created_date) {
+            const startTime = new Date(current_user.profile.created_date);
             const endTime = new Date(startTime.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days
-            const interval = setInterval(() => {
+
+            const updateCountdown = () => {
                 const now = new Date();
                 const diff = endTime - now;
 
                 if (diff <= 0) {
-                    clearInterval(interval);
                     setCountdown("00d 00h 00m 00s");
-                } else {
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                    const minutes = Math.floor((diff / 1000 / 60) % 60);
-                    const seconds = Math.floor((diff / 1000) % 60);
-                    setCountdown(
-                        `${days.toString().padStart(2, "0")}d ${hours
-                            .toString()
-                            .padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m ${seconds
-                                .toString()
-                                .padStart(2, "0")}s`
-                    );
+                    return;
                 }
-            }, 1000);
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                setCountdown(
+                    `${days.toString().padStart(2, "0")}d ${hours
+                        .toString()
+                        .padStart(2, "0")}h ${minutes.toString().padStart(2, "0")}m ${seconds
+                            .toString()
+                            .padStart(2, "0")}s`
+                );
+            };
+
+            updateCountdown(); // Set initially
+            const interval = setInterval(updateCountdown, 1000);
 
             return () => clearInterval(interval);
         }
     }, [current_user]);
+
 
     // if (current_user?.profile?.package !== "Free") return null;
 
@@ -72,10 +78,14 @@ const HomePage = (props) => {
         <div>
 
             <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
-                <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
-                    Your free trial for 14 days has started now. Time left:{" "}
-                    <span className="font-bold">{countdown}</span>
-                </div>
+            {current_user?.profile?.package === "Free" && countdown && (
+  <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
+    Your free trial for 14 days has started now. Time left:
+    <span className="font-bold mx-2">{countdown}</span>
+  </div>
+)}
+
+
                 {/* <div className='top-container p-2 flex justify-between w-full  h-22'>
                     <div className='top-container-inner w-64 h-full flex justify-start items-center '>
                         <img src={logo} />
