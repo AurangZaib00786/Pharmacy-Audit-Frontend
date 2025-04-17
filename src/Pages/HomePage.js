@@ -184,11 +184,19 @@ const HomePage = (props) => {
                 </div>
 
                 <div className="search-container grid md:grid-cols-4  gap-8 p-2 mt-4 w-full h-full">
-                    {current_user?.permissions?.includes("can_view_vendor_file_formate") ? (
-
+                    {!current_user ? (
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    ) : current_user?.permissions?.includes("can_view_vendor_file_formate") ? (
                         <Link to="/vendor-file-format">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
-                                {/* Content for the first child */}
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
                                     <span className="text-lg text-gray-600">Vendor file format</span>
                                     <img className="w-8 h-8" src={vendorIcon} alt="Vendor Icon" />
@@ -196,7 +204,6 @@ const HomePage = (props) => {
                                 <div className="w-full mx-3">
                                     <span className="text-xs text-gray-500">
                                         Manage vendor file format <br /> add, view, edit, or delete records.
-
                                     </span>
                                 </div>
                                 <div className="w-full flex justify-center">
@@ -207,22 +214,26 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>) :
-                        (<div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
-                        </div>)
-
+                        </Link>
+                    ) : null // Show nothing if user is loaded but doesn't have permission
                     }
 
-                    {current_user?.permissions?.includes("can_view_billing_file_formate") ? (
+
+                    {!current_user ? (
+                        // Show skeleton while user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    ) : current_user?.permissions?.includes("can_view_billing_file_formate") ? (
+                        // Show the actual card if permission exists
                         <Link to="/billing-file-format">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
                                     <span className="text-lg text-gray-600">Billing file format</span>
                                     <img className="w-8 h-8" src={billingIcon} alt="Billing Icon" />
@@ -230,8 +241,6 @@ const HomePage = (props) => {
                                 <div className="w-full mx-3">
                                     <span className="text-xs text-gray-500">
                                         Manage Billing file format <br /> add, view, edit, or delete records.
-
-
                                     </span>
                                 </div>
                                 <div className="w-full flex justify-center">
@@ -243,23 +252,24 @@ const HomePage = (props) => {
                                 </div>
                             </div>
                         </Link>
+                    ) : null // Show nothing if user is loaded but doesn't have permission
+                    }
 
-                    ) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
                         </div>
-
-                    )}
-                    {current_user?.permissions?.includes("can_view_bin_number") ? (
-
+                    ) : current_user?.permissions?.includes("can_view_bin_number") ? (
+                        // Show card if permission exists
                         <Link to="/bin">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
                                     <span className="text-lg text-gray-600">Bin Number</span>
                                     <img className="w-8 h-8" src={binIcon} alt="Bin Icon" />
@@ -267,7 +277,6 @@ const HomePage = (props) => {
                                 <div className="w-full mx-3">
                                     <span className="text-xs text-gray-500">
                                         Manage Bin Numbers <br /> add, view, edit, or delete records.
-
                                     </span>
                                 </div>
                                 <div className="w-full flex justify-center">
@@ -278,156 +287,152 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
+                        </Link>
+                    ) : null // Show nothing if permission not available
+                    }
+
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
                         </div>
+                    ) :
+                        current_user?.permissions?.includes("can_view_insurance_company") ? (
 
-                    )}
-                    {current_user?.permissions?.includes("can_view_insurance_company") ? (
+                            <Link to="/insurance">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
+                                    <div className="w-full mt-3 flex justify-between items-center px-2">
+                                        <span className="text-lg text-gray-600">Insurance company</span>
+                                        <img className="w-8 h-8" src={InsuranceIcon} alt="Insurance Icon" />
+                                    </div>
+                                    <div className="w-full mx-3">
+                                        <span className="text-xs text-gray-500">
+                                            Manage insurance company details <br /> add, view, edit, or delete records.
+                                        </span>
+                                    </div>
+                                    <div className="w-full flex justify-center">
+                                        <img
+                                            className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                            src={InsuranceImage}
+                                            alt="Insurance"
+                                        />
+                                    </div>
+                                </div>
+                            </Link>) : null}
 
-                        <Link to="/insurance">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
-                                <div className="w-full mt-3 flex justify-between items-center px-2">
-                                    <span className="text-lg text-gray-600">Insurance company</span>
-                                    <img className="w-8 h-8" src={InsuranceIcon} alt="Insurance Icon" />
-                                </div>
-                                <div className="w-full mx-3">
-                                    <span className="text-xs text-gray-500">
-                                        Manage insurance company details <br /> add, view, edit, or delete records.
-                                    </span>
-                                </div>
-                                <div className="w-full flex justify-center">
-                                    <img
-                                        className="w-24 h-24 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                        src={InsuranceImage}
-                                        alt="Insurance"
-                                    />
-                                </div>
-                            </div>
-                        </Link>) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
                         </div>
+                    ) :
+                        current_user?.permissions?.includes("can_view_users") ? (
 
-                    )}
-                    {current_user?.permissions?.includes("can_view_users") ? (
+                            <Link to="/user">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                    <div className="w-full mt-3 flex justify-between items-center px-2">
+                                        <span className="text-lg text-gray-600">Users</span>
+                                        <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
+                                    </div>
+                                    <div className="w-full mx-3">
+                                        <span className="text-xs text-gray-500">
+                                            Manage Users <br /> add, view, edit, or delete records.
 
-                        <Link to="/user">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                                <div className="w-full mt-3 flex justify-between items-center px-2">
-                                    <span className="text-lg text-gray-600">Users</span>
-                                    <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
+                                        </span>
+                                    </div>
+                                    <div className="w-full flex justify-center">
+                                        <img
+                                            className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                            src={userImage}
+                                            alt="Reports"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="w-full mx-3">
-                                    <span className="text-xs text-gray-500">
-                                        Manage Users <br /> add, view, edit, or delete records.
-
-                                    </span>
-                                </div>
-                                <div className="w-full flex justify-center">
-                                    <img
-                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                        src={userImage}
-                                        alt="Reports"
-                                    />
-                                </div>
-                            </div>
-                        </Link>) : (
-
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
+                            </Link>) : null}
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
                         </div>
+                    ) :
+                        current_user?.permissions?.includes("can_view_groups_permissions") ? (
 
+                            <Link to="/groups-permissions">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                    <div className="w-full mt-3 flex justify-between items-center px-2">
+                                        <span className="text-lg text-gray-600">Groups and Permissions</span>
+                                        <img className="w-8 h-8" src={securityIcon} alt="Report Icon" />
+                                    </div>
+                                    <div className="w-full mx-3">
+                                        <span className="text-xs text-gray-500">
+                                            Manage Groups and Permission <br /> Allow user to access the features.
 
-                    )}
-                    {current_user?.permissions?.includes("can_view_groups_permissions") ? (
-
-                        <Link to="/groups-permissions">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                                <div className="w-full mt-3 flex justify-between items-center px-2">
-                                    <span className="text-lg text-gray-600">Groups and Permissions</span>
-                                    <img className="w-8 h-8" src={securityIcon} alt="Report Icon" />
+                                        </span>
+                                    </div>
+                                    <div className="w-full flex justify-center">
+                                        <img
+                                            className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                            src={securityImage}
+                                            alt="Reports"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="w-full mx-3">
-                                    <span className="text-xs text-gray-500">
-                                        Manage Groups and Permission <br /> Allow user to access the features.
-
-                                    </span>
-                                </div>
-                                <div className="w-full flex justify-center">
-                                    <img
-                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                        src={securityImage}
-                                        alt="Reports"
-                                    />
-                                </div>
-                            </div>
-                        </Link>) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
+                            </Link>) : null}
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
                         </div>
+                    ) :
+                        current_user?.permissions?.includes("can_view_reports") ? (
 
-                    )}
-                    {current_user?.permissions?.includes("can_view_reports") ? (
+                            <Link to="/audit">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                    <div className="w-full mt-3 flex justify-between items-center px-2">
+                                        <span className="text-lg text-gray-600">Reports</span>
+                                        <img className="w-8 h-8" src={reportsIcon} alt="Report Icon" />
+                                    </div>
+                                    <div className="w-full mx-3">
+                                        <span className="text-xs text-gray-500">
+                                            Generate and manage reports <br /> audit, audit detailed & Insurance Reports.
 
-                        <Link to="/audit">
-                            <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
-                                <div className="w-full mt-3 flex justify-between items-center px-2">
-                                    <span className="text-lg text-gray-600">Reports</span>
-                                    <img className="w-8 h-8" src={reportsIcon} alt="Report Icon" />
+                                        </span>
+                                    </div>
+                                    <div className="w-full flex justify-center">
+                                        <img
+                                            className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                            src={reportsImage}
+                                            alt="Reports"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="w-full mx-3">
-                                    <span className="text-xs text-gray-500">
-                                        Generate and manage reports <br /> audit, audit detailed & Insurance Reports.
+                            </Link>) : null}
 
-                                    </span>
-                                </div>
-                                <div className="w-full flex justify-center">
-                                    <img
-                                        className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
-                                        src={reportsImage}
-                                        alt="Reports"
-                                    />
-                                </div>
-                            </div>
-                        </Link>) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
-                        </div>
-
-                    )}
-                    <Link to="/support">
+                    {current_user && (<Link to="/support">
 
                         <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
                             <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -447,8 +452,19 @@ const HomePage = (props) => {
                                 />
                             </div>
                         </div>
-                    </Link>
-                    {current_user?.permissions?.includes("can_view_contacts") ? (
+                    </Link>)}
+                    {!current_user ? (
+                        // Skeleton while current_user is loading
+                        <div role="status" className="max-w-sm animate-pulse">
+                            <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
+                            <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    ) : current_user?.permissions?.includes("can_view_contacts") ? (
 
                         <Link to="/contacts">
 
@@ -470,18 +486,7 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>) : (
-                        <div role="status" class="max-w-sm animate-pulse">
-                            <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5"></div>
-                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
-                            <span class="sr-only">Loading...</span>
-                        </div>
-
-                    )}
+                        </Link>) : null}
                 </div>
 
 
