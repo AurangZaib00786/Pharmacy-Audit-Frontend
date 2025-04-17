@@ -210,6 +210,12 @@ function User() {
       headerFormatter: headerstyle,
     },
     {
+      dataField: "profile.created_date",
+      text: "Created At",
+      sort: true,
+      headerFormatter: headerstyle,
+    },
+    {
       dataField: "action",
       text: "Action",
       formatter: linkFollow,
