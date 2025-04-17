@@ -116,6 +116,14 @@ function Audit() {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
@@ -140,14 +148,25 @@ function Audit() {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
         logout();
       }
       if (!response.ok) {
-        went_wrong_toast(json.error);
+       
+          went_wrong_toast(json.error);
+        
       }
+      
       if (response.ok) {
         setbalance_filesdata(json);
         setisloading(false);
@@ -166,14 +185,25 @@ function Audit() {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
         logout();
       }
       if (!response.ok) {
-        went_wrong_toast(json.error);
+        
+          went_wrong_toast(json.error);
+        
       }
+      
       if (response.ok) {
         setbilling_filesdata(json);
         setisloading(false);
@@ -192,14 +222,25 @@ function Audit() {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
         logout();
       }
       if (!response.ok) {
-        went_wrong_toast(json.error);
+       
+          went_wrong_toast(json.error);
+        
       }
+      
       if (response.ok) {
         setallvendors(
           json.map((item) => {
@@ -224,8 +265,13 @@ function Audit() {
         logout();
       }
       if (!response.ok) {
-        went_wrong_toast(json.error);
+        if (response.status === 500) {
+          went_wrong_toast("Internal Server Error. Please try again later.");
+        } else {
+          went_wrong_toast(json.error);
+        }
       }
+      
       if (response.ok) {
         setallbillings(
           json.map((item) => {
@@ -574,16 +620,32 @@ function Audit() {
       const response = await fetch(`${route}/api/audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
-
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
       const json = await response.json();
 
       if (json.code === "token_not_valid") {
         logout();
       }
 
+      // if (!response.ok) {
+      //   if (response.status === 500) {
+      //     went_wrong_toast("Internal Server Error. Please try again later.");
+      //   } else {
+      //     went_wrong_toast(json.error);
+      //   }
+      // }
       if (!response.ok) {
         went_wrong_toast(json.error);
-      }
+      } 
+    
+      
 
       if (response.ok) {
         let new_columns = [
@@ -742,6 +804,14 @@ function Audit() {
           headers: { Authorization: `Bearer ${user.access}` },
         }
       );
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; 
+      }
 
       const json = await response.json();
 
@@ -751,9 +821,10 @@ function Audit() {
       }
 
       if (!response.ok) {
-        went_wrong_toast(json.error);
-        return;
+          went_wrong_toast(json.error); 
+          setisloading(false)
       }
+      
 
       if (response.ok) {
         // 1. Clean vendor file names (remove .xlsx)
@@ -917,14 +988,26 @@ function Audit() {
       const response = await fetch(`${route}/api/insurance-audit-report/?user_id=${current_user.id}`, {
         headers: { Authorization: `Bearer ${user.access}` },
       });
+      if (response.status === 500) {
+        toast.error("Internal server error! Please try again later.", {
+          position: toast.POSITION.TOP_RIGHT,
+          pauseOnHover: false,
+        });
+        setisloading(false)
+        return; // stop execution
+      }
 
       const json = await response.json();
       if (json.code === "token_not_valid") {
         logout();
       }
       if (!response.ok) {
-        went_wrong_toast(json.error);
+      
+          went_wrong_toast(json.error);
+          setisloading(false)
+        
       }
+      
       if (response.ok) {
         let new_columns = [
           {
