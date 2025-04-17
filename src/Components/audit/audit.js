@@ -418,6 +418,45 @@ function Audit() {
   // console.log("file balance", File_balance)
   // console.log("file blling balance", Fileurl_billing)
 
+  const handleDeleteVendor = async (directory, fileName) => {
+    const url = `${route}/api/manage-files/?&directory=${directory}&user_id=${current_user.id}`;
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        toast.success("Deleted Successfully")
+        setcallagain(!callagain)
+
+        // Optionally refresh the file list here or update the state
+      } else {
+        console.error("Failed to delete file", response);
+      }
+    } catch (error) {
+
+      console.error("Error deleting file:", error);
+    }
+  };
+
+  const handleDeleteBilling = async (directory, fileName) => {
+    const url = `${route}/api/manage-files/?directory=${directory}&user_id=${current_user.id}`;
+    try {
+      const response = await fetch(url, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        toast.success("Deleted Successfully")
+        setcallagain(!callagain)
+
+        // Optionally refresh the file list here or update the state
+      } else {
+        console.error("Failed to delete file", response);
+      }
+    } catch (error) {
+
+      console.error("Error deleting file:", error);
+    }
+  };
   const handleDelete = async (directory, fileName) => {
     const url = `${route}/api/manage-files/?filename=${fileName}&directory=${directory}&user_id=${current_user.id}`;
     try {
@@ -437,7 +476,6 @@ function Audit() {
       console.error("Error deleting file:", error);
     }
   };
-
   const [isprint, setisprint] = useState(false);
 
   const componentRef = useRef();
@@ -715,6 +753,20 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+        new_columns.push({
+          dataField: "unit_cost",
+          text: "Unit Cost",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+        new_columns.push({
+          dataField: "amount_paid",
+          text: "Amount Paid",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
 
         setcolumns(new_columns);
 
@@ -742,8 +794,13 @@ function Audit() {
               : "Not Exist";
 
           item["closing_balance"] =
-            Number(item.result_unit) + Number(item.opening_balance);
-
+            Number(item.result_unit) + Number(item.opening_balance) || 0;
+            item["unit_cost"] =
+            Number(item.quantity_billing) !== 0
+              ? Number(item.amount_billing) / Number(item.quantity_billing)
+              : 0;
+              item["amount_paid"] =
+              Number(item.unit_cost) * Number(item.result_unit);    
           return item;
         });
 
@@ -845,10 +902,11 @@ function Audit() {
             headerFormatter: headerstyle,
           },
           {
-            dataField: "amount_billing",
+            dataField: "billing_amount",
             text: "Amount Billing",
             sort: true,
             headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
           },
           {
             dataField: "opening_balance",
@@ -907,6 +965,20 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
+          },
+          {
+            dataField: "unit_cost",
+            text: "Unit Cost",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          },
+          {
+            dataField: "amount_paid",
+            text: "Amount Paid",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
           }
         );
 
@@ -945,7 +1017,13 @@ function Audit() {
                 ? (sum - Number(item.total_quantity)) / Number(item.packagesize)
                 : "Not Exist";
             item["closing_balance"] =
-              Number(item.result_unit) + Number(item.opening_balance);
+              Number(item.result_unit) + Number(item.opening_balance) || 0;
+              item["unit_cost"] =
+              Number(item.quantity_billing) !== 0
+                ? Number(item.billing_amount) / Number(item.total_quantity)
+                : 0;
+                item["amount_paid"] =
+                Number(item.unit_cost) * Number(item.result_unit);    
             return item;
           });
           setVendorKeysPresent([...vendor_keys_present]);
@@ -1072,6 +1150,20 @@ function Audit() {
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
         });
+        new_columns.push({
+          dataField: "unit_cost",
+          text: "Unit Cost",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+        new_columns.push({
+          dataField: "amount_paid",
+          text: "Amount Paid",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
 
         setcolumns(new_columns);
 
@@ -1101,7 +1193,13 @@ function Audit() {
                 ? (sum - item.quantity_billing) / item.packagesize_billing
                 : "Not Exist";
             item["closing_balance"] =
-              Number(item.result_unit) + Number(item.opening_balance);
+              Number(item.result_unit) + Number(item.opening_balance) || 0;
+              item["unit_cost"] =
+              Number(item.quantity_billing) !== 0
+                ? Number(item.amount_billing) / Number(item.quantity_billing)
+                : 0;
+                item["amount_paid"] =
+                Number(item.unit_cost) * Number(item.result_unit); 
             return item;
           });
           report["data"] = new_data;
@@ -1925,7 +2023,7 @@ function Audit() {
                     </svg>
 
                     <svg
-                      onClick={() => handleDelete("vendor_files", item.name)} // Passing both values
+                      onClick={() => handleDeleteVendor("vendor_files,vendor_files_datewise", item.name)} // Passing both values
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -2049,7 +2147,7 @@ function Audit() {
                     </svg>
 
                     <svg
-                      onClick={() => handleDelete("billing_files", item.name)} // Passing both values
+                      onClick={() => handleDeleteBilling("billing_files,billing_files_datewise,insurance_billing_files", item.name)} // Passing both values
                       xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
