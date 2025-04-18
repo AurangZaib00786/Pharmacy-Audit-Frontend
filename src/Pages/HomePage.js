@@ -71,6 +71,9 @@ const HomePage = (props) => {
     }, [current_user]);
 
 
+    const isTrialExpired = countdown === "00d 00h 00m 00s";
+
+
     // if (current_user?.profile?.package !== "Free") return null;
 
 
@@ -78,12 +81,12 @@ const HomePage = (props) => {
         <div>
 
             <div className="home-container w-full lg:p-6 lg:px-16 h-auto ">
-            {current_user?.profile?.package === "Free" && countdown && (
-  <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
-    Your free trial for 14 days has started now. Time left:
-    <span className="font-bold mx-2">{countdown}</span>
-  </div>
-)}
+                {current_user?.profile?.package === "Free" && countdown && (
+                    <div className="w-full p-4 bg-red-400 text-white font-semibold text-center rounded">
+                        Your free trial for 14 days has started now. Time left:
+                        <span className="font-bold mx-2">{countdown}</span>
+                    </div>
+                )}
 
 
                 {/* <div className='top-container p-2 flex justify-between w-full  h-22'>
@@ -204,7 +207,7 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) : current_user?.permissions?.includes("can_view_vendor_file_formate") ? (
+                    ) : (!isTrialExpired || current_user?.permissions?.includes("can_view_vendor_file_formate"))  && (
                         <Link to="/vendor-file-format">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -225,12 +228,11 @@ const HomePage = (props) => {
                                 </div>
                             </div>
                         </Link>
-                    ) : null // Show nothing if user is loaded but doesn't have permission
+                    )  
                     }
 
 
                     {!current_user ? (
-                        // Show skeleton while user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -240,8 +242,7 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) : current_user?.permissions?.includes("can_view_billing_file_formate") ? (
-                        // Show the actual card if permission exists
+                    ) : (!isTrialExpired || current_user?.permissions?.includes("can_view_billing_file_formate"))  && (
                         <Link to="/billing-file-format">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -262,11 +263,10 @@ const HomePage = (props) => {
                                 </div>
                             </div>
                         </Link>
-                    ) : null // Show nothing if user is loaded but doesn't have permission
+                    )  
                     }
 
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -276,8 +276,7 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) : current_user?.permissions?.includes("can_view_bin_number") ? (
-                        // Show card if permission exists
+                    ) : (!isTrialExpired || current_user?.permissions?.includes("can_view_bin_number"))  && (
                         <Link to="/bin">
                             <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                 <div className="w-full mt-3 flex justify-between items-center px-2">
@@ -298,11 +297,10 @@ const HomePage = (props) => {
                                 </div>
                             </div>
                         </Link>
-                    ) : null // Show nothing if permission not available
+                    )  
                     }
 
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -312,8 +310,8 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) :
-                        current_user?.permissions?.includes("can_view_insurance_company") ? (
+                    ) :(!isTrialExpired || current_user?.permissions?.includes("can_view_insurance_company"))
+                         && (
 
                             <Link to="/insurance">
                                 <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
@@ -334,10 +332,9 @@ const HomePage = (props) => {
                                         />
                                     </div>
                                 </div>
-                            </Link>) : null}
+                            </Link>) }
 
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -347,11 +344,10 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) :
-                        current_user?.permissions?.includes("can_view_users") ? (
-
+                    ) : (
+                        (!isTrialExpired || current_user?.permissions?.includes("can_view_users")) && (
                             <Link to="/user">
-                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg h-44">
                                     <div className="w-full mt-3 flex justify-between items-center px-2">
                                         <span className="text-lg text-gray-600">Users</span>
                                         <img className="w-8 h-8" src={userIcon} alt="Report Icon" />
@@ -359,7 +355,6 @@ const HomePage = (props) => {
                                     <div className="w-full mx-3">
                                         <span className="text-xs text-gray-500">
                                             Manage Users <br /> add, view, edit, or delete records.
-
                                         </span>
                                     </div>
                                     <div className="w-full flex justify-center">
@@ -370,9 +365,12 @@ const HomePage = (props) => {
                                         />
                                     </div>
                                 </div>
-                            </Link>) : null}
+                            </Link>
+                        )
+                    )}
+
+
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -383,7 +381,7 @@ const HomePage = (props) => {
                             <span className="sr-only">Loading...</span>
                         </div>
                     ) :
-                        current_user?.permissions?.includes("can_view_groups_permissions") ? (
+                       (!isTrialExpired || current_user?.permissions?.includes("can_view_groups_permissions"))  && (
 
                             <Link to="/groups-permissions">
                                 <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -405,9 +403,8 @@ const HomePage = (props) => {
                                         />
                                     </div>
                                 </div>
-                            </Link>) : null}
+                            </Link>) }
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -418,7 +415,7 @@ const HomePage = (props) => {
                             <span className="sr-only">Loading...</span>
                         </div>
                     ) :
-                        current_user?.permissions?.includes("can_view_reports") ? (
+                        (!isTrialExpired || current_user?.permissions?.includes("can_view_reports")) && (
 
                             <Link to="/audit">
                                 <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
@@ -440,7 +437,7 @@ const HomePage = (props) => {
                                         />
                                     </div>
                                 </div>
-                            </Link>) : null}
+                            </Link>) }
 
                     {current_user && (<Link to="/support">
 
@@ -464,7 +461,6 @@ const HomePage = (props) => {
                         </div>
                     </Link>)}
                     {!current_user ? (
-                        // Skeleton while current_user is loading
                         <div role="status" className="max-w-sm animate-pulse">
                             <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
@@ -474,7 +470,7 @@ const HomePage = (props) => {
                             <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]"></div>
                             <span className="sr-only">Loading...</span>
                         </div>
-                    ) : current_user?.permissions?.includes("can_view_contacts") ? (
+                    ) : (!isTrialExpired || current_user?.permissions?.includes("can_view_contacts"))  && (
 
                         <Link to="/contacts">
 
@@ -496,7 +492,7 @@ const HomePage = (props) => {
                                     />
                                 </div>
                             </div>
-                        </Link>) : null}
+                        </Link>)}
                 </div>
 
 

@@ -559,6 +559,7 @@ function Audit() {
       if (!response.ok) {
         setisloading(false);
         went_wrong_toast(json.error);
+        setFileurl_vendor(null)
       }
 
       if (response.ok) {
@@ -593,6 +594,7 @@ function Audit() {
       if (!response.ok) {
         setisloading(false);
         went_wrong_toast(json.error);
+        setFileurl_billing(null);
       }
 
       if (response.ok) {
@@ -624,6 +626,7 @@ function Audit() {
       if (!response.ok) {
         setisloading(false);
         went_wrong_toast(json.error);
+        setFile_balance(null);
       }
 
       if (response.ok) {
