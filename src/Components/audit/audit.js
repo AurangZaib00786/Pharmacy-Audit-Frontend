@@ -92,9 +92,20 @@ function Audit() {
     { value: "insurance_details", label: "Insurance Detailed Report" },
   ];
 
+  const [loadingReport, setLoadingReports] = useState(false);
+
   const handleCheckboxChange = (value) => {
-    setaudit_report_type((prev) => (prev.includes(value) ? [] : [value]));
+    setLoadingReports(true); // start loading
+  
+    setTimeout(() => {
+      setaudit_report_type((prev) => (prev.includes(value) ? [] : [value]));
+  
+      // Any other processing logic if needed...
+  
+      setLoadingReports(false); // stop loading after change
+    }, 100); // Adjust delay if needed (e.g., 200-300ms for heavy processing)
   };
+  
 
 
   const [searchNDC, setSearchNDC] = useState("");
@@ -1023,10 +1034,10 @@ function Audit() {
               Number(item.result_unit) + Number(item.opening_balance) || 0;
               item["unit_cost"] =
               Number(item.quantity_billing) !== 0
-                ? Number(item.billing_amount) / Number(item.total_quantity)
+                ? Number(item.billing_amount) / Number(item.total_quantity) || 0
                 : 0;
                 item["amount_paid"] =
-                Number(item.unit_cost) * Number(item.result_unit);    
+                Number(item.unit_cost) * Number(item.result_unit) || 0;    
             return item;
           });
           setVendorKeysPresent([...vendor_keys_present]);
@@ -1353,12 +1364,17 @@ function Audit() {
       const headers = [
         "Insurance Company",
         "Description",
+        "Amount Billing",
+        "Opening Balance",
         "Package Size",
         "Billing Quantity",
         ...vendorKeysPresent,
         "Vendor Total",
         "Result (Unit)",
-        "Result (Pkg)"
+        "Result (Pkg)",
+        "Closing Balance",
+        "Unit Cost",
+        "Amount Paid",
       ];
       worksheet.addRow(headers);
 
@@ -1366,12 +1382,17 @@ function Audit() {
         const row = worksheet.addRow([
           entry.insurance_company,
           entry.description,
+          entry.billing_amount,
+          entry.opening_balance,
           entry.packagesize,
           entry.total_quantity,
           ...vendorKeysPresent.map((key) => entry[key]),
           entry.vendor_sum,
           entry.result_unit,
           entry.result_package,
+          entry.closing_balance,
+          entry.unit_cost,
+          entry.amount_paid,
         ]);
 
         // Row color logic
@@ -1405,7 +1426,7 @@ function Audit() {
 
     fullyFilteredData.forEach((item) => {
       csvContent += `NDC: ${item.ndc}\n`;
-      csvContent += `Insurance Company,Description,Package Size,Billing Quantity,${vendorKeysPresent.join(",")},Vendor Total,Result(Unit),Result(Pkg),Row Color Hint\n`;
+      csvContent += `Insurance Company,Description,Billing Amount,Opening Balance,Package Size,Billing Quantity,${vendorKeysPresent.join(",")},Vendor Total,Result(Unit),Result(Pkg),Closing Balance, Unit Cost, Amount Paid,Row Color Hint\n`;
 
       item.data.forEach((entry) => {
         let colorHint = "";
@@ -1416,12 +1437,17 @@ function Audit() {
         const row = [
           `"${entry.insurance_company}"`,
           `"${entry.description}"`,
+          entry.billing_amount,
+          entry.opening_balance,
           entry.packagesize,
           entry.total_quantity,
           ...vendorKeysPresent.map((key) => entry[key]),
           entry.vendor_sum,
           entry.result_unit,
           entry.result_package,
+          entry.closing_balance,
+          entry.unit_cost,
+          entry.amount_paid,
           colorHint,
         ];
 
@@ -2441,126 +2467,7 @@ useEffect(() => {
         </div>
       )}
 
-      {audit_report_type.includes("audit") && (
-        <div className=" me-3 mt-3">
-
-          {auditdata.length > 0 ?
-            <>
-
-              <div className="card-body mt-3">
-                <div style={{ zoom: ".8" }}>
-                  <ToolkitProvider
-                    keyField="ndc"
-                    data={Data}
-                    columns={columns}
-                    exportCSV={{
-                      onlyExportFiltered: true,
-                      exportAll: false,
-                      fileName: "Audit Report.csv",
-                    }}
-                    search
-                  >
-                    {(props) => (
-                      <div>
-                        <div className="  d-flex justify-content-between">
-                          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-                            <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
-                              <div className="input-container-inner w-full  mb-2 h-full flex items-center">
-                                <div className="w-full"> {/* Wrap input in a full-width container */}
-                                  <SearchBar
-                                    {...props?.searchProps}
-                                    placeholder="Search"
-                                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
-                                    style={{ width: "100%", maxWidth: "none" }} // Force full width
-                                  />
-
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="w-1/2  flex justify-end gap-2 ">
-
-                              <button
-                                onClick={handleExportToExcel}
-
-                                className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                </svg>
-
-                                Export excel
-                              </button>
-                              <ExportCSVButton {...props.csvProps}>
-                                <button
-                                  type="button"
-                                  className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                  </svg>
-                                  Export CSV
-                                </button>
-                              </ExportCSVButton>
-
-                              {/* <button
-                 type="button"
-                 className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-               >
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
-                 </svg>
-                 Filter
-               </button> */}
-
-
-                            </div>
-                            {/* <SearchBar {...props.searchProps} /> */}
-                          </div>
-
-                        </div>
-
-                        {/* <div className="d-flex justify-content-between align-items-center mt-3">
-                      <div>
-                        <ExportCSVButton
-                          {...props.csvProps}
-                          className="csvbutton  border bg-secondary text-light me-2"
-                        >
-                          Export CSV
-                        </ExportCSVButton>
-                        <Button
-                          onClick={handleExportToExcel}
-                          variant="success"
-                          shadow
-                        >
-                          Export Excel
-                        </Button>
-                      </div>
-                      <SearchBar {...props.searchProps} />
-                    </div> */}
-
-
-                        <div style={{ overflowX: 'auto' }}>
-                          <BootstrapTable
-                            {...props.baseProps}
-                            rowStyle={rowStyle}
-                            bootstrap4
-                            condensed
-                            filter={filterFactory()}
-                            classes="custom-table table"
-                          />
-                        </div>
-
-
-                      </div>
-                    )}
-                  </ToolkitProvider>
-                </div>
-              </div></>
-            : ''}
-
-        </div>
-      )}
+      
 
 
       {audit_report_type.includes("audit_detail") && (
@@ -2713,8 +2620,7 @@ useEffect(() => {
 
           : ""
       )}
-
-{isloading && (
+        {isloading && (
         <div className=" mt-4 flex items-center justify-center z-50">
 
           <div role="status ">
@@ -2726,6 +2632,21 @@ useEffect(() => {
           </div>
         </div>
       )}
+
+{loadingReport ? (
+        <div className=" mt-4 flex items-center justify-center z-50">
+
+          <div role="status ">
+            <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-[#29e5ce]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+              <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : 
+
+<>
       {audit_report_type.includes("insurance") && filteredData.length > 0 && (
         <>
           <div className="d-flex justify-content-end mr-12 align-items-center mt-3">
@@ -2894,9 +2815,7 @@ useEffect(() => {
           )}
         </>
       )}
-
-
-      {audit_report_type.includes("insurance_details") && (
+       {audit_report_type.includes("insurance_details") && (
         <div className="me-3 mt-3">
           {InsuranceDetailsData.length > 0 && (
             <>
@@ -3019,7 +2938,134 @@ useEffect(() => {
             </>
           )}
         </div>
+      ) }
+      {audit_report_type.includes("audit") && (
+        <div className=" me-3 mt-3">
+
+          {auditdata.length > 0 ?
+            <>
+
+              <div className="card-body mt-3">
+                <div style={{ zoom: ".8" }}>
+                  <ToolkitProvider
+                    keyField="ndc"
+                    data={Data}
+                    columns={columns}
+                    exportCSV={{
+                      onlyExportFiltered: true,
+                      exportAll: false,
+                      fileName: "Audit Report.csv",
+                    }}
+                    search
+                  >
+                    {(props) => (
+                      <div>
+                        <div className="  d-flex justify-content-between">
+                          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
+                            <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
+                              <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                                <div className="w-full"> {/* Wrap input in a full-width container */}
+                                  <SearchBar
+                                    {...props?.searchProps}
+                                    placeholder="Search"
+                                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                                    style={{ width: "100%", maxWidth: "none" }} // Force full width
+                                  />
+
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="w-1/2  flex justify-end gap-2 ">
+
+                              <button
+                                onClick={handleExportToExcel}
+
+                                className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                </svg>
+
+                                Export excel
+                              </button>
+                              <ExportCSVButton {...props.csvProps}>
+                                <button
+                                  type="button"
+                                  className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                  </svg>
+                                  Export CSV
+                                </button>
+                              </ExportCSVButton>
+
+                              {/* <button
+                 type="button"
+                 className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+               >
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                 </svg>
+                 Filter
+               </button> */}
+
+
+                            </div>
+                            {/* <SearchBar {...props.searchProps} /> */}
+                          </div>
+
+                        </div>
+
+                        {/* <div className="d-flex justify-content-between align-items-center mt-3">
+                      <div>
+                        <ExportCSVButton
+                          {...props.csvProps}
+                          className="csvbutton  border bg-secondary text-light me-2"
+                        >
+                          Export CSV
+                        </ExportCSVButton>
+                        <Button
+                          onClick={handleExportToExcel}
+                          variant="success"
+                          shadow
+                        >
+                          Export Excel
+                        </Button>
+                      </div>
+                      <SearchBar {...props.searchProps} />
+                    </div> */}
+
+
+                        <div style={{ overflowX: 'auto' }}>
+                          <BootstrapTable
+                            {...props.baseProps}
+                            rowStyle={rowStyle}
+                            bootstrap4
+                            condensed
+                            filter={filterFactory()}
+                            classes="custom-table table"
+                          />
+                        </div>
+
+
+                      </div>
+                    )}
+                  </ToolkitProvider>
+                </div>
+              </div></>
+            : ''}
+
+        </div>
       )}
+      
+</> }
+      
+
+    
+
+     
 
 
 
