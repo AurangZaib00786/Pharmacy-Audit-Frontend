@@ -14,9 +14,9 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const { user, route } = useAuthContext();
   const [isloading, setisloading] = useState(false);
   const { dispatch } = UseaddheaderContext();
-    const [company_name, setcompany_name] = useState(data.profile.company);
-    const [contact_number, setcontact_number] = useState(data.profile.contact_number);
-    const [address, setaddress] = useState(data.profile.address)
+    const [company_name, setcompany_name] = useState(data?.profile?.company ? data.profile.company : "")
+    const [contact_number, setcontact_number] = useState(data?.profile?.contact_number ? data.profile.contact_number : "");
+    const [address, setaddress] = useState(data?.profile?.address ? data.profile.address : "");
   const [username, setusername] = useState(data.username);
   const [first_name, setfirst_name] = useState(data.first_name);
   const [last_name, setlast_name] = useState(data.last_name);
@@ -27,8 +27,8 @@ function Userupdate({ show, onHide, data, fun,callagain, setcallagain }) {
   const [passworderror, setpassworderror] = useState("");
      const [groups, setgroups] = useState([]);
       const [allgroups, setallgroups] = useState([]);
-       const [Package, setPackage] = useState({label : data.profile.package, value : data.profile.package});
-        const [userActive, setUserActive] = useState({label : data.profile.is_active == true ? "Active" : "InActive", value : data.profile.is_Active});
+       const [Package, setPackage] = useState({label : data?.profile?.package ? data?.profile?.package : ""  , value : data?.profile?.package ? data?.profile?.package : "" });
+        const [userActive, setUserActive] = useState({label : data.profile?.is_Active ?  data?.profile?.is_active == true ? "Active" : "InActive" : "", value : data?.profile?.is_Active ? data?.profile?.is_active : "" });
 
 
       useEffect(() => {

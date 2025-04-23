@@ -89,12 +89,19 @@ function Audit() {
   const [audit_report_type, setaudit_report_type] = useState(["audit"]);
 
   const reportOptions = [
-    { value: "audit", label: "Audit Report" },
-    // { value: "audit_detail", label: "Detailed Audit Report" },
-    { value: "insurance", label: "Insurance Report" },
-    { value: "insurance_details", label: "Insurance Detailed Report" },
+    current_user?.permissions?.includes("can_view_audit_report") && {
+       value: "audit", label: "Audit Report" ,
+    },
+    current_user?.permissions?.includes("can_view_insurance_report") && {
+    value: "insurance", label: "Insurance Report" ,
+    },
+        current_user?.permissions?.includes("can_view_insurance_detailed_report") && {
+      value: "insurance_details", label: "Insurance Detailed Report" ,
+      },
   ];
 
+
+  console.log("current user", current_user)
   const [loadingReport, setLoadingReports] = useState(false);
 
   const handleCheckboxChange = (value) => {
@@ -2658,27 +2665,30 @@ function Audit() {
       </div>
 
       <ul className="w-full md:text-sm font-medium text-gray-900 flex justify-start md:gap-16 g items-center rounded-lg">
-        {reportOptions.map((option) => (
-          <li key={option.value}>
-            <div className="flex items-center">
-              <input
-                id={`${option.value}-checkbox`}
-                type="checkbox"
-                value={option.value}
-                checked={audit_report_type.includes(option.value)}
-                onChange={() => handleCheckboxChange(option.value)}
-                className="custom-checkbox"
-              />
-              <label
-                htmlFor={`${option.value}-checkbox`}
-                className="w-full py-3 px-2 md:ms-2 text-xs md:text-xl font-medium text-gray-800"
-              >
-                {option.label}
-              </label>
-            </div>
-          </li>
-        ))}
-      </ul>
+  {reportOptions
+    .filter(Boolean) // 👈 This removes any `false` or `null` entries
+    .map((option) => (
+      <li key={option.value}>
+        <div className="flex items-center">
+          <input
+            id={`${option.value}-checkbox`}
+            type="checkbox"
+            value={option.value}
+            checked={audit_report_type.includes(option.value)}
+            onChange={() => handleCheckboxChange(option.value)}
+            className="custom-checkbox"
+          />
+          <label
+            htmlFor={`${option.value}-checkbox`}
+            className="w-full py-3 px-2 md:ms-2 text-xs md:text-xl font-medium text-gray-800"
+          >
+            {option.label}
+          </label>
+        </div>
+      </li>
+    ))}
+</ul>
+
 
 
 
