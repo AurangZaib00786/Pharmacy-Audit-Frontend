@@ -68,6 +68,9 @@ function Audit() {
     label: "Combine Report",
   });
 
+
+
+
   const [InsuranceDetailsData, SetInsuranceDetailsData] = useState([])
   const [vendorKeysPresent, setVendorKeysPresent] = useState([]);
 
@@ -96,16 +99,16 @@ function Audit() {
 
   const handleCheckboxChange = (value) => {
     setLoadingReports(true); // start loading
-  
+
     setTimeout(() => {
       setaudit_report_type((prev) => (prev.includes(value) ? [] : [value]));
-  
+
       // Any other processing logic if needed...
-  
+
       setLoadingReports(false); // stop loading after change
     }, 100); // Adjust delay if needed (e.g., 200-300ms for heavy processing)
   };
-  
+
 
 
   const [searchNDC, setSearchNDC] = useState("");
@@ -173,11 +176,11 @@ function Audit() {
         logout();
       }
       if (!response.ok) {
-       
-          went_wrong_toast(json.error);
-        
+
+        went_wrong_toast(json.error);
+
       }
-      
+
       if (response.ok) {
         setbalance_filesdata(json);
         setisloading(false);
@@ -209,11 +212,11 @@ function Audit() {
         logout();
       }
       if (!response.ok) {
-        
-          went_wrong_toast(json.error);
-        
+
+        went_wrong_toast(json.error);
+
       }
-      
+
       if (response.ok) {
         setbilling_filesdata(json);
         setisloading(false);
@@ -246,11 +249,11 @@ function Audit() {
         logout();
       }
       if (!response.ok) {
-       
-          went_wrong_toast(json.error);
-        
+
+        went_wrong_toast(json.error);
+
       }
-      
+
       if (response.ok) {
         setallvendors(
           json.map((item) => {
@@ -281,7 +284,7 @@ function Audit() {
           went_wrong_toast(json.error);
         }
       }
-      
+
       if (response.ok) {
         setallbillings(
           json.map((item) => {
@@ -654,9 +657,9 @@ function Audit() {
     return cell !== "Not Exist" ? cell?.toFixed(2) : cell;
   };
 
-  const handlegeneratereport = async () => {
+  const handlegeneratereport = async (selectedValue) => {
     setisloading(true);
-    if (audit_report_type.includes("audit")) {
+    if (audit_report_type.includes("audit"))  {
       setreport_type({
         value: "combine",
         label: "Combine Report",
@@ -678,7 +681,7 @@ function Audit() {
       }
       if (!response.ok) {
         went_wrong_toast(json.error);
-      } 
+      }
       if (response.ok) {
         let new_columns = [
           {
@@ -700,89 +703,144 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-          {
-            dataField: "amount_billing",
-            text: "Amount Billing",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "opening_balance",
-            text: "Opening Balance (Unit)",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-
-          {
-            dataField: "packagesize_billing",
-            text: "Package Size",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "quantity_billing",
-            text: "Billing Qty",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-
+         
         ];
 
-        json.vendor_files.map((item) => {
-          new_columns.push({
-            dataField: item,
-            text: item,
-            sort: true,
-            headerFormatter: headerstyle,
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "opening_balance",
+              text: "Opening Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+        
+        // Conditionally insert right after 'description'
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(   
+            {
+              dataField: "amount_billing",
+              text: "Amount Billing",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+        
+        // Continue with the rest of the default columns
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "packagesize_billing",
+              text: "Package Size",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "quantity_billing",
+              text: "Billing Qty",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+       
+        
+        // Add dynamic vendor file columns
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          json.vendor_files.forEach((item) => {
+            new_columns.push({
+              dataField: item,
+              text: item,
+              sort: true,
+              headerFormatter: headerstyle,
+            });
           });
-        });
 
-        new_columns.push({
-          dataField: "vendor_sum",
-          text: "Vendor Total",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
+        }
+      
+        
+        // Final summary columns
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "vendor_sum",
+              text: "Vendor Total",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
 
-        new_columns.push({
-          dataField: "result_unit",
-          text: "Result (Unit)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
+          )
 
-        new_columns.push({
-          dataField: "result_package",
-          text: "Result (Pkg)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "closing_balance",
-          text: "Closing Balance (Unit)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "unit_cost",
-          text: "Unit Cost",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "amount_paid",
-          text: "Amount Paid",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
+        }
+        if(selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "result_unit",
+              text: "Result (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
 
+          )
+        }
+        
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "result_package",
+              text: "Result (Pkg)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+     
+        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "closing_balance",
+              text: "Closing Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+        // Continue conditionally if needed
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(
+           
+            {
+              dataField: "unit_cost",
+              text: "Unit Cost",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+            {
+              dataField: "amount_paid",
+              text: "Amount Paid",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            }
+          );
+        }
+        
         setcolumns(new_columns);
+        
 
         let optimize = json.data.map((item) => {
           let sum;
@@ -792,7 +850,7 @@ function Audit() {
               (acc, row) => acc + item[row] * item.packagesize_billing,
               0
             );
-            json.vendor_files.map(
+            json.vendor_files.forEach(
               (row) =>
                 (item[row] = Number(item[row]) * Number(item.packagesize_billing))
             );
@@ -809,12 +867,11 @@ function Audit() {
 
           item["closing_balance"] =
             Number(item.result_unit) + Number(item.opening_balance) || 0;
-            item["unit_cost"] =
+          item["unit_cost"] =
             Number(item.quantity_billing) !== 0
               ? Number(item.amount_billing) / Number(item.quantity_billing)
               : 0;
-              item["amount_paid"] =
-              Number(item.unit_cost) * Number(item.result_unit);    
+          item["amount_paid"] = Number(item.unit_cost) * Number(item.result_unit);
           return item;
         });
 
@@ -823,6 +880,8 @@ function Audit() {
         setisloading(false);
         custom_toast(json.message);
       }
+
+
     }
     if (audit_report_type.includes("audit_detail")) {
       setisloading(true);
@@ -859,7 +918,7 @@ function Audit() {
           pauseOnHover: false,
         });
         setisloading(false)
-        return; 
+        return;
       }
 
       const json = await response.json();
@@ -870,10 +929,10 @@ function Audit() {
       }
 
       if (!response.ok) {
-          went_wrong_toast(json.error); 
-          setisloading(false)
+        went_wrong_toast(json.error);
+        setisloading(false)
       }
-      
+
 
       if (response.ok) {
         // 1. Clean vendor file names (remove .xlsx)
@@ -915,32 +974,72 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-          {
-            dataField: "billing_amount",
-            text: "Amount Billing",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "opening_balance",
-            text: "Opening Balance (Unit)",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "packagesize",
-            text: "Package Size",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "total_quantity",
-            text: "Billing Qty",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
+          // {
+          //   dataField: "billing_amount",
+          //   text: "Amount Billing",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          //   formatter: vendor_sum_formatter,
+          // },
+          // {
+          //   dataField: "opening_balance",
+          //   text: "Opening Balance (Unit)",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
+          // {
+          //   dataField: "packagesize",
+          //   text: "Package Size",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
+          // {
+          //   dataField: "total_quantity",
+          //   text: "Billing Qty",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
         ];
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "opening_balance",
+              text: "Opening Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_details_columns.push(   
+            {
+              dataField: "billing_amount",
+              text: "Amount Billing",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "packagesize_billing",
+              text: "Package Size",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "quantity_billing",
+              text: "Billing Qty",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
 
         [...vendor_keys_present].forEach((vendor) => {
           new_details_columns.push({
@@ -950,51 +1049,125 @@ function Audit() {
             headerFormatter: headerstyle,
           });
         });
+      }
 
-        new_details_columns.push(
-          {
-            dataField: "vendor_sum",
-            text: "Vendor Total",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "result_unit",
-            text: "Result (Unit)",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "result_package",
-            text: "Result (Pkg)",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "closing_balance",
-            text: "Closing Balance (Unit)",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "unit_cost",
-            text: "Unit Cost",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          },
-          {
-            dataField: "amount_paid",
-            text: "Amount Paid",
-            sort: true,
-            headerFormatter: headerstyle,
-            formatter: vendor_sum_formatter,
-          }
-        );
+        // new_details_columns.push(
+        //   {
+        //     dataField: "vendor_sum",
+        //     text: "Vendor Total",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   },
+        //   {
+        //     dataField: "result_unit",
+        //     text: "Result (Unit)",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   },
+        //   {
+        //     dataField: "result_package",
+        //     text: "Result (Pkg)",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   },
+        //   {
+        //     dataField: "closing_balance",
+        //     text: "Closing Balance (Unit)",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   },
+        //   {
+        //     dataField: "unit_cost",
+        //     text: "Unit Cost",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   },
+        //   {
+        //     dataField: "amount_paid",
+        //     text: "Amount Paid",
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //     formatter: vendor_sum_formatter,
+        //   }
+        // );
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "vendor_sum",
+              text: "Vendor Total",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+
+        }
+
+        if(selectedValue === "by_amount" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "result_unit",
+              text: "Result (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+          
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "result_package",
+              text: "Result (Pkg)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_details_columns.push(
+            {
+              dataField: "closing_balance",
+              text: "Closing Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_details_columns.push(
+           
+            {
+              dataField: "unit_cost",
+              text: "Unit Cost",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+            {
+              dataField: "amount_paid",
+              text: "Amount Paid",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            }
+          );
+        }
 
         setDetailsColumns(new_details_columns);
 
@@ -1032,12 +1205,12 @@ function Audit() {
                 : "Not Exist";
             item["closing_balance"] =
               Number(item.result_unit) + Number(item.opening_balance) || 0;
-              item["unit_cost"] =
+            item["unit_cost"] =
               Number(item.quantity_billing) !== 0
                 ? Number(item.billing_amount) / Number(item.total_quantity) || 0
                 : 0;
-                item["amount_paid"] =
-                Number(item.unit_cost) * Number(item.result_unit) || 0;    
+            item["amount_paid"] =
+              Number(item.unit_cost) * Number(item.result_unit) || 0;
             return item;
           });
           setVendorKeysPresent([...vendor_keys_present]);
@@ -1074,12 +1247,12 @@ function Audit() {
         logout();
       }
       if (!response.ok) {
-      
-          went_wrong_toast(json.error);
-          setisloading(false)
-        
+
+        went_wrong_toast(json.error);
+        setisloading(false)
+
       }
-      
+
       if (response.ok) {
         let new_columns = [
           {
@@ -1101,83 +1274,222 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-          {
-            dataField: "amount_billing",
-            text: "Amount Billing",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "opening_balance",
-            text: "Opening Balance (Unit)",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "packagesize_billing",
-            text: "Package Size",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "quantity_billing",
-            text: "Billing Qty",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
+         
+          // {
+          //   dataField: "amount_billing",
+          //   text: "Amount Billing",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
+          // {
+          //   dataField: "opening_balance",
+          //   text: "Opening Balance (Unit)",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
+          // {
+          //   dataField: "packagesize_billing",
+          //   text: "Package Size",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
+          // {
+          //   dataField: "quantity_billing",
+          //   text: "Billing Qty",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          // },
         ];
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "opening_balance",
+              text: "Opening Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
 
-        json.vendor_files.map((item) => {
-          new_columns.push({
-            dataField: item,
-            text: item,
-            sort: true,
-            headerFormatter: headerstyle,
+          )
+        }
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(   
+            {
+              dataField: "amount_billing",
+              text: "Amount Billing",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "packagesize_billing",
+              text: "Package Size",
+              sort: true,
+              headerFormatter: headerstyle,
+            },
+            {
+              dataField: "quantity_billing",
+              text: "Billing Qty",
+              sort: true,
+              headerFormatter: headerstyle,
+            }
+          );
+        }
+
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          json.vendor_files.forEach((item) => {
+            new_columns.push({
+              dataField: item,
+              text: item,
+              sort: true,
+              headerFormatter: headerstyle,
+            });
           });
-        });
 
-        new_columns.push({
-          dataField: "vendor_sum",
-          text: "Vendor Total",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "result_unit",
-          text: "Result (Unit)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "result_package",
-          text: "Result (Pkg)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "closing_balance",
-          text: "Closing Balance (Unit)",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "unit_cost",
-          text: "Unit Cost",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
-        new_columns.push({
-          dataField: "amount_paid",
-          text: "Amount Paid",
-          sort: true,
-          headerFormatter: headerstyle,
-          formatter: vendor_sum_formatter,
-        });
+        }
+
+        // json.vendor_files.map((item) => {
+        //   new_columns.push({
+        //     dataField: item,
+        //     text: item,
+        //     sort: true,
+        //     headerFormatter: headerstyle,
+        //   });
+        // });
+
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          json.vendor_files.forEach((item) => {
+            new_columns.push({
+              dataField: item,
+              text: item,
+              sort: true,
+              headerFormatter: headerstyle,
+            });
+          });
+
+        }
+      
+        
+        // Final summary columns
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "vendor_sum",
+              text: "Vendor Total",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+
+        }
+        if(selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "result_unit",
+              text: "Result (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+        
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "result_package",
+              text: "Result (Pkg)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+     
+        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+          new_columns.push(
+            {
+              dataField: "closing_balance",
+              text: "Closing Balance (Unit)",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+
+          )
+        }
+
+        // Continue conditionally if needed
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(
+           
+            {
+              dataField: "unit_cost",
+              text: "Unit Cost",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+            {
+              dataField: "amount_paid",
+              text: "Amount Paid",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            }
+          );
+        }
+
+        // new_columns.push({
+        //   dataField: "vendor_sum",
+        //   text: "Vendor Total",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
+        // new_columns.push({
+        //   dataField: "result_unit",
+        //   text: "Result (Unit)",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
+        // new_columns.push({
+        //   dataField: "result_package",
+        //   text: "Result (Pkg)",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
+        // new_columns.push({
+        //   dataField: "closing_balance",
+        //   text: "Closing Balance (Unit)",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
+        // new_columns.push({
+        //   dataField: "unit_cost",
+        //   text: "Unit Cost",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
+        // new_columns.push({
+        //   dataField: "amount_paid",
+        //   text: "Amount Paid",
+        //   sort: true,
+        //   headerFormatter: headerstyle,
+        //   formatter: vendor_sum_formatter,
+        // });
 
         setcolumns(new_columns);
 
@@ -1208,12 +1520,12 @@ function Audit() {
                 : "Not Exist";
             item["closing_balance"] =
               Number(item.result_unit) + Number(item.opening_balance) || 0;
-              item["unit_cost"] =
+            item["unit_cost"] =
               Number(item.quantity_billing) !== 0
                 ? Number(item.amount_billing) / Number(item.quantity_billing)
                 : 0;
-                item["amount_paid"] =
-                Number(item.unit_cost) * Number(item.result_unit); 
+            item["amount_paid"] =
+              Number(item.unit_cost) * Number(item.result_unit);
             return item;
           });
           report["data"] = new_data;
@@ -1250,6 +1562,31 @@ function Audit() {
     { value: "negative", label: "Negative Report" },
     { value: "zero", label: "Zero Report" },
   ];
+  const optionsAmount = [
+
+    { value: "by_quantity", label: "By Quantity" },
+    { value: "by_amount", label: "By Amount" },
+    { value: "combine", label: "Combine" },
+  ];
+
+  const [selectedOptions, setSelectedOptions] = useState({ value: "by_quantity", label: "By Quantity" });
+
+  const handleReportOptionChange = (e) => {
+    const selectedValue = e.target.value;
+    const selected = optionsAmount.find((opt) => opt.value === selectedValue);
+    setSelectedOptions(selected);
+    handlegeneratereport(selectedValue);
+  };
+
+  
+  const handleButtonClick = () => {
+    handlegeneratereport(selectedOptions.value);
+  };
+  
+
+
+
+  console.log("selected option", selectedOptions);
 
 
   const handlereportchange = (e) => {
@@ -1854,31 +2191,31 @@ function Audit() {
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedData, setSelectedData] = useState(null);
 
-useEffect(() => {
-  if (filteredData.length > 0) {
-    const firstCompany = filteredData[0].insurance_company_name;
-    setSelectedCompany(firstCompany);
-    setSelectedData(filteredData.find(item => item.insurance_company_name === firstCompany));
-  }
-}, [filteredData]);
+  useEffect(() => {
+    if (filteredData.length > 0) {
+      const firstCompany = filteredData[0].insurance_company_name;
+      setSelectedCompany(firstCompany);
+      setSelectedData(filteredData.find(item => item.insurance_company_name === firstCompany));
+    }
+  }, [filteredData]);
 
-const handleCompanyChange = (event) => {
-  const value = event.target.value;
-  setSelectedCompany(value);
-  setisloading(true);
-};
+  const handleCompanyChange = (event) => {
+    const value = event.target.value;
+    setSelectedCompany(value);
+    setisloading(true);
+  };
 
 
-useEffect(() => {
-  if (selectedCompany) {
-    const timeout = setTimeout(() => {
-      const found = filteredData.find(item => item.insurance_company_name === selectedCompany);
-      setSelectedData(found);
-      setisloading(false);
-    }, 200); 
-    return () => clearTimeout(timeout);
-  }
-}, [selectedCompany, filteredData]);
+  useEffect(() => {
+    if (selectedCompany) {
+      const timeout = setTimeout(() => {
+        const found = filteredData.find(item => item.insurance_company_name === selectedCompany);
+        setSelectedData(found);
+        setisloading(false);
+      }, 200);
+      return () => clearTimeout(timeout);
+    }
+  }, [selectedCompany, filteredData]);
 
   return (
 
@@ -2312,7 +2649,7 @@ useEffect(() => {
       <div className="w-full h-auto mt-3  flex justify-end">
         <button
           className=" flex gap-2  bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
-          onClick={handlegeneratereport} >
+          onClick={handleButtonClick} >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
           </svg>
@@ -2343,35 +2680,6 @@ useEffect(() => {
         ))}
       </ul>
 
-      {audit_report_type.includes("audit") && (
-        <div className="relative w-full max-w-xs">
-          <select
-            className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
-                   border border-green-300 rounded-lg shadow-md text-black 
-                   cursor-pointer appearance-none"
-            value={report_type.value} // Bind value to the current state
-            onChange={handlereportchange} // Handle changes
-          >
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
-        </div>
-      )}
 
 
 
@@ -2434,40 +2742,107 @@ useEffect(() => {
       </div>
     </div>
       )} */}
-
-
-
-      {audit_report_type.includes("insurance") && (
-        <div className="relative w-full max-w-xs">
-          <select
-            className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+      <div className="flex gap-4">
+        {audit_report_type.includes("audit") && (
+          <div className="relative w-full max-w-xs">
+            <select
+              className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
                    border border-green-300 rounded-lg shadow-md text-black 
                    cursor-pointer appearance-none"
-            value={report_type.value} // Bind value to the current state
-            onChange={handleInsurancereporttchange} // Handle changes
-          >
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
+              value={report_type.value} // Bind value to the current state
+              onChange={handlereportchange} // Handle changes
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      
+
+        {audit_report_type.includes("insurance") && (
+          <div className="relative w-full max-w-xs">
+            <select
+              className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                   border border-green-300 rounded-lg shadow-md text-black 
+                   cursor-pointer appearance-none"
+              value={report_type.value} // Bind value to the current state
+              onChange={handleInsurancereporttchange} // Handle changes
+            >
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+          </div>
+        )}
+
+{(
+  audit_report_type.includes("insurance") ||
+  audit_report_type.includes("audit")
+) && (
+  <div className="relative w-full max-w-xs">
+    <select
+      className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+      border border-green-300 rounded-lg shadow-md text-black 
+      cursor-pointer appearance-none"
+      value={selectedOptions.value}
+      onChange={handleReportOptionChange}
+    >
+      {optionsAmount.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+
+    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-6"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  </div>
+)}
+
+       
+
+      </div>
+
+
 
 
       {audit_report_type.includes("audit_detail") && (
@@ -2620,7 +2995,7 @@ useEffect(() => {
 
           : ""
       )}
-        {isloading && (
+      {isloading && (
         <div className=" mt-4 flex items-center justify-center z-50">
 
           <div role="status ">
@@ -2633,7 +3008,7 @@ useEffect(() => {
         </div>
       )}
 
-{loadingReport ? (
+      {loadingReport ? (
         <div className=" mt-4 flex items-center justify-center z-50">
 
           <div role="status ">
@@ -2644,65 +3019,65 @@ useEffect(() => {
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-      ) : 
+      ) :
 
-<>
-      {audit_report_type.includes("insurance") && filteredData.length > 0 && (
         <>
-          <div className="d-flex justify-content-end mr-12 align-items-center mt-3">
-            <div className="relative w-full max-w-xs">
+          {audit_report_type.includes("insurance") && filteredData.length > 0 && (
+            <>
+              <div className="d-flex justify-content-end mr-12 align-items-center mt-3">
+                <div className="relative w-full max-w-xs">
 
-              <select
-                value={selectedCompany}
-                onChange={handleCompanyChange}
-                className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                  <select
+                    value={selectedCompany}
+                    onChange={handleCompanyChange}
+                    className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
             border border-green-300 rounded-lg shadow-md text-black 
             cursor-pointer appearance-none"          >
-                {filteredData.map((item) => (
-                  <option key={item.insurance_company_name} value={item.insurance_company_name}>
-                    {item.insurance_company_name}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-6"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                </svg>
+                    {filteredData.map((item) => (
+                      <option key={item.insurance_company_name} value={item.insurance_company_name}>
+                        {item.insurance_company_name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-6"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {selectedData && (
-            <div className="card me-3 border-0" style={{ backgroundColor: "transparent", boxShadow: "none" }}>
-              <div className="card-body">
-                <div style={{ zoom: ".8" }}>
-                  <ToolkitProvider
-                    keyField="ndc"
-                    data={selectedData.data || []}
-                    columns={columns}
-                    exportCSV={{ onlyExportFiltered: true, exportAll: false }}
-                    search
-                  >
-                    {(props) => (
-                      <div className="mb-3">
-                        <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
-                          <div className="input-container-inner w-1/3 h-full flex justify-start items-center">
-                            <SearchBar
-                              {...props?.searchProps}
-                              placeholder="Search" // Placeholder for the search input
-                              className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-500 bg-transparent placeholder-gray-600 placeholder-text-xl"
-                            />
+              {selectedData && (
+                <div className="card me-3 border-0" style={{ backgroundColor: "transparent", boxShadow: "none" }}>
+                  <div className="card-body">
+                    <div style={{ zoom: ".8" }}>
+                      <ToolkitProvider
+                        keyField="ndc"
+                        data={selectedData.data || []}
+                        columns={columns}
+                        exportCSV={{ onlyExportFiltered: true, exportAll: false }}
+                        search
+                      >
+                        {(props) => (
+                          <div className="mb-3">
+                            <div className="d-flex justify-content-between align-items-center mt-3 mb-3">
+                              <div className="input-container-inner w-1/3 h-full flex justify-start items-center">
+                                <SearchBar
+                                  {...props?.searchProps}
+                                  placeholder="Search" // Placeholder for the search input
+                                  className="text-black text-sm rounded-lg focus:outline-none w-full p-3 border-2 border-green-500 bg-transparent placeholder-gray-600 placeholder-text-xl"
+                                />
 
-                          </div>
+                              </div>
 
-                          {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
+                              {/* <div className="input-container-inner  w-1/3 h-full flex justify-start items-center">
                                 <form className="w-full">
                                   <div className="relative w-full">
                                     <input
@@ -2736,49 +3111,49 @@ useEffect(() => {
                                 </form>
                               </div> */}
 
-                          <div className="flex justify-end gap-2 ">
-                            <button
-                              onClick={handlebinnumberopen}
+                              <div className="flex justify-end gap-2 ">
+                                <button
+                                  onClick={handlebinnumberopen}
 
 
-                              className=" flex gap-1 mr-4 flex justify-center items-center bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-800 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                            >
+                                  className=" flex gap-1 mr-4 flex justify-center items-center bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-800 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                >
 
 
-                              Bin Numbers
-                            </button>
-                            <button
+                                  Bin Numbers
+                                </button>
+                                <button
 
-                              onClick={() =>
-                                handleExportToExcelInsurance(selectedData.data, selectedData.insurance_company_name)
-                              }
-                              className=" flex gap-1 mr-4 flex justify-center items-center bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                              </svg>
+                                  onClick={() =>
+                                    handleExportToExcelInsurance(selectedData.data, selectedData.insurance_company_name)
+                                  }
+                                  className=" flex gap-1 mr-4 flex justify-center items-center bg-[#587291] hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                  </svg>
 
-                              Export Excel
-                            </button>
-                            <button
-                              {...props.csvProps}
+                                  Export Excel
+                                </button>
+                                <button
+                                  {...props.csvProps}
 
-                              type="button"
-                              className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                              </svg>    <ExportCSVButton
-                                {...props.csvProps}
-                                className="text-white "
-                              >
-                                <span className="text-xl">Export CSV</span>
-                              </ExportCSVButton>
-                            </button>
+                                  type="button"
+                                  className=" flex gap-1 items-center mr-4   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                  </svg>    <ExportCSVButton
+                                    {...props.csvProps}
+                                    className="text-white "
+                                  >
+                                    <span className="text-xl">Export CSV</span>
+                                  </ExportCSVButton>
+                                </button>
 
 
 
-                            {/* <Button
+                                {/* <Button
                                   onClick={() =>
                                     handleExportToExcelInsurance(item.data, item.insurance_company_name)
                                   }
@@ -2790,7 +3165,7 @@ useEffect(() => {
                                 </Button> */}
 
 
-                            {/* <Button
+                                {/* <Button
                                   onClick={() => handleHideClickInsurance(item.insurance_company_name)}
                                   variant="secondary"
                                   shadow
@@ -2798,210 +3173,239 @@ useEffect(() => {
                                   {item.hide ? "View" : "Hide"}
                                 </Button> */}
 
-                          </div>
-                        </div>
-                        <div style={{ overflowX: 'auto' }}>
+                              </div>
+                            </div>
+                            <div style={{ overflowX: 'auto' }}>
 
-                        <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
-                          bootstrap4 filter={filterFactory()} classes="custom-table" />
+                              <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
+                                bootstrap4 filter={filterFactory()} classes="custom-table" />
+                            </div>
+                            <hr />
                           </div>
-                        <hr />
-                      </div>
-                    )}
-                  </ToolkitProvider>
+                        )}
+                      </ToolkitProvider>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
           )}
-        </>
-      )}
-       {audit_report_type.includes("insurance_details") && (
-        <div className="me-3 mt-3">
-          {InsuranceDetailsData.length > 0 && (
-            <>
+          {audit_report_type.includes("insurance_details") && (
+            <div className="me-3 mt-3">
+              {InsuranceDetailsData.length > 0 && (
+                <>
 
 
-              {/* === FILTER === */}
-              <div className="relative w-full max-w-xs mb-4">
-                <select
-                  className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                  {/* === FILTER === */}
+                  <div className="flex gap-4">
+                  <div className="relative w-full max-w-xs mb-4">
+                    <select
+                      className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
                    border border-green-300 rounded-lg shadow-md text-black 
                    cursor-pointer appearance-none"
-                  value={report_type.value} // Bind value to the current state
-                  onChange={handlereportchange} // Handle changes
-                >
-                  {options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </div>
-              </div>
-              <div className="d-flex justify-between items-center mb-4">
-                <div className="w-1/3">
-                  <input
-                    type="number"
-                    placeholder="Search NDC"
-                    value={searchNDC}
-                    onChange={(e) => {
-                      setSearchNDC(e.target.value);
-                      SetcurrentDetailPage(1); // reset to page 1 on search
-                    }}
-                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
-                  />
-                </div>
-                <div className="w-1/2 flex justify-end gap-2">
-                  <button
-                    onClick={handleExportDetailsToExcel}
-                    className="flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
-                  >
-                    {/* Excel Icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                    </svg>
-                    Export Excel
-                  </button>
-                  <button
-                    onClick={handleDetailsExportCSV}
-                    className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
-                  >
-                    {/* CSV Icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                    </svg>
-                    Export CSV
-                  </button>
-                </div>
-              </div>
-
-              {/* === TABLE === */}
-              {paginatedData.length > 0 ? (
-                <>
-                  {paginatedData.map((ndcData, index) => (
-                    <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
-                      <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
-                      <div style={{ overflowX: 'auto' }}>
-
-                      <BootstrapTable
-                        keyField="insurance_company"
-                        data={ndcData.data}
-                        columns={detailsColumns}
-                        rowStyle={rowStyle}
-                        bootstrap4
-                        condensed
-                        filter={filterFactory()}
-                        classes="custom-table"
-                      />
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* === Pagination === */}
-                  <div className="flex justify-between items-center mt-6 px-4 text-white">
-                    <span>
-                      Showing {startIndexDetail}–{endIndexDetail} of {totalItems}
-                    </span>
-                    <div className="space-x-3">
-                      <button
-                        onClick={goToDetailPreviousPage}
-                        disabled={currentDetailPage === 1}
-                        className="px-4 py-2 border rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+                      value={report_type.value} // Bind value to the current state
+                      onChange={handlereportchange} // Handle changes
+                    >
+                      {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-6"
                       >
-                        Previous
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="relative w-full max-w-xs">
+    <select
+      className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+      border border-green-300 rounded-lg shadow-md text-black 
+      cursor-pointer appearance-none"
+      value={selectedOptions.value}
+      onChange={handleReportOptionChange}
+    >
+      {optionsAmount.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+
+    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="size-6"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+      </svg>
+    </div>
+  </div></div>
+                  <div className="d-flex justify-between items-center mb-4">
+                    <div className="w-1/3">
+                      <input
+                        type="number"
+                        placeholder="Search NDC"
+                        value={searchNDC}
+                        onChange={(e) => {
+                          setSearchNDC(e.target.value);
+                          SetcurrentDetailPage(1); // reset to page 1 on search
+                        }}
+                        className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                      />
+                    </div>
+                    <div className="w-1/2 flex justify-end gap-2">
+                      <button
+                        onClick={handleExportDetailsToExcel}
+                        className="flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                      >
+                        {/* Excel Icon */}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                        Export Excel
                       </button>
                       <button
-                        onClick={goToDetailNextPage}
-                        disabled={currentDetailPage === totalPages}
-                        className="px-4 py-2 border rounded bg-[#15e6cd] hover:bg-[#15e6cd] disabled:opacity-50"
+                        onClick={handleDetailsExportCSV}
+                        className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
                       >
-                        Next
+                        {/* CSV Icon */}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                        Export CSV
                       </button>
                     </div>
                   </div>
+
+                  {/* === TABLE === */}
+                  {paginatedData.length > 0 ? (
+                    <>
+                      {paginatedData.map((ndcData, index) => (
+                        <div key={index} className="card-body mb-6 border border-gray-300 rounded-xl p-4 shadow-sm bg-white">
+                          <h2 className="text-lg font-semibold mb-2">NDC: {ndcData.ndc}</h2>
+                          <div style={{ overflowX: 'auto' }}>
+
+                            <BootstrapTable
+                              keyField="insurance_company"
+                              data={ndcData.data}
+                              columns={detailsColumns}
+                              rowStyle={rowStyle}
+                              bootstrap4
+                              condensed
+                              filter={filterFactory()}
+                              classes="custom-table"
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* === Pagination === */}
+                      <div className="flex justify-between items-center mt-6 px-4 text-white">
+                        <span>
+                          Showing {startIndexDetail}–{endIndexDetail} of {totalItems}
+                        </span>
+                        <div className="space-x-3">
+                          <button
+                            onClick={goToDetailPreviousPage}
+                            disabled={currentDetailPage === 1}
+                            className="px-4 py-2 border rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+                          >
+                            Previous
+                          </button>
+                          <button
+                            onClick={goToDetailNextPage}
+                            disabled={currentDetailPage === totalPages}
+                            className="px-4 py-2 border rounded bg-[#15e6cd] hover:bg-[#15e6cd] disabled:opacity-50"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-white text-2xl text-center">No matching NDC found.</p>
+                  )}
+
                 </>
-              ) : (
-                <p className="text-white text-2xl text-center">No matching NDC found.</p>
               )}
-
-            </>
+            </div>
           )}
-        </div>
-      ) }
-      {audit_report_type.includes("audit") && (
-        <div className=" me-3 mt-3">
+          {audit_report_type.includes("audit") && (
+            <div className=" me-3 mt-3">
 
-          {auditdata.length > 0 ?
-            <>
+              {auditdata.length > 0 ?
+                <>
 
-              <div className="card-body mt-3">
-                <div style={{ zoom: ".8" }}>
-                  <ToolkitProvider
-                    keyField="ndc"
-                    data={Data}
-                    columns={columns}
-                    exportCSV={{
-                      onlyExportFiltered: true,
-                      exportAll: false,
-                      fileName: "Audit Report.csv",
-                    }}
-                    search
-                  >
-                    {(props) => (
-                      <div>
-                        <div className="  d-flex justify-content-between">
-                          <div className="d-flex  w-full justify-content-between align-items-center mt-3">
-                            <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
-                              <div className="input-container-inner w-full  mb-2 h-full flex items-center">
-                                <div className="w-full"> {/* Wrap input in a full-width container */}
-                                  <SearchBar
-                                    {...props?.searchProps}
-                                    placeholder="Search"
-                                    className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
-                                    style={{ width: "100%", maxWidth: "none" }} // Force full width
-                                  />
+                  <div className="card-body mt-3">
+                    <div style={{ zoom: ".8" }}>
+                      <ToolkitProvider
+                        keyField="ndc"
+                        data={Data}
+                        columns={columns}
+                        exportCSV={{
+                          onlyExportFiltered: true,
+                          exportAll: false,
+                          fileName: "Audit Report.csv",
+                        }}
+                        search
+                      >
+                        {(props) => (
+                          <div>
+                            <div className="  d-flex justify-content-between">
+                              <div className="d-flex  w-full justify-content-between align-items-center mt-3">
+                                <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
+                                  <div className="input-container-inner w-full  mb-2 h-full flex items-center">
+                                    <div className="w-full"> {/* Wrap input in a full-width container */}
+                                      <SearchBar
+                                        {...props?.searchProps}
+                                        placeholder="Search"
+                                        className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
+                                        style={{ width: "100%", maxWidth: "none" }} // Force full width
+                                      />
 
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
 
-                            <div className="w-1/2  flex justify-end gap-2 ">
+                                <div className="w-1/2  flex justify-end gap-2 ">
 
-                              <button
-                                onClick={handleExportToExcel}
+                                  <button
+                                    onClick={handleExportToExcel}
 
-                                className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                </svg>
+                                    className=" flex gap-1 bg-[#587291] items-center hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                    </svg>
 
-                                Export excel
-                              </button>
-                              <ExportCSVButton {...props.csvProps}>
-                                <button
-                                  type="button"
-                                  className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                  </svg>
-                                  Export CSV
-                                </button>
-                              </ExportCSVButton>
+                                    Export excel
+                                  </button>
+                                  <ExportCSVButton {...props.csvProps}>
+                                    <button
+                                      type="button"
+                                      className="flex gap-1 items-center hover:bg-[#15e6cd] text-white text-xl hover:text-white font-normal py-2 px-3 border-2 border-white rounded-xl shadow-md"
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                      </svg>
+                                      Export CSV
+                                    </button>
+                                  </ExportCSVButton>
 
-                              {/* <button
+                                  {/* <button
                  type="button"
                  className=" flex gap-1 items-center  hover:bg-[#15e6cd] box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-white hover:text-white font-normal py-2 px-3  border-2 border-white rounded-xl"
                >
@@ -3012,13 +3416,13 @@ useEffect(() => {
                </button> */}
 
 
+                                </div>
+                                {/* <SearchBar {...props.searchProps} /> */}
+                              </div>
+
                             </div>
-                            {/* <SearchBar {...props.searchProps} /> */}
-                          </div>
 
-                        </div>
-
-                        {/* <div className="d-flex justify-content-between align-items-center mt-3">
+                            {/* <div className="d-flex justify-content-between align-items-center mt-3">
                       <div>
                         <ExportCSVButton
                           {...props.csvProps}
@@ -3038,34 +3442,34 @@ useEffect(() => {
                     </div> */}
 
 
-                        <div style={{ overflowX: 'auto' }}>
-                          <BootstrapTable
-                            {...props.baseProps}
-                            rowStyle={rowStyle}
-                            bootstrap4
-                            condensed
-                            filter={filterFactory()}
-                            classes="custom-table table"
-                          />
-                        </div>
+                            <div style={{ overflowX: 'auto' }}>
+                              <BootstrapTable
+                                {...props.baseProps}
+                                rowStyle={rowStyle}
+                                bootstrap4
+                                condensed
+                                filter={filterFactory()}
+                                classes="custom-table table"
+                              />
+                            </div>
 
 
-                      </div>
-                    )}
-                  </ToolkitProvider>
-                </div>
-              </div></>
-            : ''}
+                          </div>
+                        )}
+                      </ToolkitProvider>
+                    </div>
+                  </div></>
+                : ''}
 
-        </div>
-      )}
-      
-</> }
-      
+            </div>
+          )}
 
-    
+        </>}
 
-     
+
+
+
+
 
 
 
