@@ -791,7 +791,7 @@ function Audit() {
           )
 
         }
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity" || selectedValue === "by_amount" || selectedValue === "combine") {
           new_columns.push(
             {
               dataField: "result_unit",
@@ -1129,7 +1129,7 @@ function Audit() {
 
         }
 
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity" || selectedValue === "by_amount" || selectedValue === "combine") {
           new_details_columns.push(
             {
               dataField: "result_unit",
@@ -1418,7 +1418,7 @@ function Audit() {
           )
 
         }
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity"  || selectedValue === "by_amount" || selectedValue === "combine") {
           new_columns.push(
             {
               dataField: "result_unit",
