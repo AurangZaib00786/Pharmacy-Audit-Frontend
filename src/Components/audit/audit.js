@@ -735,6 +735,7 @@ function Audit() {
               text: "Amount Billing",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
             }
           );
         }
@@ -753,6 +754,8 @@ function Audit() {
               text: "Billing Qty",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -766,6 +769,8 @@ function Audit() {
               text: item,
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             });
           });
 
@@ -786,7 +791,7 @@ function Audit() {
           )
 
         }
-        if(selectedValue === "by_amount" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
           new_columns.push(
             {
               dataField: "result_unit",
@@ -1026,6 +1031,8 @@ function Audit() {
               text: "Amount Billing",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -1037,12 +1044,16 @@ function Audit() {
               text: "Package Size",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             },
             {
               dataField: "quantity_billing",
               text: "Billing Qty",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -1054,6 +1065,8 @@ function Audit() {
             text: vendor,
             sort: true,
             headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+
           });
         });
       }
@@ -1116,7 +1129,7 @@ function Audit() {
 
         }
 
-        if(selectedValue === "by_amount" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
           new_details_columns.push(
             {
               dataField: "result_unit",
@@ -1326,6 +1339,8 @@ function Audit() {
               text: "Amount Billing",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -1337,12 +1352,16 @@ function Audit() {
               text: "Package Size",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             },
             {
               dataField: "quantity_billing",
               text: "Billing Qty",
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -1354,6 +1373,8 @@ function Audit() {
               text: item,
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             });
           });
 
@@ -1375,6 +1396,8 @@ function Audit() {
               text: item,
               sort: true,
               headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+
             });
           });
 
@@ -1395,7 +1418,7 @@ function Audit() {
           )
 
         }
-        if(selectedValue === "by_amount" || selectedValue === "combine") {
+        if(selectedValue === "by_quantity" || selectedValue === "combine") {
           new_columns.push(
             {
               dataField: "result_unit",
