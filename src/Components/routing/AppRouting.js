@@ -15,6 +15,7 @@ import BillingFileformat from '../billing-format/file-format';
 import HomePage from '../../Pages/HomePage';
 import Support from '../support/Support';
 import Header from '../header';
+import ReportsHistory from '../history/ReportsHistory';
 
 const AppRouting = () => {
       const { user } = useAuthContext();
@@ -70,6 +71,10 @@ const AppRouting = () => {
             <Route
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
+            ></Route>
+              <Route
+              path="/history"
+              element={user ? <ReportsHistory /> : <Navigate to={"/"} />}
             ></Route>
            
             {/* <Route

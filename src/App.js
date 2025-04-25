@@ -24,6 +24,8 @@ import Support from "./Components/support/Support";
 import jwtDecode from "jwt-decode";
 import Contacts from "./Components/contact/Contacts";
 import NewPassword from "./Pages/NewPassword";
+import ReportsHistory from "./Components/history/ReportsHistory";
+import AuditReportsHistory from "./Components/audit/AuditReportsHistory";
 
 
 function Routing() {
@@ -77,6 +79,10 @@ function Routing() {
               path="/audit"
               element={user ? <Audit /> : <Navigate to={"/"} />}
             ></Route>
+               <Route
+              path="/audit-reports-history/:path"
+              element={user ? <AuditReportsHistory /> : <Navigate to={"/"} />}
+            ></Route>
            
             {/* <Route
               path="/audit-details"
@@ -93,6 +99,10 @@ function Routing() {
             <Route
               path="/contacts"
               element={user ? <Contacts /> : <Navigate to={"/"} />}
+            ></Route>
+             <Route
+              path="/history"
+              element={user ? <ReportsHistory /> : <Navigate to={"/"} />}
             ></Route>
             <Route
               path="/support"

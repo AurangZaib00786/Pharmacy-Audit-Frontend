@@ -22,6 +22,7 @@ import supportIcon from '../assets/icons/sup.png';
 import contactIcon from '../assets/icons/contact-icon.png';
 import supportImage from '../assets/icons/support.png';
 import userImage from '../assets/icons/team.png';
+import reportHistory from '../assets/icons/history.png';
 import securityImage from '../assets/icons/security.png';
 import contactImage from '../assets/icons/contact-book.png';
 import { Link } from 'react-router-dom';
@@ -438,6 +439,30 @@ const HomePage = (props) => {
                                     </div>
                                 </div>
                             </Link>) }
+
+                        
+
+                            <Link to="/history">
+                                <div className="child-container-inner-1 group cursor-pointer hover:shadow-xl bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] border-2 border-green-200 rounded-lg  h-44">
+                                    <div className="w-full mt-3 flex justify-between items-center px-2">
+                                        <span className="text-lg text-gray-600">Reports History</span>
+                                        <img className="w-8 h-8" src={reportsIcon} alt="Report Icon" />
+                                    </div>
+                                    <div className="w-full mx-3">
+                                        <span className="text-xs text-gray-500">
+                                        review generated reports, audits, <br />  detailed audits, and insurance reports.
+
+                                        </span>
+                                    </div>
+                                    <div className="w-full flex justify-center">
+                                        <img
+                                            className="w-24 h-20 transform transition-transform duration-300 group-hover:translate-y-[-10px]"
+                                            src={reportHistory}
+                                            alt="Reports"
+                                        />
+                                    </div>
+                                </div>
+                            </Link>
 
                     {current_user && (<Link to="/support">
 

@@ -666,235 +666,221 @@ function Audit() {
 
   const handlegeneratereport = async (selectedValue) => {
     setisloading(true);
-    if (audit_report_type.includes("audit"))  {
+    if (audit_report_type.includes("audit")) {
       setreport_type({
         value: "combine",
         label: "Combine Report",
       });
-      const response = await fetch(`${route}/api/audit-report/?user_id=${current_user.id}`, {
-        headers: { Authorization: `Bearer ${user.access}` },
+    
+      const response = await fetch(`${route}/api/audit-report/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: JSON.stringify({ user_id: current_user.id }),
       });
+    
       if (response.status === 500) {
         toast.error("Internal server error! Please try again later.", {
           position: toast.POSITION.TOP_RIGHT,
           pauseOnHover: false,
         });
-        setisloading(false)
-        return; // stop execution
+        setisloading(false);
+        return;
       }
+    
       const json = await response.json();
+    
       if (json.code === "token_not_valid") {
         logout();
       }
+    
       if (!response.ok) {
         went_wrong_toast(json.error);
+        return;
       }
-      if (response.ok) {
-        let new_columns = [
+    
+      let new_columns = [
+        {
+          dataField: "id",
+          text: "#",
+          csvExport: false,
+          formatter: (cell, row, rowIndex) => rowIndex + 1,
+          headerFormatter: headerstyle,
+        },
+        {
+          dataField: "ndc",
+          text: "NDC",
+          sort: true,
+          headerFormatter: headerstyle,
+        },
+        {
+          dataField: "description",
+          text: "Description",
+          sort: true,
+          headerFormatter: headerstyle,
+        },
+      ];
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        new_columns.push(
           {
-            dataField: "id",
-            text: "#",
-            csvExport: false,
-            formatter: (cell, row, rowIndex) => rowIndex + 1,
-            headerFormatter: headerstyle,
-          },
-          {
-            dataField: "ndc",
-            text: "NDC",
+            dataField: "opening_balance",
+            text: "Opening Balance (Unit)",
             sort: true,
             headerFormatter: headerstyle,
-          },
-          {
-            dataField: "description",
-            text: "Description",
-            sort: true,
-            headerFormatter: headerstyle,
-          },
-         
-        ];
-
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "opening_balance",
-              text: "Opening Balance (Unit)",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-
-          )
-        }
-
-        
-        // Conditionally insert right after 'description'
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
-          new_columns.push(   
-            {
-              dataField: "amount_billing",
-              text: "Amount Billing",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            }
-          );
-        }
-        
-        // Continue with the rest of the default columns
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "packagesize_billing",
-              text: "Package Size",
-              sort: true,
-              headerFormatter: headerstyle,
-            },
-            {
-              dataField: "quantity_billing",
-              text: "Billing Qty",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-
-            }
-          );
-        }
-       
-        
-        // Add dynamic vendor file columns
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
-          json.vendor_files.forEach((item) => {
-            new_columns.push({
-              dataField: item,
-              text: item,
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-
-            });
-          });
-
-        }
-      
-        
-        // Final summary columns
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "vendor_sum",
-              text: "Vendor Total",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-
-          )
-
-        }
-        if(selectedValue === "by_quantity" || selectedValue === "by_amount" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "result_unit",
-              text: "Result (Unit)",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-
-          )
-        }
-        
-        if(selectedValue === "by_quantity" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "result_package",
-              text: "Result (Pkg)",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-
-          )
-        }
-     
-        if (selectedValue === "by_quantity" || selectedValue === "combine") {
-          new_columns.push(
-            {
-              dataField: "closing_balance",
-              text: "Closing Balance (Unit)",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-
-          )
-        }
-
-        // Continue conditionally if needed
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
-          new_columns.push(
-           
-            {
-              dataField: "unit_cost",
-              text: "Unit Cost",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
-            {
-              dataField: "amount_paid",
-              text: "Amount Paid",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            }
-          );
-        }
-        
-        setcolumns(new_columns);
-        
-
-        let optimize = json.data.map((item) => {
-          let sum;
-
-          if (item.packagesize_billing > 0) {
-            sum = json.vendor_files.reduce(
-              (acc, row) => acc + item[row] * item.packagesize_billing,
-              0
-            );
-            json.vendor_files.forEach(
-              (row) =>
-                (item[row] = Number(item[row]) * Number(item.packagesize_billing))
-            );
-          } else {
-            sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+            formatter: vendor_sum_formatter,
           }
-
-          item["vendor_sum"] = sum;
-          item["result_unit"] = sum - item.quantity_billing;
-          item["result_package"] =
-            item.packagesize_billing > 0
-              ? (sum - item.quantity_billing) / item.packagesize_billing
-              : "Not Exist";
-
-          item["closing_balance"] =
-            Number(item.result_unit) + Number(item.opening_balance) || 0;
-          item["unit_cost"] =
-            Number(item.quantity_billing) !== 0
-              ? Number(item.amount_billing) / Number(item.quantity_billing)
-              : 0;
-          item["amount_paid"] = Number(item.unit_cost) * Number(item.result_unit);
-          return item;
-        });
-
-        dispatch({ type: "Set_data", payload: optimize });
-        setauditdata(optimize);
-        setisloading(false);
-        custom_toast(json.message);
+        );
       }
-
-
+    
+      if (selectedValue === "by_amount" || selectedValue === "combine") {
+        new_columns.push({
+          dataField: "amount_billing",
+          text: "Amount Billing",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        new_columns.push(
+          {
+            dataField: "packagesize_billing",
+            text: "Package Size",
+            sort: true,
+            headerFormatter: headerstyle,
+          },
+          {
+            dataField: "quantity_billing",
+            text: "Billing Qty",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          }
+        );
+      }
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        json.vendor_files.forEach((item) => {
+          new_columns.push({
+            dataField: item,
+            text: item,
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          });
+        });
+      }
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        new_columns.push({
+          dataField: "vendor_sum",
+          text: "Vendor Total",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (
+        selectedValue === "by_quantity" ||
+        selectedValue === "by_amount" ||
+        selectedValue === "combine"
+      ) {
+        new_columns.push({
+          dataField: "result_unit",
+          text: "Result (Unit)",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        new_columns.push({
+          dataField: "result_package",
+          text: "Result (Pkg)",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        new_columns.push({
+          dataField: "closing_balance",
+          text: "Closing Balance (Unit)",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (selectedValue === "by_amount" || selectedValue === "combine") {
+        new_columns.push(
+          {
+            dataField: "unit_cost",
+            text: "Unit Cost",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          },
+          {
+            dataField: "amount_paid",
+            text: "Amount Paid",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          }
+        );
+      }
+    
+      setcolumns(new_columns);
+    
+      let optimize = json.data.map((item) => {
+        let sum;
+    
+        if (item.packagesize_billing > 0) {
+          sum = json.vendor_files.reduce(
+            (acc, row) => acc + item[row] * item.packagesize_billing,
+            0
+          );
+          json.vendor_files.forEach(
+            (row) =>
+              (item[row] = Number(item[row]) * Number(item.packagesize_billing))
+          );
+        } else {
+          sum = json.vendor_files.reduce((acc, row) => acc + item[row], 0);
+        }
+    
+        item["vendor_sum"] = sum;
+        item["result_unit"] = sum - item.quantity_billing;
+        item["result_package"] =
+          item.packagesize_billing > 0
+            ? (sum - item.quantity_billing) / item.packagesize_billing
+            : "Not Exist";
+    
+        item["closing_balance"] =
+          Number(item.result_unit) + Number(item.opening_balance) || 0;
+        item["unit_cost"] =
+          Number(item.quantity_billing) !== 0
+            ? Number(item.amount_billing) / Number(item.quantity_billing)
+            : 0;
+        item["amount_paid"] =
+          Number(item.unit_cost) * Number(item.result_unit);
+    
+        return item;
+      });
+    
+      dispatch({ type: "Set_data", payload: optimize });
+      setauditdata(optimize);
+      setisloading(false);
+      custom_toast(json.message);
     }
+    
     if (audit_report_type.includes("audit_detail")) {
       setisloading(true);
 
@@ -919,11 +905,14 @@ function Audit() {
       setisloading(true);
 
       const response = await fetch(
-        `${route}/api/insurance-audit-report-detail/?user_id=${current_user.id}`,
-        {
-          headers: { Authorization: `Bearer ${user.access}` },
-        }
-      );
+        `${route}/api/insurance-audit-report-detail/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: JSON.stringify({ user_id: current_user.id }),
+      });
       if (response.status === 500) {
         toast.error("Internal server error! Please try again later.", {
           position: toast.POSITION.TOP_RIGHT,
@@ -1250,8 +1239,13 @@ function Audit() {
         value: "combine",
         label: "Combine Report",
       });
-      const response = await fetch(`${route}/api/insurance-audit-report/?user_id=${current_user.id}`, {
-        headers: { Authorization: `Bearer ${user.access}` },
+      const response = await fetch(`${route}/api/insurance-audit-report/`, { 
+         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access}`,
+        },
+        body: JSON.stringify({ user_id: current_user.id }),
       });
       if (response.status === 500) {
         toast.error("Internal server error! Please try again later.", {
@@ -2247,6 +2241,49 @@ function Audit() {
     }
   }, [selectedCompany, filteredData]);
 
+  const [saveloading, setissaveloading] = useState(false);
+
+
+  const handleReportSave = async () => {
+    setissaveloading(true);
+    const response = await fetch(`${route}/api/save-progress/?user_id=${current_user.id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.access}`,
+      },
+    });
+  
+    if (response.status === 500) {
+      toast.error("Internal server error! Please try again later.", {
+        position: toast.POSITION.TOP_RIGHT,
+        pauseOnHover: false,
+      });
+      setisloading(false);
+      return;
+    }
+  
+    const json = await response.json();
+  
+    if (json.code === "token_not_valid") {
+      logout();
+      return;
+    }
+  
+    if (!response.ok) {
+      went_wrong_toast(json.error || "Something went wrong.");
+      setisloading(false);
+      return;
+    }
+  
+    // ✅ Optional: handle success case
+    if(response.ok){
+      custom_toast(json.message || "Progress saved successfully!");
+      setissaveloading(false);
+
+    }
+   
+  };
+  
   return (
 
     <div className="user_main">
@@ -2276,8 +2313,34 @@ function Audit() {
         </div>
       )}
       <div className=" me-3">
-        <div className="card-header d-flex align-items-center justify-content-end mt-3 ">
+        <div className="card-header d-flex gap-2 align-items-center justify-content-end mt-3 ">
+        {saveloading && (
+        <div className=" mt-4 flex items-center justify-center z-50">
 
+          <div role="status ">
+            <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-[#29e5ce]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+              <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      )}
+        <div>
+            <button
+              className=" flex gap-1 mb-2 items-center   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-red-600 font-normal py-2 px-3  border-2 border-white rounded-xl"
+              onClick={handleReportSave}
+              shadow
+            >
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+</svg>
+
+
+              Save Data
+            </button>
+
+          </div>
           <div>
             <button
               className=" flex gap-1 mb-2 items-center   hover:bg-[#15e6cd] text-white box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-red-600 font-normal py-2 px-3  border-2 border-white rounded-xl"
