@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.8d7233be.css",
-    "main.js": "/static/js/main.f159f562.js",
+    "main.js": "/static/js/main.ce53cf77.js",
     "static/js/27.db21f876.chunk.js": "/static/js/27.db21f876.chunk.js",
     "static/media/Loging page - AuditPro.png": "/static/media/Loging page - AuditPro.d654a41b560de3474895.png",
     "static/media/home-bg.png": "/static/media/home-bg.799c8e0357dad30d4f78.png",
@@ -12,6 +12,7 @@
     "static/media/contact-book.png": "/static/media/contact-book.b62efe255f8bb659895f.png",
     "static/media/receipt.png": "/static/media/receipt.04874b59a7409b2a0b32.png",
     "static/media/fileimg.png": "/static/media/fileimg.1f3f112b6d82fb9c7565.png",
+    "static/media/history.png": "/static/media/history.1bf572500f9a58741020.png",
     "static/media/reports.png": "/static/media/reports.4978850f6fe8634e4ec2.png",
     "static/media/security.png": "/static/media/security.57a66c9965c8db9d22e1.png",
     "static/media/insurance.png": "/static/media/insurance.b8cde311775d2267a1d5.png",
@@ -20,6 +21,6 @@
   },
   "entrypoints": [
     "static/css/main.8d7233be.css",
-    "static/js/main.f159f562.js"
+    "static/js/main.ce53cf77.js"
   ]
 }
