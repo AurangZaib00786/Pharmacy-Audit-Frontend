@@ -5,6 +5,7 @@ import ToolkitProvider, {
   Search,
   CSVExport,
 } from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
+import paginationFactory from 'react-bootstrap-table2-paginator';
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import "react-bootstrap-table-next/dist/react-bootstrap-table2.min.css";
 import { UseaddDataContext } from "../../hooks/useadddatacontext";
@@ -734,11 +735,21 @@ function Audit() {
       //     }
       //   );
       // }
-
-      if (selectedValue === "by_amount" || selectedValue === "combine") {
+    
+      if ( selectedValue === "by_amount" ) {
+        new_columns.push({
+          dataField: "quantity_billing",
+          text: "Billing Qty",
+          sort: true,
+          headerFormatter: headerstyle,
+          formatter: vendor_sum_formatter,
+        });
+      }
+    
+      if (selectedValue === "by_amount" ) {
         new_columns.push({
           dataField: "amount_billing",
-          text: "Amount Billing",
+          text: "Billing Amount",
           sort: true,
           headerFormatter: headerstyle,
           formatter: vendor_sum_formatter,
@@ -794,6 +805,18 @@ function Audit() {
           formatter: vendor_sum_formatter,
         });
       }
+      if (selectedValue === "by_amount" ) {
+        new_columns.push(
+          {
+            dataField: "unit_cost",
+            text: "Unit Cost",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          },
+         
+        );
+      }
 
       if (
         selectedValue === "by_quantity" ||
@@ -829,8 +852,15 @@ function Audit() {
         });
       }
 
-      if (selectedValue === "by_amount" || selectedValue === "combine") {
+      if ( selectedValue === "combine") {
         new_columns.push(
+          {
+            dataField: "amount_billing",
+            text: "Billing Amount",
+            sort: true,
+            headerFormatter: headerstyle,
+            formatter: vendor_sum_formatter,
+          },
           {
             dataField: "unit_cost",
             text: "Unit Cost",
@@ -838,9 +868,23 @@ function Audit() {
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
           },
+         
+        );
+      }
+
+
+      if (selectedValue === "by_amount" || selectedValue === "combine") {
+        new_columns.push(
+          // {
+          //   dataField: "unit_cost",
+          //   text: "Unit Cost",
+          //   sort: true,
+          //   headerFormatter: headerstyle,
+          //   formatter: vendor_sum_formatter,
+          // },
           {
             dataField: "amount_paid",
-            text: "Amount Paid",
+            text: "Difference Amount",
             sort: true,
             headerFormatter: headerstyle,
             formatter: vendor_sum_formatter,
@@ -985,49 +1029,28 @@ function Audit() {
             sort: true,
             headerFormatter: headerstyle,
           },
-          // {
-          //   dataField: "billing_amount",
-          //   text: "Amount Billing",
-          //   sort: true,
-          //   headerFormatter: headerstyle,
-          //   formatter: vendor_sum_formatter,
-          // },
-          // {
-          //   dataField: "opening_balance",
-          //   text: "Opening Balance (Unit)",
-          //   sort: true,
-          //   headerFormatter: headerstyle,
-          // },
-          // {
-          //   dataField: "packagesize",
-          //   text: "Package Size",
-          //   sort: true,
-          //   headerFormatter: headerstyle,
-          // },
-          // {
-          //   dataField: "total_quantity",
-          //   text: "Billing Qty",
-          //   sort: true,
-          //   headerFormatter: headerstyle,
-          // },
+        
         ];
-        // if (selectedValue === "by_quantity" || selectedValue === "combine") {
-        //   new_details_columns.push(
-        //     {
-        //       dataField: "opening_balance",
-        //       text: "Opening Balance (Unit)",
-        //       sort: true,
-        //       headerFormatter: headerstyle,
-        //       formatter: vendor_sum_formatter,
-        //     },
+       
+        if (selectedValue === "by_amount" ) {
+          new_details_columns.push(
+           
+            {
+              dataField: "total_quantity",
+              text: "Billing Qty",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
 
-        //   )
-        // }
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
+            }
+          );
+        }
+
+        if (selectedValue === "by_amount" ) {
           new_details_columns.push(
             {
               dataField: "billing_amount",
-              text: "Amount Billing",
+              text: "Billing Amount ",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
@@ -1046,13 +1069,7 @@ function Audit() {
               formatter: vendor_sum_formatter,
 
             },
-            {
-              dataField: "opening_balance",
-              text: "Opening Balance (Unit)",
-              sort: true,
-              headerFormatter: headerstyle,
-              formatter: vendor_sum_formatter,
-            },
+          
 
             {
               dataField: "total_quantity",
@@ -1078,50 +1095,7 @@ function Audit() {
           });
         }
 
-        // new_details_columns.push(
-        //   {
-        //     dataField: "vendor_sum",
-        //     text: "Vendor Total",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   },
-        //   {
-        //     dataField: "result_unit",
-        //     text: "Result (Unit)",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   },
-        //   {
-        //     dataField: "result_package",
-        //     text: "Result (Pkg)",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   },
-        //   {
-        //     dataField: "closing_balance",
-        //     text: "Closing Balance (Unit)",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   },
-        //   {
-        //     dataField: "unit_cost",
-        //     text: "Unit Cost",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   },
-        //   {
-        //     dataField: "amount_paid",
-        //     text: "Amount Paid",
-        //     sort: true,
-        //     headerFormatter: headerstyle,
-        //     formatter: vendor_sum_formatter,
-        //   }
-        // );
+     
         if (selectedValue === "by_quantity" || selectedValue === "combine") {
           new_details_columns.push(
             {
@@ -1135,6 +1109,19 @@ function Audit() {
           )
 
         }
+        if (selectedValue === "by_amount" ) {
+          new_details_columns.push(
+            {
+              dataField: "unit_cost",
+              text: "Unit Cost",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+           
+          );
+        }
+  
 
         if (selectedValue === "by_quantity" || selectedValue === "by_amount" || selectedValue === "combine") {
           new_details_columns.push(
@@ -1163,22 +1150,17 @@ function Audit() {
           )
         }
 
-        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+      
+        if ( selectedValue === "combine") {
           new_details_columns.push(
             {
-              dataField: "closing_balance",
-              text: "Closing Balance (Unit)",
+              dataField: "billing_amount",
+              text: "Billing Amount ",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
-
-          )
-        }
-
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
-          new_details_columns.push(
-
             {
               dataField: "unit_cost",
               text: "Unit Cost",
@@ -1186,9 +1168,17 @@ function Audit() {
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
             },
+           
+          );
+        }
+
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_details_columns.push(
+
+           
             {
               dataField: "amount_paid",
-              text: "Amount Paid",
+              text: "Difference Amount",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
@@ -1332,23 +1322,35 @@ function Audit() {
           //   headerFormatter: headerstyle,
           // },
         ];
-        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        // if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        //   new_columns.push(
+        //     {
+        //       dataField: "opening_balance",
+        //       text: "Opening Balance (Unit)",
+        //       sort: true,
+        //       headerFormatter: headerstyle,
+        //       formatter: vendor_sum_formatter,
+        //     },
+
+        //   )
+        // }
+        if (selectedValue === "by_amount" ) {
           new_columns.push(
             {
-              dataField: "opening_balance",
-              text: "Opening Balance (Unit)",
+              dataField: "quantity_billing",
+              text: "Billing Qty",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
-            },
 
-          )
+            }
+          );
         }
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
+        if (selectedValue === "by_amount" ) {
           new_columns.push(
             {
               dataField: "amount_billing",
-              text: "Amount Billing",
+              text: "Billing Amount ",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
@@ -1430,6 +1432,18 @@ function Audit() {
           )
 
         }
+        if (selectedValue === "by_amount" ) {
+          new_columns.push(
+            {
+              dataField: "unit_cost",
+              text: "Unit Cost",
+              sort: true,
+              headerFormatter: headerstyle,
+              formatter: vendor_sum_formatter,
+            },
+           
+          );
+        }
         if (selectedValue === "by_quantity" || selectedValue === "by_amount" || selectedValue === "combine") {
           new_columns.push(
             {
@@ -1456,23 +1470,30 @@ function Audit() {
           )
         }
 
-        if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        // if (selectedValue === "by_quantity" || selectedValue === "combine") {
+        //   new_columns.push(
+        //     {
+        //       dataField: "closing_balance",
+        //       text: "Closing Balance (Unit)",
+        //       sort: true,
+        //       headerFormatter: headerstyle,
+        //       formatter: vendor_sum_formatter,
+        //     },
+
+        //   )
+        // }
+
+        if (selectedValue === "combine") {
           new_columns.push(
+
             {
-              dataField: "closing_balance",
-              text: "Closing Balance (Unit)",
+              dataField: "amount_billing",
+              text: "Billing Amount ",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
-
-          )
-        }
-
-        // Continue conditionally if needed
-        if (selectedValue === "by_amount" || selectedValue === "combine") {
-          new_columns.push(
-
             {
               dataField: "unit_cost",
               text: "Unit Cost",
@@ -1480,9 +1501,26 @@ function Audit() {
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
             },
+            
+         
+          );
+        }
+
+
+        // Continue conditionally if needed
+        if (selectedValue === "by_amount" || selectedValue === "combine") {
+          new_columns.push(
+
+            // {
+            //   dataField: "unit_cost",
+            //   text: "Unit Cost",
+            //   sort: true,
+            //   headerFormatter: headerstyle,
+            //   formatter: vendor_sum_formatter,
+            // },
             {
               dataField: "amount_paid",
-              text: "Amount Paid",
+              text: "Difference Amount",
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
@@ -1736,22 +1774,37 @@ function Audit() {
   const handleExportDetailsToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Insurance Details");
-
+  
     fullyFilteredData.forEach((item) => {
       worksheet.addRow([`NDC: ${item.ndc}`]);
-
-      // Build headers
-      let headers = ["Insurance Company", "Description"];
-
-      if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-        headers.push("Amount Billing");
+  
+      // Build the header row
+      let headers = ["#", "Name", "Description"];
+  
+      if (selectedOptions.value === "by_amount") {
+        headers.push("Billing Qty");
       }
+  
+      if (selectedOptions.value === "by_amount") {
+        headers.push("Billing Amount");
+      }
+  
       if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Opening Balance", "Package Size", "Billing Quantity");
+        headers.push("Package Size", "Billing Qty");
       }
+  
       if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push(...vendorKeysPresent, "Vendor Total");
+        headers.push(...vendorKeysPresent);
       }
+  
+      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+        headers.push("Vendor Total");
+      }
+  
+      if (selectedOptions.value === "by_amount") {
+        headers.push("Unit Cost");
+      }
+  
       if (
         selectedOptions.value === "by_quantity" ||
         selectedOptions.value === "by_amount" ||
@@ -1759,30 +1812,55 @@ function Audit() {
       ) {
         headers.push("Result (Unit)");
       }
+  
       if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Result (Pkg)", "Closing Balance");
+        headers.push("Result (Pkg)");
       }
+  
+      if (selectedOptions.value === "combine") {
+        headers.push("Billing Amount", "Unit Cost");
+      }
+  
       if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-        headers.push("Unit Cost", "Amount Paid");
+        headers.push("Difference Amount");
       }
-
+  
       worksheet.addRow(headers);
-
-      item.data.forEach((entry) => {
-        const row = [entry.insurance_company, entry.description];
-
-        if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
+  
+      // Add data rows
+      item.data.forEach((entry, rowIndex) => {
+        const row = [
+          rowIndex + 1, // "#"
+          entry.insurance_company,
+          entry.description,
+        ];
+  
+        if (selectedOptions.value === "by_amount") {
+          row.push(entry.total_quantity ?? "");
+        }
+  
+        if (selectedOptions.value === "by_amount") {
           row.push(entry.billing_amount ?? "");
         }
+  
         if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.opening_balance ?? "", entry.packagesize ?? "", entry.total_quantity ?? "");
+          row.push(entry.packagesize ?? "", entry.total_quantity ?? "");
         }
+  
         if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          vendorKeysPresent.forEach((key) => {
-            row.push(entry[key] ?? "");
+          vendorKeysPresent.forEach((vendor) => {
+            row.push(entry[vendor] ?? "");
           });
+        }
+  
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
           row.push(entry.vendor_sum ?? "");
         }
+  
+        if (selectedOptions.value === "by_amount") {
+          row.push(entry.unit_cost ?? "");
+        }
+  
         if (
           selectedOptions.value === "by_quantity" ||
           selectedOptions.value === "by_amount" ||
@@ -1790,23 +1868,27 @@ function Audit() {
         ) {
           row.push(entry.result_unit ?? "");
         }
+  
         if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.result_package ?? "", entry.closing_balance ?? "");
+          row.push(entry.result_package ?? "");
         }
+  
+        if (selectedOptions.value === "combine") {
+          row.push(entry.billing_amount ?? "", entry.unit_cost ?? "");
+        }
+  
         if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-          row.push(entry.unit_cost ?? "", entry.amount_paid ?? "");
+          row.push(entry.amount_paid ?? "");
         }
-
-        console.log("Row Data:", row); // ✅ Debugging
-
+  
         const excelRow = worksheet.addRow(row);
-
-        // Conditional coloring
+  
+        // Apply conditional coloring based on `result_package`
         let fillColor = null;
-        if (entry.result_package < 0) fillColor = "FFCCCC";
-        else if (entry.result_package == 0) fillColor = "CCFFCC";
-        else if (entry.result_package === "Not Exist") fillColor = "CCE5FF";
-
+        if (entry.result_package < 0) fillColor = "FFCCCC"; // Red-ish
+        else if (entry.result_package == 0) fillColor = "CCFFCC"; // Green-ish
+        else if (entry.result_package === "Not Exist") fillColor = "CCE5FF"; // Blue-ish
+  
         if (fillColor) {
           excelRow.eachCell((cell) => {
             cell.fill = {
@@ -1818,7 +1900,7 @@ function Audit() {
         }
       });
     });
-
+  
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: "application/octet-stream" });
     const url = window.URL.createObjectURL(blob);
@@ -1828,6 +1910,8 @@ function Audit() {
     anchor.click();
     window.URL.revokeObjectURL(url);
   };
+  
+  
 
 
 
@@ -1835,83 +1919,120 @@ function Audit() {
     let csvContent = "";
 
     fullyFilteredData.forEach((item) => {
-      csvContent += `NDC: ${item.ndc}\n`;
+        csvContent += `NDC: ${item.ndc}\n`;
 
-      // Build headers dynamically
-      let headers = ["Insurance Company", "Description"];
+        // Build headers dynamically (same as new_details_columns logic)
+        const headers = ["#", "Name", "Description"];
 
-      if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-        headers.push("Billing Amount");
-      }
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Opening Balance", "Package Size", "Billing Quantity");
-      }
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push(...vendorKeysPresent, "Vendor Total");
-      }
-      if (
-        selectedOptions.value === "by_quantity" ||
-        selectedOptions.value === "by_amount" ||
-        selectedOptions.value === "combine"
-      ) {
-        headers.push("Result (Unit)");
-      }
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Result (Pkg)", "Closing Balance");
-      }
-      if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-        headers.push("Unit Cost", "Amount Paid");
-      }
+        if (selectedOptions.value === "by_amount") {
+            headers.push("Billing Qty", "Billing Amount");
+        }
 
-      // Always include Row Color Hint at the end
-      headers.push("Row Color Hint");
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+            headers.push("Package Size", "Billing Qty");
+        }
 
-      csvContent += headers.join(",") + "\n";
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+            vendorKeysPresent.forEach((vendor) => {
+                headers.push(vendor);
+            });
+        }
 
-      item.data.forEach((entry) => {
-        let colorHint = "";
-        if (entry.result_package < 0) colorHint = "Negative";
-        else if (entry.result_package == 0) colorHint = "Zero";
-        else if (entry.result_package === "Not Exist") colorHint = "Not Exist";
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+            headers.push("Vendor Total");
+        }
 
-        const row = [
-          `"${entry.insurance_company}"`,
-          `"${entry.description}"`,
-        ];
+        if (selectedOptions.value === "by_amount") {
+            headers.push("Unit Cost");
+        }
+
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
+            headers.push("Result (Unit)");
+        }
+
+        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+            headers.push("Result (Pkg)");
+        }
+
+        if (selectedOptions.value === "combine") {
+            headers.push("Billing Amount", "Unit Cost");
+        }
 
         if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-          row.push(entry.billing_amount ?? "");
-        }
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.opening_balance ?? "", entry.packagesize ?? "", entry.total_quantity ?? "");
-        }
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          vendorKeysPresent.forEach((key) => {
-            row.push(entry[key] ?? "");
-          });
-          row.push(entry.vendor_sum ?? "");
-        }
-        if (
-          selectedOptions.value === "by_quantity" ||
-          selectedOptions.value === "by_amount" ||
-          selectedOptions.value === "combine"
-        ) {
-          row.push(entry.result_unit ?? "");
-        }
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.result_package ?? "", entry.closing_balance ?? "");
-        }
-        if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-          row.push(entry.unit_cost ?? "", entry.amount_paid ?? "");
+            headers.push("Difference Amount");
         }
 
-        // Always push color hint at the end
-        row.push(colorHint);
+        // Add Row Color Hint (optional, keeps your existing idea)
+        headers.push("Row Color Hint");
 
-        csvContent += row.join(",") + "\n";
-      });
+        csvContent += headers.join(",") + "\n";
 
-      csvContent += "\n";
+        item.data.forEach((entry, index) => {
+            let colorHint = "";
+            if (entry.result_package < 0) colorHint = "Negative";
+            else if (entry.result_package == 0) colorHint = "Zero";
+            else if (entry.result_package === "Not Exist") colorHint = "Not Exist";
+
+            const row = [
+                index + 1, // Row number
+                `"${entry.insurance_company}"`,
+                `"${entry.description}"`,
+            ];
+
+            if (selectedOptions.value === "by_amount") {
+                row.push(
+                    entry.total_quantity ?? "",
+                    entry.billing_amount ?? ""
+                );
+            }
+
+            if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+                row.push(
+                    entry.packagesize ?? "",
+                    entry.total_quantity ?? ""
+                );
+            }
+
+            if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+                vendorKeysPresent.forEach((vendor) => {
+                    row.push(entry[vendor] ?? "");
+                });
+            }
+
+            if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+                row.push(entry.vendor_sum ?? "");
+            }
+
+            if (selectedOptions.value === "by_amount") {
+                row.push(entry.unit_cost ?? "");
+            }
+
+            if (selectedOptions.value === "by_quantity" || selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
+                row.push(entry.result_unit ?? "");
+            }
+
+            if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+                row.push(entry.result_package ?? "");
+            }
+
+            if (selectedOptions.value === "combine") {
+                row.push(
+                    entry.billing_amount ?? "",
+                    entry.unit_cost ?? ""
+                );
+            }
+
+            if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
+                row.push(entry.amount_paid ?? "");
+            }
+
+            // Always push color hint at the end
+            row.push(colorHint);
+
+            csvContent += row.join(",") + "\n";
+        });
+
+        csvContent += "\n";
     });
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1922,7 +2043,8 @@ function Audit() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
+};
+
 
 
   // const handleinsurancereportchange = (e) => {
@@ -2907,115 +3029,119 @@ function Audit() {
           {/* Balance upload Container */}
 
         </div>
-        <div className="col-md-6 mt-8 md:mt-4 ">
-          <form onSubmit={handlesubmitbalance_files}>
-
-            <div className=" flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
-
-              <div className=" flex items-center  gap-2">
-                <div className=" flex items-center ml-2 justify-center  ">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6  text-gray-900"
+        {audit_report_type.includes("audit") && (
+            <div className="col-md-6 mt-8 md:mt-4 ">
+            <form onSubmit={handlesubmitbalance_files}>
+  
+              <div className=" flex items-center justify-between gap-2 p-0.5 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] shadow-lg border-2 border-green-300 rounded-lg">
+  
+                <div className=" flex items-center  gap-2">
+                  <div className=" flex items-center ml-2 justify-center  ">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6  text-gray-900"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
+                      />
+                    </svg>
+                  </div>
+                  <label
+                    htmlFor="balance-upload"
+                    className="cursor-pointer md:text-xl ml-2 text-gray-700"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 16.5v3a1.5 1.5 0 001.5 1.5h15a1.5 1.5 0 001.5-1.5v-3m-4.5-2.25L12 7.5m0 0L7.5 14.25M12 7.5v12"
-                    />
-                  </svg>
+                    Upload Balance File
+                  </label>
+  
+                  <input
+                    id="balance-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={handleselection_balance}
+                    accept=".xlsx,.xls,.csv"
+                    required
+                  />
+  
                 </div>
-                <label
-                  htmlFor="balance-upload"
-                  className="cursor-pointer md:text-xl ml-2 text-gray-700"
-                >
-                  Upload Balance File
-                </label>
-
-                <input
-                  id="balance-upload"
-                  type="file"
-                  className="hidden"
-                  onChange={handleselection_balance}
-                  accept=".xlsx,.xls,.csv"
-                  required
-                />
-
+  
+                <div className="w-1/3 text-right">
+                  <button
+                    style={{ width: "80px" }}
+                    type="submit"
+                    className="text-white py-2 rounded-lg bg-[#587291] hover:bg-[#4a5d7a] transition duration-300"
+                  >
+                    Upload
+  
+                  </button>
+  
+  
+                </div>
+  
               </div>
-
-              <div className="w-1/3 text-right">
-                <button
-                  style={{ width: "80px" }}
-                  type="submit"
-                  className="text-white py-2 rounded-lg bg-[#587291] hover:bg-[#4a5d7a] transition duration-300"
-                >
-                  Upload
-
-                </button>
-
-
+              <div className=" pl-2 pt-2">
+                {File_balance?.name && (
+                  <span className="text-white text-sm md:text-base truncate max-w-[150px]">
+                    {File_balance.name}
+                  </span>
+                )}
               </div>
-
-            </div>
-            <div className=" pl-2 pt-2">
-              {File_balance?.name && (
-                <span className="text-white text-sm md:text-base truncate max-w-[150px]">
-                  {File_balance.name}
-                </span>
-              )}
-            </div>
-
-          </form>
-          <div className="md:pt-10 pt-2 pl-3 row col-md-12 ">
-            {balance_filesdata.map((item) => (
-              <div
-                key={item.name}
-                className="d-flex align-items-center justify-content-between bg-light pt-2 pb-2 rounded-lg mb-2"
-                style={{
-                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+  
+            </form>
+            <div className="md:pt-10 pt-2 pl-3 row col-md-12 ">
+              {balance_filesdata.map((item) => (
                 <div
-                  className="flex justify-center items-center"
-                  style={{ cursor: "pointer" }}
+                  key={item.name}
+                  className="d-flex align-items-center justify-content-between bg-light pt-2 pb-2 rounded-lg mb-2"
+                  style={{
+                    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+                  }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12  text-gray-700 font-normal">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                  </svg>
-                  <div>
-                    <div className="text-normal">{item.name}</div>
-                    <div className=" text-xs mt-2 text-gray-400">
-                      {item.type || "XLSX"} |  {item.size || "1.2 MB"}
+                  <div
+                    className="flex justify-center items-center"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12  text-gray-700 font-normal">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                    </svg>
+                    <div>
+                      <div className="text-normal">{item.name}</div>
+                      <div className=" text-xs mt-2 text-gray-400">
+                        {item.type || "XLSX"} |  {item.size || "1.2 MB"}
+                      </div>
                     </div>
                   </div>
+  
+                  <div className="d-flex align-items-end gap-2 ">
+                    <svg onClick={() => openimage(item)}
+                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="cursor-pointer size-5">
+                      <title>Download file</title> {/* This shows a tooltip on hover */}
+  
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+  
+                    <svg
+                      onClick={() => handleDelete("opening_balance_files", item.name)} // Passing both values
+                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+  
+                  </div>
                 </div>
-
-                <div className="d-flex align-items-end gap-2 ">
-                  <svg onClick={() => openimage(item)}
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="cursor-pointer size-5">
-                    <title>Download file</title> {/* This shows a tooltip on hover */}
-
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                  </svg>
-
-                  <svg
-                    onClick={() => handleDelete("opening_balance_files", item.name)} // Passing both values
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 cursor-pointer text-red-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                  </svg>
-
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+
+        )}
+      
       </div>
 
-      <div className="w-full h-auto mt-3  flex justify-end">
+      {/* <div className="w-full h-auto mt-3  flex justify-end">
         <button
           className=" flex gap-2  bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2  border-2 border-[#15e6cd] rounded-xl"
           onClick={handleButtonClick} >
@@ -3024,7 +3150,7 @@ function Audit() {
           </svg>
           Generate
         </button>
-      </div>
+      </div> */}
 
       <ul className="w-full md:text-sm font-medium text-gray-900 flex justify-start md:gap-16 g items-center rounded-lg">
         {reportOptions
@@ -3175,6 +3301,63 @@ function Audit() {
             </div>
           </div>
         )}
+        {audit_report_type.includes("insurance_details") && (  
+          <>
+          <div className="relative flex w-full max-w-xs">
+                      <select
+                        className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+                   border border-green-300 rounded-lg shadow-md text-black 
+                   cursor-pointer appearance-none"
+                        value={report_type.value} // Bind value to the current state
+                        onChange={handlereportchange} // Handle changes
+                      >
+                        {options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-6"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="relative w-full max-w-xs">
+                      <select
+                        className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
+      border border-green-300 rounded-lg shadow-md text-black 
+      cursor-pointer appearance-none"
+                        value={selectedOptions.value}
+                        onChange={handleReportOptionChange}
+                      >
+                        {optionsAmount.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+
+                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-6"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </div>
+                    </div></>)}
 
         {(
           audit_report_type.includes("insurance") ||
@@ -3210,6 +3393,16 @@ function Audit() {
             </div>
           )}
 
+<div className="w-full h-auto   flex justify-start   ">
+        <button
+          className=" flex gap-2 items-center  bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-600 text-xl hover:text-white font-normal py-2 px-2 border-2 border-[#15e6cd] rounded-xl"
+          onClick={handleButtonClick} >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          Generate
+        </button>
+      </div>
 
 
       </div>
@@ -3569,7 +3762,23 @@ function Audit() {
                             <div style={{ overflowX: 'auto' }}>
 
                               <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
-                                bootstrap4 filter={filterFactory()} classes="custom-table" />
+                                bootstrap4 filter={filterFactory()} classes="custom-table"
+                                pagination={paginationFactory({
+                                  sizePerPage: 50,          // 50 entries per page
+                                  showTotal: true,          // shows "Showing x to y of z entries"
+                                  hideSizePerPage: true,    // hide dropdown to change size
+                                  firstPageText: 'First',
+                                  prePageText: 'Previous',
+                                  nextPageText: 'Next',
+                                  lastPageText: 'Last',
+                                  alwaysShowAllBtns: true,  // show Next/Prev even if there’s only one page
+                                })}
+
+                                defaultSorted={[{
+                                  dataField: 'description',  
+                                  order: 'asc'               
+                                }]}
+                                 />
                             </div>
                             <hr />
                           </div>
@@ -3588,7 +3797,7 @@ function Audit() {
 
 
                   {/* === FILTER === */}
-                  <div className="flex gap-4">
+                  {/* <div className="flex gap-4">
                     <div className="relative w-full max-w-xs mb-4">
                       <select
                         className="w-full px-4 py-3 bg-gradient-to-t from-[#c5e9f9] to-[#f2fafe] 
@@ -3643,7 +3852,7 @@ function Audit() {
                           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                         </svg>
                       </div>
-                    </div></div>
+                    </div></div> */}
                   <div className="d-flex justify-between items-center mb-4">
                     <div className="w-1/3">
                       <input
@@ -3701,6 +3910,10 @@ function Audit() {
                               condensed
                               filter={filterFactory()}
                               classes="custom-table"
+                              defaultSorted={[{
+                                dataField: 'description',  
+                                order: 'asc'              
+                              }]}
                             />
                           </div>
                         </div>
@@ -3762,12 +3975,12 @@ function Audit() {
                               <div className="d-flex  w-full justify-content-between align-items-center mt-3">
                                 <div className="input-container-inner md:w-1/2  h-full md:flex items-center">
                                   <div className="input-container-inner w-full  mb-2 h-full flex items-center">
-                                    <div className="w-full"> {/* Wrap input in a full-width container */}
+                                    <div className="w-full"> 
                                       <SearchBar
                                         {...props?.searchProps}
                                         placeholder="Search"
                                         className="w-full text-black text-sm rounded-lg focus:outline-none p-3 border-2 border-green-200 bg-transparent placeholder-gray-100 placeholder-text-xl"
-                                        style={{ width: "100%", maxWidth: "none" }} // Force full width
+                                        style={{ width: "100%", maxWidth: "none" }} 
                                       />
 
                                     </div>
@@ -3858,6 +4071,20 @@ function Audit() {
                                 condensed
                                 filter={filterFactory()}
                                 classes="custom-table table"
+                                pagination={paginationFactory({
+                                  sizePerPage: 50,          // 50 entries per page
+                                  showTotal: true,          // shows "Showing x to y of z entries"
+                                  hideSizePerPage: true,    // hide dropdown to change size
+                                  firstPageText: 'First',
+                                  prePageText: 'Previous',
+                                  nextPageText: 'Next',
+                                  lastPageText: 'Last',
+                                  alwaysShowAllBtns: true,  // show Next/Prev even if there’s only one page
+                                })}
+                                defaultSorted={[{
+                                  dataField: 'description',  
+                                  order: 'asc'               
+                                }]}
                               />
                             </div>
 
