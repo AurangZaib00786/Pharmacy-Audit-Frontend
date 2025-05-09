@@ -38,6 +38,7 @@ import BinNumberModal from "./BinNumberModal";
 import * as XLSX from "xlsx";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import SummaryModal from "./SummaryModal";
 
 
 function Audit() {
@@ -76,9 +77,13 @@ function Audit() {
   const [vendorKeysPresent, setVendorKeysPresent] = useState([]);
 
   const [binnumbers, setbinnumbers] = useState(false);
+  const [summaryopen, setsummaryopen] = useState(false);
 
   const handlebinnumberopen = () => {
     setbinnumbers(true);
+  }
+   const handlesummaryopen = () => {
+    setsummaryopen(true);
   }
 
   const [insurance_report_type, setinsurance_report_type] = useState({
@@ -1274,6 +1279,20 @@ function Audit() {
         setisloading(false)
 
       }
+      // Calculate overall sums
+let totals = {};
+json.reports.forEach(report => {
+  report.data.forEach(item => {
+    Object.keys(item).forEach(key => {
+      if (["amount_billing", "amount_paid", "quantity_billing", "vendor_sum", "result_unit", "result_package", "unit_cost"].includes(key)) {
+        totals[key] = (totals[key] || 0) + Number(item[key]) || 0;
+      }
+    });
+  });
+});
+
+
+
 
       if (response.ok) {
         let new_columns = [
@@ -1289,12 +1308,14 @@ function Audit() {
             text: "NDC",
             sort: true,
             headerFormatter: headerstyle,
+
           },
           {
             dataField: "description",
             text: "Description",
             sort: true,
             headerFormatter: headerstyle,
+
           },
 
           // {
@@ -1343,6 +1364,7 @@ function Audit() {
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
 
+
             }
           );
         }
@@ -1354,6 +1376,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
 
             }
           );
@@ -1368,6 +1391,7 @@ function Audit() {
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
 
+
             },
             {
               dataField: "quantity_billing",
@@ -1375,6 +1399,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
 
             }
           );
@@ -1388,6 +1413,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
 
             });
           });
@@ -1427,6 +1453,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
 
           )
@@ -1440,6 +1467,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
            
           );
@@ -1452,6 +1480,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
 
           )
@@ -1465,6 +1494,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
 
           )
@@ -1493,6 +1523,7 @@ function Audit() {
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
 
+
             },
             {
               dataField: "unit_cost",
@@ -1500,6 +1531,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             },
             
          
@@ -1524,6 +1556,7 @@ function Audit() {
               sort: true,
               headerFormatter: headerstyle,
               formatter: vendor_sum_formatter,
+
             }
           );
         }
@@ -1612,6 +1645,9 @@ function Audit() {
           report["hide"] = false;
           return report;
         });
+        let amountPaidTotal = optimize.reduce((sum, row) => {
+  return sum + (Number(row.amount_paid) || 0);
+}, 0);
         dispatch({ type: "Set_data", payload: optimize });
         setinsurancedata(optimize);
         setisloading(false);
@@ -2682,6 +2718,58 @@ function Audit() {
 
   };
 
+    const customTotal = (from, to, size) => (
+    <span className="react-bootstrap-table-pagination-total ms-2 text-white ">
+      Showing {from} to {to} of {size} Results
+    </span>
+  );
+
+  const optionss = {
+    paginationSize: 4,
+    pageStartIndex: 1,
+    firstPageText: "First",
+    showTotal: true,
+    paginationTotalRenderer: customTotal,
+    disablePageTitle: true,
+    sizePerPageList: [
+      {
+        text: "50",
+        value: 50,
+      },
+      {
+        text: "100",
+        value: 100,
+      },
+      {
+        text: "All",
+        value: selectedData?.data?.length,
+      },
+    ], // A numeric array is also available. the purpose of above example is custom the text
+  };
+
+    const optionsss = {
+    paginationSize: 4,
+    pageStartIndex: 1,
+    firstPageText: "First",
+    showTotal: true,
+    paginationTotalRenderer: customTotal,
+    disablePageTitle: true,
+    sizePerPageList: [
+      {
+        text: "50",
+        value: 50,
+      },
+      {
+        text: "100",
+        value: 100,
+      },
+      {
+        text: "All",
+        value: Data?.length,
+      },
+    ], // A numeric array is also available. the purpose of above example is custom the text
+  };
+
   return (
 
     <div className="user_main">
@@ -3677,6 +3765,16 @@ function Audit() {
                               </div> */}
 
                               <div className="flex justify-end gap-2 ">
+                               <button
+                                  onClick={handlesummaryopen}
+
+
+                                  className=" flex gap-1 mr-4 flex justify-center items-center bg-[#daf0fa] hover:bg-[#15e6cd] text-gray-800 box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px; text-xl hover:text-white font-normal py-2 px-2  border-2 border-white rounded-xl"
+                                >
+
+
+                                  Summary
+                                </button>
                                 <button
                                   onClick={handlebinnumberopen}
 
@@ -3763,16 +3861,7 @@ function Audit() {
 
                               <BootstrapTable {...props.baseProps} rowStyle={rowStyle}
                                 bootstrap4 filter={filterFactory()} classes="custom-table"
-                                pagination={paginationFactory({
-                                  sizePerPage: 50,          // 50 entries per page
-                                  showTotal: true,          // shows "Showing x to y of z entries"
-                                  hideSizePerPage: true,    // hide dropdown to change size
-                                  firstPageText: 'First',
-                                  prePageText: 'Previous',
-                                  nextPageText: 'Next',
-                                  lastPageText: 'Last',
-                                  alwaysShowAllBtns: true,  // show Next/Prev even if there’s only one page
-                                })}
+                                pagination={paginationFactory(optionss)}
 
                                 defaultSorted={[{
                                   dataField: 'description',  
@@ -4071,16 +4160,7 @@ function Audit() {
                                 condensed
                                 filter={filterFactory()}
                                 classes="custom-table table"
-                                pagination={paginationFactory({
-                                  sizePerPage: 50,          // 50 entries per page
-                                  showTotal: true,          // shows "Showing x to y of z entries"
-                                  hideSizePerPage: true,    // hide dropdown to change size
-                                  firstPageText: 'First',
-                                  prePageText: 'Previous',
-                                  nextPageText: 'Next',
-                                  lastPageText: 'Last',
-                                  alwaysShowAllBtns: true,  // show Next/Prev even if there’s only one page
-                                })}
+                                pagination={paginationFactory(optionsss)}
                                 defaultSorted={[{
                                   dataField: 'description',  
                                   order: 'asc'               
@@ -4124,6 +4204,14 @@ function Audit() {
           show={binnumbers}
           onHide={() => setbinnumbers(false)}
           data={selectedData?.bin_numbers}
+          company={selectedData.insurance_company_name}
+        />
+      )}
+      {summaryopen && (
+        <SummaryModal
+          show={summaryopen}
+          onHide={() => setsummaryopen(false)}
+          data={filteredData}
           company={selectedData.insurance_company_name}
         />
       )}
