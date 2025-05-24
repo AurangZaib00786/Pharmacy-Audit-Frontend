@@ -1807,145 +1807,130 @@ json.reports.forEach(report => {
   };
 
 
-  const handleExportDetailsToExcel = async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Insurance Details");
-  
-    fullyFilteredData.forEach((item) => {
-      worksheet.addRow([`NDC: ${item.ndc}`]);
-  
-      // Build the header row
-      let headers = ["#", "Name", "Description"];
-  
+const handleExportDetailsToExcel = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Insurance Details");
+
+  fullyFilteredData.forEach((item) => {
+    // Add NDC row
+    const ndcRow = worksheet.addRow([`NDC: ${item.ndc}`]);
+    ndcRow.font = { bold: true, size: 12 };
+
+    // Build header
+    let headers = ["#", "Name", "Description"];
+
+    if (selectedOptions.value === "by_amount") {
+      headers.push("Billing Qty");
+      headers.push("Billing Amount");
+    }
+
+    if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+      headers.push("Package Size", "Billing Qty");
+      headers.push(...vendorKeysPresent);
+      headers.push("Vendor Total");
+    }
+
+    if (selectedOptions.value === "by_amount") {
+      headers.push("Unit Cost");
+    }
+
+    if (
+      selectedOptions.value === "by_quantity" ||
+      selectedOptions.value === "by_amount" ||
+      selectedOptions.value === "combine"
+    ) {
+      headers.push("Result (Unit)");
+    }
+
+    if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+      headers.push("Result (Pkg)");
+    }
+
+    if (selectedOptions.value === "combine") {
+      headers.push("Billing Amount", "Unit Cost");
+    }
+
+    if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
+      headers.push("Difference Amount");
+    }
+
+    const headerRow = worksheet.addRow(headers);
+    headerRow.font = { bold: true, size: 12 };
+
+    // Add data rows
+    item.data.forEach((entry, rowIndex) => {
+      const row = [
+        rowIndex + 1,
+        entry.insurance_company,
+        entry.description,
+      ];
+
       if (selectedOptions.value === "by_amount") {
-        headers.push("Billing Qty");
+        row.push(entry.total_quantity ?? "");
+        row.push(entry.billing_amount ?? "");
       }
-  
+
+      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
+        row.push(entry.packagesize ?? "", entry.total_quantity ?? "");
+        vendorKeysPresent.forEach((vendor) => {
+          row.push(entry[vendor] ?? "");
+        });
+        row.push(entry.vendor_sum ?? "");
+      }
+
       if (selectedOptions.value === "by_amount") {
-        headers.push("Billing Amount");
+        row.push(entry.unit_cost ?? "");
       }
-  
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Package Size", "Billing Qty");
-      }
-  
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push(...vendorKeysPresent);
-      }
-  
-      if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Vendor Total");
-      }
-  
-      if (selectedOptions.value === "by_amount") {
-        headers.push("Unit Cost");
-      }
-  
+
       if (
         selectedOptions.value === "by_quantity" ||
         selectedOptions.value === "by_amount" ||
         selectedOptions.value === "combine"
       ) {
-        headers.push("Result (Unit)");
+        row.push(entry.result_unit ?? "");
       }
-  
+
       if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-        headers.push("Result (Pkg)");
+        row.push(entry.result_package ?? "");
       }
-  
+
       if (selectedOptions.value === "combine") {
-        headers.push("Billing Amount", "Unit Cost");
+        row.push(entry.billing_amount ?? "", entry.unit_cost ?? "");
       }
-  
+
       if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-        headers.push("Difference Amount");
+        row.push(entry.amount_paid ?? "");
       }
-  
-      worksheet.addRow(headers);
-  
-      // Add data rows
-      item.data.forEach((entry, rowIndex) => {
-        const row = [
-          rowIndex + 1, // "#"
-          entry.insurance_company,
-          entry.description,
-        ];
-  
-        if (selectedOptions.value === "by_amount") {
-          row.push(entry.total_quantity ?? "");
-        }
-  
-        if (selectedOptions.value === "by_amount") {
-          row.push(entry.billing_amount ?? "");
-        }
-  
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.packagesize ?? "", entry.total_quantity ?? "");
-        }
-  
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          vendorKeysPresent.forEach((vendor) => {
-            row.push(entry[vendor] ?? "");
-          });
-        }
-  
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.vendor_sum ?? "");
-        }
-  
-        if (selectedOptions.value === "by_amount") {
-          row.push(entry.unit_cost ?? "");
-        }
-  
-        if (
-          selectedOptions.value === "by_quantity" ||
-          selectedOptions.value === "by_amount" ||
-          selectedOptions.value === "combine"
-        ) {
-          row.push(entry.result_unit ?? "");
-        }
-  
-        if (selectedOptions.value === "by_quantity" || selectedOptions.value === "combine") {
-          row.push(entry.result_package ?? "");
-        }
-  
-        if (selectedOptions.value === "combine") {
-          row.push(entry.billing_amount ?? "", entry.unit_cost ?? "");
-        }
-  
-        if (selectedOptions.value === "by_amount" || selectedOptions.value === "combine") {
-          row.push(entry.amount_paid ?? "");
-        }
-  
-        const excelRow = worksheet.addRow(row);
-  
-        // Apply conditional coloring based on `result_package`
-        let fillColor = null;
-        if (entry.result_package < 0) fillColor = "FFCCCC"; // Red-ish
-        else if (entry.result_package == 0) fillColor = "CCFFCC"; // Green-ish
-        else if (entry.result_package === "Not Exist") fillColor = "CCE5FF"; // Blue-ish
-  
-        if (fillColor) {
-          excelRow.eachCell((cell) => {
-            cell.fill = {
-              type: "pattern",
-              pattern: "solid",
-              fgColor: { argb: fillColor },
-            };
-          });
-        }
+
+      const excelRow = worksheet.addRow(row);
+
+      // Determine font color based on result_package
+      let fontColor = { argb: "000000" }; // Default black
+      if (entry.result_package < 0) fontColor = { argb: "FF0000" }; // Red
+      else if (entry.result_package == 0) fontColor = { argb: "008000" }; // Green
+      else if (entry.result_package === "Not Exist") fontColor = { argb: "0000FF" }; // Blue
+
+      // Apply text color + bold + font size
+      excelRow.eachCell((cell) => {
+        cell.font = {
+          color: fontColor,
+          size: 12,
+          bold: true
+        };
       });
     });
-  
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: "application/octet-stream" });
-    const url = window.URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "InsuranceDetails.xlsx";
-    anchor.click();
-    window.URL.revokeObjectURL(url);
-  };
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: "application/octet-stream" });
+  const url = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "InsuranceDetails.xlsx";
+  anchor.click();
+  window.URL.revokeObjectURL(url);
+};
+
   
   
 
@@ -2156,81 +2141,83 @@ json.reports.forEach(report => {
     }
   };
 
-  const handleExportToExcel = async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet 01');
+ const handleExportToExcel = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Sheet 01');
 
-    // Dynamically choose columns based on selectedValue
-    let exportColumns = columns.slice(1); // skip index column
+  let exportColumns = columns.slice(1); // skip index column
+  const vendorFiles = Data?.vendor_files || [];
 
-    // Ensure json.vendor_files is available
-    const vendorFiles = Data?.vendor_files || [];
+  if (selectedOptions === "by_amount") {
+    exportColumns = exportColumns.filter(col =>
+      [
+        "description",
+        "ndc",
+        "amount_billing",
+        "unit_cost",
+        "amount_paid",
+        "result_unit",
+      ].includes(col.dataField)
+    );
+  } else if (selectedOptions === "by_quantity") {
+    exportColumns = exportColumns.filter(col =>
+      [
+        "description",
+        "ndc",
+        "opening_balance",
+        "packagesize_billing",
+        "quantity_billing",
+        ...vendorFiles,
+        "vendor_sum",
+        "result_unit",
+        "result_package",
+        "closing_balance",
+      ].includes(col.dataField)
+    );
+  } else if (selectedOptions === "combine") {
+    // keep all columns (already handled)
+  }
 
-    if (selectedOptions === "by_amount") {
-      exportColumns = exportColumns.filter(col =>
-        [
-          "description",
-          "ndc",
-          "amount_billing",
-          "unit_cost",
-          "amount_paid",
-          "result_unit",
-        ].includes(col.dataField)
-      );
-    } else if (selectedOptions === "by_quantity") {
-      exportColumns = exportColumns.filter(col =>
-        [
-          "description",
-          "ndc",
-          "opening_balance",
-          "packagesize_billing",
-          "quantity_billing",
-          ...vendorFiles, // Now using vendorFiles
-          "vendor_sum",
-          "result_unit",
-          "result_package",
-          "closing_balance",
-        ].includes(col.dataField)
-      );
-    } else if (selectedOptions === "combine") {
-      // keep all columns (already handled)
+  // Add header row with styling
+  const header = exportColumns.map(item => item.text);
+  const headerRow = worksheet.addRow(header);
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, size: 12 };
+  });
+
+  // Add data rows
+  Data.forEach(item => {
+    const rowData = exportColumns.map(col => item[col.dataField]);
+    const row = worksheet.addRow(rowData);
+
+    // Determine font color based on result_package
+    let fontColor = { argb: '000000' };
+    if (item.result_package < 0) {
+      fontColor = { argb: 'FF0000' };
+    } else if (item.result_package == 0) {
+      fontColor = { argb: '008000' };
+    } else if (item.result_package === 'Not Exist') {
+      fontColor = { argb: '0000FF' };
     }
 
-    // Add header row
-    const header = exportColumns.map(item => item.text);
-    worksheet.addRow(header);
-
-    // Add data rows
-    Data.forEach(item => {
-      const rowData = exportColumns.map(col => item[col.dataField]);
-      const row = worksheet.addRow(rowData);
-
-      // Apply styles based on result_package
-      let fontColor = { argb: '000000' };
-
-      if (item.result_package < 0) {
-        fontColor = { argb: 'FF0000' };
-      } else if (item.result_package == 0) {
-        fontColor = { argb: '008000' };
-      } else if (item.result_package === 'Not Exist') {
-        fontColor = { argb: '0000FF' };
-      }
-
-      row.eachCell((cell) => {
-        cell.font = { color: fontColor };
-      });
+    // Apply font styling to each cell
+    row.eachCell((cell) => {
+      cell.font = { color: fontColor, bold: true, size: 12 };
     });
+  });
 
-    // Set column widths (adjust as needed)
-    worksheet.columns = exportColumns.map(() => ({ width: 15 }));
+  // Set column widths
+  worksheet.columns = exportColumns.map(() => ({ width: 15 }));
 
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/octet-stream' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'Audit Report.xlsx';
-    link.click();
-  };
+  // Export the Excel file
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/octet-stream' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'Audit Report.xlsx';
+  link.click();
+};
+
 
   const handleExportToCSV = () => {
     let csvContent = "";
@@ -2299,95 +2286,89 @@ json.reports.forEach(report => {
 
 
 
-  const handleExportToExcelInsurance = async (insuranceData, insuranceCompanyName) => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Audit Report');
+const handleExportToExcelInsurance = async (insuranceData, insuranceCompanyName) => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Audit Report');
 
-    // Prepare header and data fields dynamically based on the selected value
-    let header = [];
-    let headerDataField = [];
+  let header = [];
+  let headerDataField = [];
 
-    // Define the columns that will be used in the export based on selectedValue
-    let exportColumns = columns.slice(1); // Exclude the index column
+  let exportColumns = columns.slice(1); // Exclude index column
 
-    // Filter columns based on selected value
-    if (selectedOptions === "by_amount") {
-      exportColumns = exportColumns.filter(col =>
-        [
-          "description",
-          "ndc",
-          "amount_billing",
-          "unit_cost",
-          "amount_paid",
-          "result_unit",
-        ].includes(col.dataField)
-      );
-    } else if (selectedOptions === "by_quantity") {
-      exportColumns = exportColumns.filter(col =>
-        [
-          "description",
-          "ndc",
-          "opening_balance",
-          "packagesize_billing",
-          "quantity_billing",
-          ...insuranceData[0]?.vendor_files || [], // vendor_files may be available in the data
-          "vendor_sum",
-          "result_unit",
-          "result_package",
-          "closing_balance",
-        ].includes(col.dataField)
-      );
-    } else if (selectedOptions === "combine") {
-      // Keep all columns for 'combine'
+  if (selectedOptions === "by_amount") {
+    exportColumns = exportColumns.filter(col =>
+      [
+        "description",
+        "ndc",
+        "amount_billing",
+        "unit_cost",
+        "amount_paid",
+        "result_unit",
+      ].includes(col.dataField)
+    );
+  } else if (selectedOptions === "by_quantity") {
+    exportColumns = exportColumns.filter(col =>
+      [
+        "description",
+        "ndc",
+        "opening_balance",
+        "packagesize_billing",
+        "quantity_billing",
+        ...(insuranceData[0]?.vendor_files || []),
+        "vendor_sum",
+        "result_unit",
+        "result_package",
+        "closing_balance",
+      ].includes(col.dataField)
+    );
+  } else if (selectedOptions === "combine") {
+    // keep all columns
+  }
+
+  // Build header
+  exportColumns.forEach((item) => {
+    header.push(item.text);
+    headerDataField.push(item.dataField);
+  });
+
+  // Add header row with bold and larger font
+  const headerRow = worksheet.addRow(header);
+  headerRow.eachCell(cell => {
+    cell.font = { bold: true, size: 12 };
+  });
+
+  // Add data rows
+  insuranceData.forEach((row) => {
+    const rowData = headerDataField.map((field) => row[field]);
+    const newRow = worksheet.addRow(rowData);
+
+    // Set font color based on result_package
+    let fontColor = { argb: '000000' };
+    if (row.result_package < 0) {
+      fontColor = { argb: 'FF0000' }; // Red
+    } else if (row.result_package === 0) {
+      fontColor = { argb: '008000' }; // Green
+    } else if (row.result_package === 'Not Exist') {
+      fontColor = { argb: '0000FF' }; // Blue
     }
 
-    // Prepare header based on filtered columns
-    exportColumns.forEach((item) => {
-      header.push(item.text);
-      headerDataField.push(item.dataField);
+    // Apply font styling to entire row
+    newRow.eachCell((cell) => {
+      cell.font = { color: fontColor, bold: true, size: 12 };
     });
+  });
 
-    // Add header row
-    worksheet.addRow(header);
+  // Set column widths
+  worksheet.columns = exportColumns.map(() => ({ width: 15 }));
 
-    // Add data rows based on filtered columns
-    insuranceData.forEach((row) => {
-      const rowData = headerDataField.map((field) => row[field]);
-      const newRow = worksheet.addRow(rowData);
+  // Export file
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const fileName = `${insuranceCompanyName}_Audit_Report.xlsx`;
+  saveAs(blob, fileName);
+};
 
-      // Determine fill color based on result_package
-      let fillColor = null;
-      if (row.result_package < 0) {
-        fillColor = 'FA5053';       // Bold Red
-      } else if (row.result_package === 0) {
-        fillColor = 'CCFF01';       // Bold Green
-      } else if (row.result_package === 'Not Exist') {
-        fillColor = '6395EE';       // Bold Blue
-      }
 
-      // Apply fill color to the entire row (including empty cells up to header length)
-      if (fillColor) {
-        for (let colIndex = 1; colIndex <= header.length; colIndex++) {
-          const cell = newRow.getCell(colIndex);
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: fillColor },
-          };
-        }
-      }
-    });
-
-    // Set column widths dynamically based on the header length
-    const columnWidths = exportColumns.map(() => ({ width: 15 }));
-    worksheet.columns = columnWidths.slice(0, header.length);
-
-    // Create buffer and save the file
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `${insuranceCompanyName}_Audit_Report.xlsx`;
-    saveAs(blob, fileName);
-  };
 
   const handleExportToCSVInsurance = (insuranceData, insuranceCompanyName) => {
     let csvContent = "";

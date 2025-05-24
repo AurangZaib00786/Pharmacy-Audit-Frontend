@@ -24,24 +24,37 @@ function SummaryModal({ show, onHide, data }) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>Insurance Company</th>
-                            <th>Billing Amount Total</th>
-                            <th>Difference Amount Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {companySummaries.map((company, index) => (
-                            <tr key={index}>
-                                <td>{company.name}</td>
-                                <td>{company.totalBilling.toFixed(2)}</td>
-                                <td>{company.totalPaid.toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+               <Table striped bordered hover>
+  <thead>
+    <tr>
+      <th>Insurance Company</th>
+      <th>Billing Amount Total</th>
+      {/* <th>Difference Amount Total</th> */}
+    </tr>
+  </thead>
+  <tbody>
+    {companySummaries.map((company, index) => (
+      <tr key={index}>
+        <td>{company.name}</td>
+        <td>{company.totalBilling.toFixed(2)}</td>
+        {/* <td>{company.totalPaid.toFixed(2)}</td> */}
+      </tr>
+    ))}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td><strong>Total</strong></td>
+      <td>
+        <strong>
+          {companySummaries
+            .reduce((sum, company) => sum + company.totalBilling, 0)
+            .toFixed(2)}
+        </strong>
+      </td>
+    </tr>
+  </tfoot>
+</Table>
+
             </Modal.Body>
         </Modal>
     );
